@@ -34,7 +34,7 @@
             "label": "",
             "ui_data": {
               "label": "ingest.ipynb",
-              "image": "/notebook/onnxserving/pipelines/static/elyra/notebook.svg",
+              "image": "/notebook/mninst/model/static/elyra/notebook.svg",
               "x_pos": 192,
               "y_pos": 289,
               "description": "Run notebook file"
@@ -93,7 +93,7 @@
             "label": "",
             "ui_data": {
               "label": "train.ipynb",
-              "image": "/notebook/onnxserving/pipelines/static/elyra/notebook.svg",
+              "image": "/notebook/mninst/model/static/elyra/notebook.svg",
               "x_pos": 487,
               "y_pos": 325,
               "description": "Run notebook file"
@@ -134,6 +134,83 @@
               }
             }
           ]
+        },
+        {
+          "id": "9e4b3055-4baa-4212-8c2e-61af32d49eb3",
+          "type": "execution_node",
+          "op": "execute-notebook-node",
+          "app_data": {
+            "component_parameters": {
+              "dependencies": [],
+              "include_subdirectories": false,
+              "outputs": [],
+              "env_vars": [
+                {
+                  "env_var": "AWS_ACCESS_KEY_ID"
+                },
+                {
+                  "env_var": "AWS_SECRET_ACCESS_KEY"
+                },
+                {
+                  "env_var": "AWS_S3_BUCKET"
+                },
+                {
+                  "env_var": "AWS_S3_ENDPOINT"
+                }
+              ],
+              "kubernetes_pod_annotations": [],
+              "kubernetes_pod_labels": [],
+              "kubernetes_secrets": [],
+              "kubernetes_shared_mem_size": {},
+              "kubernetes_tolerations": [],
+              "mounted_volumes": [],
+              "filename": "convert-onnx.ipynb",
+              "runtime_image": "amancevice/pandas@sha256:f74bef70689b19d3cd610ef67227fce1c9a6ed8fa950ac2aff39ce72310d5520"
+            },
+            "label": "",
+            "ui_data": {
+              "label": "convert-onnx.ipynb",
+              "image": "/notebook/mninst/model/static/elyra/notebook.svg",
+              "x_pos": 768,
+              "y_pos": 345,
+              "description": "Run notebook file"
+            }
+          },
+          "inputs": [
+            {
+              "id": "inPort",
+              "app_data": {
+                "ui_data": {
+                  "cardinality": {
+                    "min": 0,
+                    "max": -1
+                  },
+                  "label": "Input Port"
+                }
+              },
+              "links": [
+                {
+                  "id": "983ce02e-989f-4e77-b254-ab9fdbf0426f",
+                  "node_id_ref": "99d90e3b-fb31-4793-bc73-ce664bafdf59",
+                  "port_id_ref": "outPort"
+                }
+              ]
+            }
+          ],
+          "outputs": [
+            {
+              "id": "outPort",
+              "app_data": {
+                "ui_data": {
+                  "cardinality": {
+                    "min": 0,
+                    "max": -1
+                  },
+                  "label": "Output Port"
+                }
+              }
+            }
+          ]
         }
       ],
       "app_data": {
@@ -145,13 +222,13 @@
           "name": "mninst",
           "runtime": "Generic",
           "pipeline_defaults": {
+            "kubernetes_shared_mem_size": {},
             "mounted_volumes": [],
+            "kubernetes_tolerations": [],
             "kubernetes_pod_annotations": [],
             "kubernetes_pod_labels": [],
-            "kubernetes_shared_mem_size": {},
-            "kubernetes_tolerations": [],
-            "kubernetes_secrets": [],
-            "env_vars": []
+            "env_vars": [],
+            "kubernetes_secrets": []
           }
         }
       },
