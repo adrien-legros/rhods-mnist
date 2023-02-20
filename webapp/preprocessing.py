@@ -15,7 +15,7 @@ def process_data(img_string):
     return res
 
 def process_payload(data):
-    f = open("./input_template.json")
+    f = open("./input_template_v1.json")
     payload = json.load(f)
     payload['inputs'][0]['data'] = data
     return payload
