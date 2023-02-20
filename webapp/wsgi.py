@@ -15,12 +15,6 @@ def index():
 def status():
     return jsonify({'status': 'ok'})
 
-# def call_mm(img_input):
-
-#     requests.post(MM_URL, data=)
-#     res = {"data": [0, 1 ,0, 0, 0, 0, 0, 0, 0, 0]}
-#     return res
-
 @application.route('/predict', methods=['POST'])
 def predict():
     img_str = request.json["draw"]
@@ -32,3 +26,6 @@ def predict():
     print(resp)
     prediction = resp['outputs'][0]['data']
     return jsonify({"data": prediction})
+
+if __name__ == '__main__':
+    application.run(host='0.0.0.0',port=8080)
