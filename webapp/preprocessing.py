@@ -1,9 +1,12 @@
 import io
+import os
 import re
 import base64
 import json
 import numpy as np
 from PIL import Image
+
+MODEL_VERSION = os.environ.get("MODEL_VERSION") or "v2"
 
 def process_data(img_string):
     img_str = re.search(r'base64,(.*)', img_string).group(1)
@@ -15,7 +18,11 @@ def process_data(img_string):
     return res
 
 def process_payload(data):
-    f = open("./input_template_v1.json")
+    if MODEL_VERSION == "v1":
+        file_path = "./input_template/v1.json"
+    else:
+        file_path = "./input_template/v2.json"
+    f = open(file_path)
     payload = json.load(f)
     payload['inputs'][0]['data'] = data
     return payload
