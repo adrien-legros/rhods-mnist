@@ -1,0 +1,13 @@
+{
+  "inputs": [
+    {
+      "name": "dense_input",
+      "shape": [
+        1,
+        784
+      ],
+      "datatype": "FP32",
+      "data": ["INPUT_HERE"]
+    }
+  ]
+}
