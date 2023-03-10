@@ -16,21 +16,10 @@
             "component_parameters": {
               "dependencies": [],
               "include_subdirectories": false,
-              "outputs": [],
-              "env_vars": [
-                {
-                  "env_var": "AWS_ACCESS_KEY_ID"
-                },
-                {
-                  "env_var": "AWS_SECRET_ACCESS_KEY"
-                },
-                {
-                  "env_var": "AWS_S3_BUCKET"
-                },
-                {
-                  "env_var": "AWS_S3_ENDPOINT"
-                }
+              "outputs": [
+                "logs.tar.gz"
               ],
+              "env_vars": [],
               "kubernetes_pod_annotations": [],
               "kubernetes_pod_labels": [],
               "kubernetes_secrets": [],
@@ -38,14 +27,14 @@
               "kubernetes_tolerations": [],
               "mounted_volumes": [],
               "filename": "Train.ipynb",
-              "runtime_image": "tensorflow/tensorflow@sha256:7c01f75d58fadc2cd1109d5baac1925ed131e05925d840b1b49363c794d1c4db"
+              "runtime_image": "quay.io/alegros/runtime-image:cuda-ubi8-py38"
             },
             "label": "",
             "ui_data": {
               "label": "Train.ipynb",
-              "image": "/notebook/onnxserving/pipelines/static/elyra/notebook.svg",
-              "x_pos": 525,
-              "y_pos": 201,
+              "image": "/notebook/mnist/notebook/static/elyra/notebook.svg",
+              "x_pos": 527,
+              "y_pos": 263,
               "description": "Run notebook file"
             }
           },
@@ -94,20 +83,7 @@
               "dependencies": [],
               "include_subdirectories": false,
               "outputs": [],
-              "env_vars": [
-                {
-                  "env_var": "AWS_ACCESS_KEY_ID"
-                },
-                {
-                  "env_var": "AWS_SECRET_ACCESS_KEY"
-                },
-                {
-                  "env_var": "AWS_S3_BUCKET"
-                },
-                {
-                  "env_var": "AWS_S3_ENDPOINT"
-                }
-              ],
+              "env_vars": [],
               "kubernetes_pod_annotations": [],
               "kubernetes_pod_labels": [],
               "kubernetes_secrets": [],
@@ -115,14 +91,14 @@
               "kubernetes_tolerations": [],
               "mounted_volumes": [],
               "filename": "Pre-process.ipynb",
-              "runtime_image": "tensorflow/tensorflow@sha256:7c01f75d58fadc2cd1109d5baac1925ed131e05925d840b1b49363c794d1c4db"
+              "runtime_image": "quay.io/alegros/runtime-image:cuda-ubi8-py38"
             },
             "label": "",
             "ui_data": {
               "label": "Pre-process.ipynb",
-              "image": "/notebook/onnxserving/pipelines/static/elyra/notebook.svg",
-              "x_pos": 199,
-              "y_pos": 218,
+              "image": "/notebook/mnist/notebook/static/elyra/notebook.svg",
+              "x_pos": 227,
+              "y_pos": 213.5,
               "description": "Run notebook file"
             }
           },
@@ -138,6 +114,72 @@
                   "label": "Input Port"
                 }
               }
+            }
+          ],
+          "outputs": [
+            {
+              "id": "outPort",
+              "app_data": {
+                "ui_data": {
+                  "cardinality": {
+                    "min": 0,
+                    "max": -1
+                  },
+                  "label": "Output Port"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "f7d83286-4355-4044-b54e-9aaac482a5fb",
+          "type": "execution_node",
+          "op": "execute-notebook-node",
+          "app_data": {
+            "component_parameters": {
+              "dependencies": [],
+              "include_subdirectories": false,
+              "outputs": [
+                "tmp/logs/fit/"
+              ],
+              "env_vars": [],
+              "kubernetes_pod_annotations": [],
+              "kubernetes_pod_labels": [],
+              "kubernetes_secrets": [],
+              "kubernetes_shared_mem_size": {},
+              "kubernetes_tolerations": [],
+              "mounted_volumes": [],
+              "filename": "Metadata.ipynb",
+              "runtime_image": "quay.io/alegros/runtime-image:cuda-ubi8-py38"
+            },
+            "label": "",
+            "ui_data": {
+              "label": "Metadata.ipynb",
+              "image": "/notebook/mnist/notebook/static/elyra/notebook.svg",
+              "x_pos": 823,
+              "y_pos": 308,
+              "description": "Run notebook file"
+            }
+          },
+          "inputs": [
+            {
+              "id": "inPort",
+              "app_data": {
+                "ui_data": {
+                  "cardinality": {
+                    "min": 0,
+                    "max": -1
+                  },
+                  "label": "Input Port"
+                }
+              },
+              "links": [
+                {
+                  "id": "311d1f79-9e2b-4ff9-ba2e-722793acb152",
+                  "node_id_ref": "3262df5b-8ee0-4e73-8188-aef81f9162a5",
+                  "port_id_ref": "outPort"
+                }
+              ]
             }
           ],
           "outputs": [
@@ -175,8 +217,8 @@
             },
             {
               "id": "801b0dbf-118a-4f16-9c18-f83a382936df",
-              "x_pos": 533,
-              "y_pos": 91,
+              "x_pos": 493,
+              "y_pos": 168,
               "width": 175,
               "height": 44,
               "content": "**Build and train the neural network model**",
@@ -184,6 +226,20 @@
                 {
                   "id": "25aa375a-ba62-4448-894a-6b6ad1878b60",
                   "node_ref": "3262df5b-8ee0-4e73-8188-aef81f9162a5"
+                }
+              ]
+            },
+            {
+              "id": "1d74cac4-e1f6-4c38-9523-6ee56baf71a4",
+              "x_pos": 788,
+              "y_pos": 188,
+              "width": 175,
+              "height": 42,
+              "content": "**Set the pipeline artifacts**",
+              "associated_id_refs": [
+                {
+                  "id": "d879a992-8474-47b8-b7a2-802dccb92a81",
+                  "node_ref": "f7d83286-4355-4044-b54e-9aaac482a5fb"
                 }
               ]
             }
@@ -194,13 +250,35 @@
           "name": "mnist",
           "runtime": "Generic",
           "pipeline_defaults": {
+            "kubernetes_tolerations": [],
             "kubernetes_pod_annotations": [],
             "mounted_volumes": [],
-            "kubernetes_tolerations": [],
             "kubernetes_pod_labels": [],
             "kubernetes_shared_mem_size": {},
-            "env_vars": [],
-            "kubernetes_secrets": []
+            "kubernetes_secrets": [
+              {
+                "env_var": "AWS_ACCESS_KEY_ID",
+                "name": "mlpipeline-minio-artifact",
+                "key": "accesskey"
+              },
+              {
+                "env_var": "AWS_SECRET_ACCESS_KEY",
+                "name": "mlpipeline-minio-artifact",
+                "key": "secretkey"
+              }
+            ],
+            "env_vars": [
+              {
+                "env_var": "AWS_S3_BUCKET",
+                "value": "rhods"
+              },
+              {
+                "env_var": "AWS_S3_ENDPOINT",
+                "value": "http://minio-redhat-ods-applications.apps.snogpu.redhat.hpecic.net"
+              }
+            ],
+            "runtime_image": "quay.io/alegros/runtime-image:cuda-ubi8-py38",
+            "disable_node_caching": "True"
           }
         }
       },
