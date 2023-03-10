@@ -1,0 +1,18 @@
+namespace: mnist
+
+resources:
+  - ./service.yaml
+
+patches:
+- target:
+    group: serving.knative.dev
+    version: v1
+    kind: Service
+    name: data-transformation
+  patch: |-
+    - op: replace
+      path: /spec/template/spec/containers/0/env/0/value
+      value: "https://mnist-mnist.apps.snogpu.redhat.hpecic.net/v2/models/mnist/infer"
+    - op: replace
+      path: /spec/template/spec/containers/0/env/1/value
+      value: "true"

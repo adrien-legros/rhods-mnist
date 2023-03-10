@@ -1,0 +1,20 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: data-transformation
+spec:
+  template:
+    spec:
+      containers:
+        - image: quay.io/alegros/mnist-serverless-fn:v2
+          env:
+            - name: INFERENCE_ENDPOINT
+              value: "http://modelmesh-serving.mnist:8008/v2/models/mnist/infer"
+            - name: USE_OAUTH_PROXY
+              value: "false"
+            - name: OAUTH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: model-mesh
+                  key: token
+                  optional: true
