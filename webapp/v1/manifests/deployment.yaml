@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: rhods-webapp
+    app.kubernetes.io/component: rhods-webapp
+    app.kubernetes.io/instance: rhods-webapp
+    app.kubernetes.io/name: rhods-webapp
+    app.openshift.io/runtime: python
+    app.openshift.io/runtime-version: 3.9-ubi8
+  name: rhods-webapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rhods-webapp
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: rhods-webapp
+        deployment: rhods-webapp
+    spec:
+      containers:
+      - env:
+        - name: INFERENCE_ENDPOINT
+          value: https://mnist-onnxserving.apps.ocp1.redhat.hpecic.net/v2/models/mnist/infer
+        image: image-registry.openshift-image-registry.svc:5000/onnxserving/rhods-webapp:latest
+        imagePullPolicy: Always
+        name: rhods-webapp
+        ports:
+        - containerPort: 8080
+          protocol: TCP
