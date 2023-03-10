@@ -1,0 +1,13 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: visualizationserver-fix
+  namespace: redhat-ods-applications
+subjects:
+- kind: ServiceAccount
+  name: ds-pipeline-viewer-crd-service-account
+  namespace: redhat-ods-applications
+roleRef:
+  kind: Role
+  name: ds-pipeline-viewer-controller-role-fix
+  apiGroup: rbac.authorization.k8s.io

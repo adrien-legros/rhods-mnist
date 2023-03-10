@@ -1,0 +1,11 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: ds-pipeline
+  namespace: redhat-ods-applications
+spec:
+  port:
+    targetPort: 8888
+  to:
+    kind: Service
+    name: ds-pipeline

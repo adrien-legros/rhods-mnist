@@ -1,0 +1,18 @@
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: custom-notebook-build
+  namespace: redhat-ods-applications
+spec:
+  lookupPolicy:
+    local: true
+  tags:
+  - annotations:
+      openshift.io/imported-from: image-registry.openshift-image-registry.svc:5000/redhat-ods-applications/custom-notebook-build:latest
+    from:
+      kind: DockerImage
+      name: custom-notebook-build
+    importPolicy: {}
+    name: latest
+    referencePolicy:
+      type: Source

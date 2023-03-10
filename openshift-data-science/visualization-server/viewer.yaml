@@ -1,0 +1,26 @@
+apiVersion: kubeflow.org/v1beta1
+kind: Viewer
+metadata:
+  name: my-viewer
+  namespace: redhat-ods-applications
+spec:
+  podTemplateSpec:
+    spec:
+      containers:
+      - name: my-viewer
+        env:
+          - name: AWS_ACCESS_KEY_ID
+            value: minio
+          - name: AWS_SECRET_ACCESS_KEY
+            value: minio123
+          - name: S3_ENDPOINT
+            value: "http://minio-redhat-ods-applications.apps.snogpu.redhat.hpecic.net/"
+          - name: S3_USE_HTTPS
+            value: "0"
+          - name: S3_VERIFY_SSL
+            value: "0"
+      serviceAccountName: ds-pipelines-viewer
+  tensorboardSpec:
+    logDir: s3://rhods
+    tensorflowImage: tensorflow/tensorflow:2.2.2
+  type: tensorboard

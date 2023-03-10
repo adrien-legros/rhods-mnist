@@ -1,0 +1,19 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    application-crd-id: data-science-pipelines
+  name: ds-pipeline-viewer-controller-role-fix
+rules:
+  - apiGroups:
+      - kubeflow.org
+    resources:
+      - viewers/finalizers
+    verbs:
+      - create
+      - get
+      - list
+      - watch
+      - update
+      - patch
+      - delete

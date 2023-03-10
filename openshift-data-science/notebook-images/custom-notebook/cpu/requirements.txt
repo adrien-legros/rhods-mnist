@@ -1,0 +1,9 @@
+numpy
+tensorflow
+pandas
+scikit-learn
+matplotlib
+seaborn
+boto3
+tf2onnx
+keras_tuner
