@@ -6,13 +6,12 @@ Furthermore, we have the abilty to use GPU hardware thanks to Nvida GPU Operator
 
 ![archi-schema](./docs/now.png)
 
+## Lab instruction
+
+[Lab instructions](./docs/lab-instructions.md)
+
+
 ## Deploy
-
-
-```shell
-# Get the model serving endpoint
-oc -n mnist get route mnist -ojsonpath='{.status.ingress[0].host}'
-```
 
 ```shell
 # First deploy the operators and wait for completion
@@ -25,6 +24,11 @@ oc apply -k ./openshift-data-science/
 oc apply -k ./webapp/v2/manifests/
 # Deploy the serverless function
 oc apply -k ./openshift-serverless/manifests/
+```
+
+```shell
+# Get the model serving endpoint
+oc -n mnist get route mnist -ojsonpath='{.status.ingress[0].host}'
 ```
 
 ## Reference
