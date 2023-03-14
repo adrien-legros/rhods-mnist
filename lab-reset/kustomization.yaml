@@ -1,0 +1,4 @@
+resources:
+  - ./scripts/reset-scripts.yaml
+  - ./sa/service-account.yaml
+  - ./sa/rbac.yaml

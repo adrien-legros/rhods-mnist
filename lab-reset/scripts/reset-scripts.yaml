@@ -1,0 +1,49 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: reset-scripts
+  namespace: redhat-ods-applications
+data:
+  reset-minio.sh: |-
+    #!/usr/bin/env sh
+    # Create bucket
+    mc alias set minio http://${MINIO_SERVICE}:${MINIO_PORT} ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD}
+    if [ $? -gt 0 ]; then exit 1; fi
+    buckets=$(mc ls minio --json | jq '.key' | sed 's/\"//g')
+    for buck in ${buckets}
+    do
+      echo "Removing bucket ${buck} ..."
+      mc rb --force minio/${buck}
+    done
+    echo "Deletion phase completed"
+    echo "Creating bucket rhods on minio alias ..."
+    mc mb minio/rhods
+    curl -LJ https://github.com/adrien-legros/datasets/tarball/mnist -o /tmp/dataset.tar.gz
+    mkdir /tmp/dataset
+    tar xzf /tmp/dataset.tar.gz -C /tmp/dataset --strip-components 1
+    unzip /tmp/dataset/digit-recognizer.zip -d /tmp/dataset
+    mc cp /tmp/dataset/train.csv minio/rhods/data/train.csv
+    mc cp /tmp/dataset/test.csv minio/rhods/data/test.csv
+    echo "Creation completed"
+  reset-mariadb.sh: |-
+    #!/usr/bin/env sh
+    oc -n redhat-ods-applications exec -it deploy/mariadb -- mysql -h 127.0.0.1 -u mlpipeline -pmlpipeline -D mlpipeline -e 'drop database mlpipeline';
+    oc -n redhat-ods-applications exec -it deploy/mariadb -- mysql -h 127.0.0.1 -u mlpipeline -pmlpipeline -e 'create database mlpipeline';
+  reset-jupyterlab.sh: |-
+    #!/usr/bin/env sh
+    for sts in $(oc -n mnist get sts -oname);
+    do 
+      oc -n mnist exec -it $sts -- rm -rf *;
+    done
+  redeploy-ds-pipeline.sh: |-
+    #!/usr/bin/env sh
+    oc -n redhat-ods-applications get deploy -oname | grep ds-pipeline | xargs oc rollout restart
+    oc -n redhat-ods-applications rollout restart deploy/mariadb
+    oc -n redhat-ods-applications rollout restart deploy/minio
+  clear-mnist-namespace.sh: |-
+    #!/usr/bin/env sh
+    oc -n mnist delete notebook --all
+    oc -n mnist delete isvc --all
+    oc -n mnist delete servingruntimes --all
+    oc -n mnist delete ksvc --all
+    oc -n mnist delete all -l app=mnist-webapp

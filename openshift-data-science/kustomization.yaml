@@ -6,10 +6,6 @@ resources:
   - ./routes/ds-pipelines-route.yaml
   - ./routes/minio-route.yaml
 
-  # Initalize Minio Bucket With Mnist Data
-  - ./init-bucket/creation-script.yaml
-  - ./init-bucket/creation-job.yaml
-
   # Add Notebook Imagestreams for RHODS
   - ./notebook-images/ds-notebook-cuda-is.yaml
   - ./notebook-images/ds-notebook-is.yaml
