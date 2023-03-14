@@ -40,6 +40,7 @@ data:
     oc -n redhat-ods-applications get deploy -oname | grep ds-pipeline | xargs oc rollout restart
     oc -n redhat-ods-applications rollout restart deploy/mariadb
     oc -n redhat-ods-applications rollout restart deploy/minio
+    oc -n redhat-ods-applications delete taskrun --all
   clear-mnist-namespace.sh: |-
     #!/usr/bin/env sh
     oc -n mnist delete notebook --all
