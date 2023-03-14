@@ -2,28 +2,43 @@
 
 ## Log in to Red Hat OpenShift Data Science (RHODS)
 
-On the top right of the screen click on the XXX button and launch Red Hat OpenShift Data Science (RHODS). Select on my_htpasswd_provider and connect with the hpe_redhat user.
+On the top right of the OpenShift console click on the Application Launcher button and click on the Red Hat OpenShift Data Science (RHODS) managed service. Connect using the my_htpasswd_provider and hpe_redhat user.
+
+![launch-dashboard](./screenshots/launch-dashboard.png)
 
 ## Start a new data science project
 
-Go to the **Data Science projects** tab and click on the pre-created **mnist** project. This project has been created with a pvc for the notebook filesystem (i.e the jupyterlab notebooks). It also contains a S3 secret corresponding the the minio credentials deployed in the *redhat-ods-applications* namespace.  
-You need to create a new workbench. Click on the corresponding button and fill up. Don't forget to link the pre-created pvc to the notebook. Complete the form as bellow:
+### Create the workbench
+
+Go to the **Data Science projects** tab and click on the pre-created **mnist** project.
+
+![data-science-project](./screenshots/ds-project.png)
+
+ This project has been created with a pvc for the notebook filesystem (i.e the jupyterlab notebooks). It also has a data connection, which is a secret containing the minio credentials for the S3 storage.  
+You need to create a new workbench. Click on the corresponding button and fill up the form. Don't forget to link the pre-created pvc to the notebook. Complete the form as bellow:
 
 ![create-workbench-1](./screenshots/create-notebook-1.png)
 
 ![create-workbench-2](./screenshots/create-notebook-2.png)
 
-You also have to add the S3 credentials for the notebook you just created. This will restart the notebook as the credentials will the mount on a volume from a secret pre-created for you. See the picture bellow:
+### Edit the Data connections secret
+
+You also have to add the S3 credentials to the notebook you just created. This will restart the notebook as the credentials will be mount on a volume from a secret pre-created for you. See the picture bellow:
 
 ![create-workbench-3](./screenshots/create-notebook-3.png)
 
-RHODS is going to pull a few container images especially the one used for the jupyterlab notebook server. After a few moment the workbench is running and you can open it.
+RHODS is going to pull a few container images especially the one used for the jupyterlab notebook server. This notebook image for this lab is quite heavy (~ 6GB) as it contains the cuda library required to work with the GPU. After a few moment the workbench is running and you can open it.
 
 ![create-workbench-4](./screenshots/create-notebook-4.png)
 
 ## JupyterLab notebooks
 
-On the left side click on the git clone button and clone this repository: https://github.com/adrien-legros/rhods-mnist.git. Navigate to *./rhods-mnist/notebooks/v2*. Check the following files.
+For you are now in the jupyterlab interface.
+On the left side click on the git clone button and clone this repository: https://github.com/adrien-legros/rhods-mnist.git. 
+
+![git-clone](./screenshots/git-clone.png)
+
+Navigate to *./rhods-mnist/notebooks/v2*. Check the following files:
 
 ### Notebooks
 
@@ -31,12 +46,12 @@ There are 3 notebooks available: Pre-process, Train and Metadata. Navigate to ea
 
 #### Pre-process
 
-Load and pre-process the data. The data are loaded from minio s3 bucket. In the notebook, we are describing the data and running basic analysis such as counting the number of observation per label. We also transform the data by normalizing and reshaping them. We store the python numpy objects in a bucket so it is available to the others notebooks (i.e available to next pipeline steps).
+Load and pre-process the data. The data are loaded from the minio s3 bucket. In this notebook, we are describing the data and running basic analysis such as counting the number of observation per label. We also transform the data by normalizing and reshaping them. We store the python numpy objects in a bucket so it is available to the others notebooks (i.e available to next pipeline steps).
 
 #### Train
 
-We load the processed data, create, and train the ML model. The model is a convolutional neural network. See the architecture of the model and the different layers. Once the model is trained, we display few metrics such as the f1 score or the confusion matrix.  
-The model is saved in the minio bucket in the onnx format so that we can serve it later on this lab.
+We load the processed data, create, and train a model. The model is a convolutional neural network. See the architecture of the model and the different layers. Once the model is trained, we display few metrics such as the f1 score or the confusion matrix.  
+The model is saved in the minio bucket in onnx format so that we can serve it later on this lab.
 
 #### Metadata
 
@@ -51,26 +66,11 @@ See also that we need to reference a Runtime Image where the python code will ru
 
 ## Complete and run the pipeline
 
-### Edit default pipeline properties
+### Check the default pipeline properties
 
 Open the pipeline properties panel by clicking on the *Open Panel* button, or right clicking to a node, select *Open Properties* and switch tab to *Pipeline Properties*.
 
-#### Edit default Runtime Image
-
-In the Runtime Image, add by default *Custom Runtime for mnist : CUDA11.4/Py38*.
-
-![default-properties](./screenshots/edit-default-properties-1.png)
-
-
-#### Edit the S3 endpoint url
-
-Get your minio server endpoint url. Go to the **Administrator Console > Networking > Routes** in the *redhat-ods-applications* namespace. Copy the minio route url. Or run the following command:
-```shell
-oc -n mnist get route mnist -ojsonpath='{.status.ingress[0].host}'
-```
-Edit the AWS_S3_ENDPOINT environmental variable value by replacing it with the route endpoint you just copied.
-
-![default-properties](./screenshots/edit-default-properties-2.png)
+![pipeline-properties](./screenshots/pipeline-properties.png)
 
 ### Add a pipeline step
 
@@ -80,11 +80,11 @@ We are going to add the metadata playbook to our pipeline. Open the *mnist.pipel
 
 Additionnaly, confirm that environmental variables has been set by default.
 
-![node-properties](./screenshots/add-metadata-step.png)
+![node-properties](./gif/add-step.gif)
 
 ### Add Kubeflow Runtime
 
-We need to setup the Kuflow Runtime so that Elyra can call Kubeflow Pipeline API to create an experiment and run it. On the left navigation bar, click on Runtimes. Add a new Kubeflow Pipeline runtime configuration. You will need the Kubeflow API endpoint as well as the Minio endpoint and credentials. To get the endpoints, go to **Administrator Console > Networking > Routes** in the *redhat-ods-applications* namespace. Or run the commands:
+We need to setup the Kuflow Runtime so that Elyra can trigger Kubeflow Pipeline API to create an experiment and run it. On the left navigation bar, click on Runtimes. Add a new Kubeflow Pipeline runtime configuration. You will need the Kubeflow API endpoint as well as the Minio endpoint and credentials. To get the endpoints, go to **Administrator Console > Networking > Routes** in the *redhat-ods-applications* namespace. Or run the commands:
 ```shell
 echo MINIO_ENDPOINT: http://$(oc -n redhat-ods-applications get route minio -ojsonpath='{.status.ingress[0].host}')
 echo KUBEFLOW_API_ENDPOINT: http://$(oc -n redhat-ods-applications get route ds-pipeline -ojsonpath='{.status.ingress[0].host}')
@@ -118,6 +118,9 @@ Check out the logs by clicking on a step, then on the log tab.
 The pipeline completed after approximatively 5 minutes with the GPU enabled.
 
 Click on the **Run Ouput** tab. Notice that few metadata artifacts has been created throughout the pipeline. By default, you can retrieve all logs in html or ipynb format. Click on a link to redirect to minio bucket.  
+
+![artifacts](./screenshots/artifacts.png)
+
 Also notice that a tensorboard is availble. We have deployed a visualization server and a custom resource associated. We will use this server to visualize the model metrics by run and compare them.
 
 Go to **Administrator Console > Networking > Routes** in the *redhat-ods-applications* namespace. Open the *my-viewer* url to open the Visualization server. **WARNING:** Don't forget the /tensorboard/my-viewer/ path at the end of the hostname.  
@@ -130,11 +133,15 @@ echo https://$(oc -n redhat-ods-applications get route my-viewer -ojsonpath='{.s
 
 ## Model Serving
 
-Now it is time to serve our model using modelmesh serving. Go back to RHODS dashboard. Click on **Configure server**. Make the model available via external route and secure it with a token authorization. The token authoriezation uses oauth proxy as backend. Choose model-mesh as service account name. Finally click on configure:
+Now it is time to serve our model using modelmesh serving. Go back to RHODS dashboard. Click on **Configure server**. Make the model available via external route and secure it with a token authorization. The token authoriezation uses oauth proxy as backend. Choose *model-mesh* as service account name. Finally click on configure:
 
 ![model-serving](./screenshots/model-serving.png)
 
-Then click on **Deploy model**. Enter *mnist* as model name. Select *onnx - 1* as model framework. In the Train.ipynb notebook we trained and saved a model in the onnx format. We converted a tensorflow model in the onnx format. The onnx model is saved in the minio S3 bucket at the path *onnx/model-v2.onnx*. Let's add the s3 bucket as the data connection and *onnx/model-v2.onnx* as the folder path. Deploy the model. Wait for the model deployment to complete. You can now see the model endpoint as well as the token associated with the service account created.  
+Then click on **Deploy model**. Enter *mnist* as model name. Select *onnx - 1* as model framework. In the Train.ipynb notebook we trained and saved a model in the onnx format. We converted a tensorflow model in the onnx format. The onnx model is saved in the minio S3 bucket at the path *onnx/model-v2.onnx*. Let's add the s3 bucket as the data connection and *onnx/model-v2.onnx* as the folder path. Deploy the model. 
+
+![deploy-model](./screenshots/deploy-model.png)
+
+Wait for the model deployment to complete. You can now see the model endpoint as well as the token associated with the service account created.  
 **NOTE:** The service account resource as not been created. The model server has created a secret named *model-mesh* containing the token, certificate etc.
 
 ![model-serving-token](./screenshots/model-serving-endpoint.png)
@@ -152,9 +159,6 @@ The ONNX framework is adequation with this architecutre. Therefore the model ser
 For more information conerning the serverless function check out the openshift-serverless/functions/app-src directory. The file *preprocessing.py* contains the 2 most important functions:
 - process_data: convert the png format to a well shaped tensor
 - process_payload: take the template expected by modelmesh serving and add the processed data
-
-Before deploying the serverless function, modify ./openshift-serverless/manifests/kustomization.yaml.  
-Change the modelmesh inference endpoint with the url displayed in the RHODS dashboard. Confirm that the 2 other variables are correctly set.
 
 Now deploy the serverless function:
 ```shell
@@ -178,3 +182,8 @@ oc -n mnist get route mnist-webapp -ojsonpath='{.status.ingress[0].host}'
 Draw a digit between 1 and 9. Click on predict and see te ouput. Note: the first prediction can take more time as the serverless function might not be running. The following predictions will be much faster.
 
 ## Clean Up
+
+Once you finished and saved all needed files, you can reset the lab by running:
+```shell
+oc create -f /lab-reset/reset-job.yaml
+```

@@ -26,6 +26,17 @@ oc apply -k ./webapp/v2/manifests/
 oc apply -k ./openshift-serverless/manifests/
 ```
 
+## Reset lab
+
+```shell
+# Reset configurations
+oc apply -k ./lab-reset/
+# Reset job
+oc create -f ./lab-reset/reset-job.yaml
+# Reset cron job
+oc create -f ./lab-reset/reset-cron-job.yaml
+```
+
 ```shell
 # Get the model serving endpoint
 oc -n mnist get route mnist -ojsonpath='{.status.ingress[0].host}'
