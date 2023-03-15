@@ -2,6 +2,7 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: lab-reset-cronjob
+  namespace: redhat-ods-applications
 spec:
   schedule: "0 0 * * *"
   jobTemplate:

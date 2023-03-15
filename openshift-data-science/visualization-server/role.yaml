@@ -4,6 +4,7 @@ metadata:
   labels:
     application-crd-id: data-science-pipelines
   name: ds-pipeline-viewer-controller-role-fix
+  namespace: redhat-ods-applications
 rules:
   - apiGroups:
       - kubeflow.org
