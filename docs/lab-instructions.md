@@ -2,7 +2,7 @@
 
 ## Log in to Red Hat OpenShift Data Science (RHODS)
 
-On the top right of the OpenShift console click on the Application Launcher button and click on the Red Hat OpenShift Data Science (RHODS) managed service. Connect using the my_htpasswd_provider and hpe_redhat user.
+On the top right of the OpenShift console click on the Application Launcher button and click on the Red Hat OpenShift Data Science (RHODS) managed service. Connect to the RHODS console with an existing user that has admin right on mnist namespace. Note that we might reduce admin permission for that user, but for now let's simplify things.
 
 ![launch-dashboard](./screenshots/launch-dashboard.png)
 
@@ -15,7 +15,11 @@ Go to the **Data Science projects** tab and click on the pre-created **mnist** p
 ![data-science-project](./screenshots/ds-project.png)
 
  This project has been created with a pvc for the notebook filesystem (i.e the jupyterlab notebooks). It also has a data connection, which is a secret containing the minio credentials for the S3 storage.  
-You need to create a new workbench. Click on the corresponding button and fill up the form. Don't forget to link the pre-created pvc to the notebook. Complete the form as bellow:
+You need to create a new workbench. You have to select a notebook image:
+- **If you have GPU available**, please select: "Custom Datascience Notebook Cuda 11.4" image.
+- **If you have CPU available**, please select: "Custom Datascience Notebook" image.
+
+Click on *create workbench* and fill up the form. Don't forget to link the pre-created pvc to the notebook. Complete the form as bellow. We are using the GPU in this example:
 
 ![create-workbench-1](./screenshots/create-notebook-1.png)
 
@@ -27,13 +31,13 @@ You also have to add the S3 credentials to the notebook you just created. This w
 
 ![create-workbench-3](./screenshots/create-notebook-3.png)
 
-RHODS is going to pull a few container images especially the one used for the jupyterlab notebook server. This notebook image for this lab is quite heavy (~ 6GB) as it contains the cuda library required to work with the GPU. After a few moment the workbench is running and you can open it.
+RHODS is going to pull a few container images especially the one used for the jupyterlab notebook server. The "Custom Datascience Notebook Cuda 11.4" notebook image is quite heavy (~ 6GB) as it contains the cuda library required to use the GPU in the model training. It can take a few moment for the first pull only (the image is copied in your openshift internal registry). Checkout the notebook status and click on the *open* link.
 
 ![create-workbench-4](./screenshots/create-notebook-4.png)
 
 ## JupyterLab notebooks
 
-For you are now in the jupyterlab interface.
+You are now in the jupyterlab interface.
 On the left side click on the git clone button and clone this repository: https://github.com/adrien-legros/rhods-mnist.git. 
 
 ![git-clone](./screenshots/git-clone.png)
@@ -46,36 +50,49 @@ There are 3 notebooks available: Pre-process, Train and Metadata. Navigate to ea
 
 #### Pre-process
 
-Load and pre-process the data. The data are loaded from the minio s3 bucket. In this notebook, we are describing the data and running basic analysis such as counting the number of observation per label. We also transform the data by normalizing and reshaping them. We store the python numpy objects in a bucket so it is available to the others notebooks (i.e available to next pipeline steps).
+Load and pre-process the data. The data used to train and test the model are loaded from the minio s3 bucket. In this notebook, we are describing the data and running basic analysis such as counting the number of observation per label. We also transform the data by normalizing and reshaping them. We store the python numpy objects in a bucket so it is available to the others notebooks (i.e available to next pipeline steps).
 
 #### Train
 
-We load the processed data, create, and train a model. The model is a convolutional neural network. See the architecture of the model and the different layers. Once the model is trained, we display few metrics such as the f1 score or the confusion matrix.  
+We load the processed data, the we create and train a model. The model is a convolutional neural network. See the architecture of the model and the different layers. Once the model is trained, we test it and display few metrics such as the f1 score or the confusion matrix.  
 The model is saved in the minio bucket in onnx format so that we can serve it later on this lab.
 
 #### Metadata
 
-This notebook tells Kubeflow to store some metadata. It is specific for the piepline and decoupled from the other notebooks so that the data scientist work is independant of the pipeline configurations.
+This notebook tells Kubeflow Pipelines to store some metadata. It is specific for the piepline and decoupled from the other notebooks so that the data scientist work is independant of the pipeline configurations.
 
 ### Elyra pipeline
 
 Display the pipeline by openning the file *mnist.pipeline*.
-It is a pipeline generated thanks to Elyra visual editor. You can see how the notebooks are linked together. 
-If you right click on a "node" you can open the properties tab. You can check that there are some envrionemental variables referenced by a secret name and key. These are the credentials of the minio S3 bucket where we will store some processed data as well as the model in onnx format.  
-See also that we need to reference a Runtime Image where the python code will run.
+It is a pipeline generated thanks to Elyra visual editor. You can see how the notebooks are linked together. Note that you will have to add the 3rd step, or check the solution directory.
+If you right click on a "node" you can open the properties tab. You can check that there are some envrionemental variables referenced by a secret name and key. The environment variables are passed to the notebook so it can store artifacts to the minio S3 bucket. We will store some processed data as well as the model in onnx format.  
+See also that we need to reference a Runtime Image where the python code will run. You will have to choose the runtime image, depending if you selected the CUDA notebook image or not.
 
 ## Complete and run the pipeline
 
-### Check the default pipeline properties
+### Change the default pipeline properties
 
-Open the pipeline properties panel by clicking on the *Open Panel* button, or right clicking to a node, select *Open Properties* and switch tab to *Pipeline Properties*.
+We need to change the S3 Endpoint used by the notebooks. Open the pipeline properties panel by clicking on the *Open Panel* button, or right clicking to a node, select *Open Properties* and switch tab to *Pipeline Properties*.
 
 ![pipeline-properties](./screenshots/pipeline-properties.png)
 
+Scroll down to the environment variable and set AWS_S3_ENDPOINT with the S3 endpoint url of the minio route. Check it in Openshift console or run : 
+```shell
+echo MINIO_ENDPOINT: http://$(oc -n redhat-ods-applications get route minio -ojsonpath='{.status.ingress[0].host}')
+```
+
+### Select the appropriate runtime image
+
+For each step (each notebook), change de runtime:
+- **For GPU user**: Ensure the "Custom Runtime for mnist : CUDA11.4/Py38" runtime image is selected
+- **For CPU user**: Ensure the "Custom Runtime for mnist : Py38" runtime image is selected
+
 ### Add a pipeline step
 
-We are going to add the metadata playbook to our pipeline. Open the *mnist.pipeline* file. You can add a step by grabbing a playbook from the file browser to the UI. Add the *Metadata.ipynb* notebook. Then bind it to the ouput of the *Train.ipynb* step. Open the *Metadata.ipynb* node properties by right clicking on the object. Add the following properties: 
-- Runtime Image: Ensure the *Custom Runtime for mnist : CUDA11.4/Py38* runtime image is selected
+We are going to add the metadata playbook to our pipeline. Open the *mnist.pipeline* file. You can add a step by grabbing a playbook from the file browser to the UI. See the animation bellow. Add the *Metadata.ipynb* notebook. Then bind it to the ouput of the *Train.ipynb* step. Open the *Metadata.ipynb* node properties by right clicking on the object. Add the following properties: 
+- Runtime Image: 
+  - **For GPU user**: Ensure the "Custom Runtime for mnist : CUDA11.4/Py38" runtime image is selected
+  - **For CPU user**: Ensure the "Custom Runtime for mnist : Py38" runtime image is selected
 - Output Files: Add *tmp/logs/fit/* as output files. This path is used to store Tensorflow logs in the pipeline metadata. We will be able to visualize our logs through a Tensorboard.  
 
 Additionnaly, confirm that environmental variables has been set by default.
@@ -108,7 +125,7 @@ Go back to the pipeline and run it.
 
 Go to **Administrator Console > Networking > Routes** in the *redhat-ods-applications* namespace. Open the *ds-pipeline-ui* url to open Kubeflow Pipeline. Alternatively, get the url with:
 ```shell
-oc -n redhat-ods-applications get route ds-pipeline-ui -ojsonpath='{.status.ingress[0].host}'
+echo https://$(oc -n redhat-ods-applications get route ds-pipeline-ui -ojsonpath='{.status.ingress[0].host}')
 ```
 Navigate to the **Runs** tab. A new run has been launched for you by Elyra. Click on it. You can see a graph with your pipeline steps. The graph is updated step by step so you only see the Pre-process step during the first 1-2 minutes.  
 Check out the logs by clicking on a step, then on the log tab.
@@ -133,18 +150,18 @@ echo https://$(oc -n redhat-ods-applications get route my-viewer -ojsonpath='{.s
 
 ## Model Serving
 
-Now it is time to serve our model using modelmesh serving. Go back to RHODS dashboard. Click on **Configure server**. Make the model available via external route and secure it with a token authorization. The token authoriezation uses oauth proxy as backend. Choose *model-mesh* as service account name. Finally click on configure:
+Now it is time to serve our model using modelmesh serving. Go back to RHODS dashboard. Click on **Configure server**. Secure the model with a **token authorization**. The token authorization uses oauth proxy as backend. You don't need an external route. Choose *model-mesh* as service account name. Finally click on configure:
 
-![model-serving](./screenshots/model-serving.png)
+![model-serving](./screenshots/serving-no-route.png)
 
-Then click on **Deploy model**. Enter *mnist* as model name. Select *onnx - 1* as model framework. In the Train.ipynb notebook we trained and saved a model in the onnx format. We converted a tensorflow model in the onnx format. The onnx model is saved in the minio S3 bucket at the path *onnx/model-v2.onnx*. Let's add the s3 bucket as the data connection and *onnx/model-v2.onnx* as the folder path. Deploy the model. 
+Then click on **Deploy model**. Enter **mnist** as model name. Select **onnx - 1** as model framework. In the *Train.ipynb* notebook we trained and saved a model in the onnx format. We converted a tensorflow model in the onnx format. The onnx model is saved in the minio S3 bucket at the path **onnx/model-v2.onnx**. Let's add **s3-creds** as the data connection and *onnx/model-v2.onnx* as the folder path. Deploy the model. 
 
 ![deploy-model](./screenshots/deploy-model.png)
 
-Wait for the model deployment to complete. You can now see the model endpoint as well as the token associated with the service account created.  
+Wait for the model deployment to complete. You can now see the model delpoyment status as well as the token associated with the service account created.  
 **NOTE:** The service account resource as not been created. The model server has created a secret named *model-mesh* containing the token, certificate etc.
 
-![model-serving-token](./screenshots/model-serving-endpoint.png)
+![model-serving-token](./screenshots/model-serving-status.png)
 ![model-serving-endpoint](./screenshots/model-serving-token.png)
 
 ## Interact with the model

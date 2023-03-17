@@ -8,25 +8,47 @@ Furthermore, we have the abilty to use GPU hardware thanks to Nvida GPU Operator
 
 ## Lab instruction
 
-[Lab instructions](./docs/lab-instructions.md)
+Follow the lab instructions here: [lab instructions](./docs/lab-instructions.md).  
+Through this lab you will construct, train, deploy, serve and consume a predictive model. Finnaly you will be able to interact with it thanks to the UI.
+
+![final-result.gif](./docs/gif/final-result.gif)
 
 
-## Deploy
+## Deploy on your own cluster
+
+### Deploy operators and their CR
+
+Install the operators and their custom resources:
 
 ```shell
 # First deploy the operators and wait for completion
 oc apply -f ./pre-requisites/operators/
 # Then deploy few operators CRDs and wait for completion
 oc apply -f ./pre-requisites/operators-instance/
-# Deploy the data science components
-oc apply -k ./openshift-data-science/
-# Deploy the frontend webapp
-oc apply -k ./webapp/v2/manifests/
-# Deploy the serverless function
-oc apply -k ./openshift-serverless/manifests/
 ```
 
+### Deploy the data Science Project
+
+Set your cluster name and base domain in openshift-data-science/kustomization.yaml or run: 
+```shell
+sed -i 's/CLUSTER_NAME/PUT_YOUR_CLUSTER_NAME_HERE/g' openshift-data-science/kustomization.yaml
+sed -i 's/BASE_DOMAIN/PUT_YOUR_BASE_DOMAIN_HERE/g' openshift-data-science/kustomization.yaml
+```
+
+```shell
+# Deploy the data science components
+oc apply -k ./openshift-data-science/
+```
+
+### Do the lab
+
+You can now go to this link and do the lab: [Lab instructions](./docs/lab-instructions.md)
+
+
 ## Reset lab
+
+**Warning:** This will delete all your work.  
+When finished, you can clean your lab by running:
 
 ```shell
 # Reset configurations
@@ -35,11 +57,6 @@ oc apply -k ./lab-reset/
 oc create -f ./lab-reset/reset-job.yaml
 # Reset cron job
 oc create -f ./lab-reset/reset-cron-job.yaml
-```
-
-```shell
-# Get the model serving endpoint
-oc -n mnist get route mnist -ojsonpath='{.status.ingress[0].host}'
 ```
 
 ## Reference
