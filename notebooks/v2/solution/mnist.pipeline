@@ -274,7 +274,7 @@
               },
               {
                 "env_var": "AWS_S3_ENDPOINT",
-                "value": ""
+                "value": "http://minio-redhat-ods-applications.apps.snogpu.redhat.hpecic.net"
               }
             ],
             "runtime_image": "quay.io/alegros/runtime-image:cuda-ubi8-py38",
