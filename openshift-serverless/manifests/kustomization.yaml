@@ -13,7 +13,7 @@ patches:
     # Modelmesh inference endpoint
     - op: replace
       path: /spec/template/spec/containers/0/env/0/value
-      value: "https://mnist-mnist.apps.snogpu.redhat.hpecic.net/v2/models/mnist/infer"
+      value: "https://modelmesh-serving.mnist.svc.cluster.local:8443/v2/models/mnist/infer"
     # Enable token authentication
     - op: replace
       path: /spec/template/spec/containers/0/env/1/value
