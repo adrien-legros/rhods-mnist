@@ -8,9 +8,13 @@ COPY requirements.txt ./
 RUN echo "Installing softwares and packages" && \
     # Install Python packages \
     pip install -r requirements.txt && \
+    # Remove default image runtime
+    rm /opt/app-root/share/jupyter/metadata/runtime-images/*.json && \
     # Fix permissions to support pip in Openshift environments \
     chmod -R g+w /opt/app-root/lib/python3.8/site-packages && \
     fix-permissions /opt/app-root -P
+
+COPY runtime-images/ /opt/app-root/share/jupyter/metadata/runtime-images/
 
 WORKDIR /opt/app-root/src
 

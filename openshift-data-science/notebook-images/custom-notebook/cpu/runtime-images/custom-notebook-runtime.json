@@ -1,0 +1,9 @@
+{
+    "display_name": "Custom Runtime for mnist : Py38",
+    "metadata": {
+        "tags": [],
+        "display_name": "Custom Runtime for mnist : Py38",
+        "image_name": "quay.io/alegros/runtime-image:rhods-mnist-cpu"
+    },
+    "schema_name": "runtime-image"
+}
