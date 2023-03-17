@@ -31,9 +31,9 @@ data:
     oc -n redhat-ods-applications exec -it deploy/mariadb -- mysql -h 127.0.0.1 -u mlpipeline -pmlpipeline -e 'create database mlpipeline';
   reset-jupyterlab.sh: |-
     #!/usr/bin/env sh
-    for sts in $(oc -n mnist get sts -oname);
+    for sts in $(oc -n mnist get sts -oname)
     do 
-      oc -n mnist exec -it $sts -- rm -rf *;
+      oc -n mnist exec -it $sts -- /bin/sh -c "rm -rf *";
     done
   redeploy-ds-pipeline.sh: |-
     #!/usr/bin/env sh
