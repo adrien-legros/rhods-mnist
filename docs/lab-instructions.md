@@ -202,5 +202,5 @@ Draw a digit between 1 and 9. Click on predict and see te ouput. Note: the first
 
 Once you finished and saved all needed files, you can reset the lab by running:
 ```shell
-oc create -f /lab-reset/reset-job.yaml
+oc create -f /lab/reset/reset-job.yaml
 ```
