@@ -54,9 +54,9 @@ When finished, you can clean your lab by running:
 # Reset configurations
 oc apply -k ./lab/reset/
 # Reset job
-oc create -f ./lab/reset/reset-job.yaml
+oc create -f ./lab/reset/job.yaml
 # Reset cron job
-oc create -f ./lab/reset/reset-cron-job.yaml
+oc create -f ./lab/reset/cron-job.yaml
 ```
 
 ## Reference
