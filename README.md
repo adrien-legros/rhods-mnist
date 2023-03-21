@@ -44,6 +44,25 @@ oc apply -k ./openshift-data-science/
 
 You can now go to this link and do the lab: [Lab instructions](./docs/lab-instructions.md)
 
+### Lab Solution
+
+This will deploy the notebooks, the correct runtime settings, as well as the model mesh server:
+- Using CPU
+```shell
+oc apply -k ./lab/solve/overlays/cpu
+oc create -f ./lab/solve/job.yaml
+```
+- Using GPU
+```shell
+oc apply -k ./lab/solve/overlays/gpu
+oc create -f ./lab/solve/job.yaml
+```
+Then deploy the serverless function and the web UI:
+
+```shell
+oc apply -k ./openshift-serverless/manifests/
+oc apply -k ./webapp/manifests/
+```
 
 ## Reset lab
 

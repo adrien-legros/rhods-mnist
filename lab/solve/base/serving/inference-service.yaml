@@ -18,4 +18,4 @@ spec:
       runtime: model-server-mnist
       storage:
         key: aws-connection-s3-creds
-        path: /onnx/model-v2.onnx
+        path: onnx/model-v2.onnx

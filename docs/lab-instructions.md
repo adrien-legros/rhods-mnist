@@ -187,7 +187,7 @@ oc apply -k ./openshift-serverless/manifests/
 Deploy the frontend web application:
 
 ```shell
-oc apply -k ./webapp/v2/manifests/
+oc apply -k ./webapp/manifests/
 ```
 
 Get the route endpoint and visit the url!
