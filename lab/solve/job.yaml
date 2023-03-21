@@ -1,0 +1,59 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: lab-solve-
+  namespace: mnist
+spec:
+  parallelism: 1    
+  completions: 1    
+  activeDeadlineSeconds: 1800 
+  backoffLimit: 6
+  template:         
+    metadata:
+      name: lab-solve
+    spec:
+      serviceAccountName: jobs
+      restartPolicy: OnFailure
+      volumes:
+        - name: solve-scripts
+          configMap:
+            name: lab-solve-scripts
+            defaultMode: 0777 
+      initContainers:
+        - name: wait-for-notebook
+          image: registry.redhat.io/openshift4/ose-cli:v4.11.0-202302061916.p0.g1928ac4.assembly.stream
+          command: ["oc", "-n", "mnist", "wait", "--for=condition=Ready=true", "po/mnist-notebook-0"]
+      containers:
+        - name: git-clone
+          image: registry.redhat.io/openshift4/ose-cli:v4.11.0-202302061916.p0.g1928ac4.assembly.stream
+          command: ["oc", "-n", "mnist", "exec", "-it", "po/mnist-notebook-0",  "--", "/bin/sh", "-c", "/scripts/clone-repo.sh"]
+        - name: elyra-metadata
+          image: registry.redhat.io/openshift4/ose-cli:v4.11.0-202302061916.p0.g1928ac4.assembly.stream
+          command: ["oc", "-n", "mnist", "exec", "-it", "po/mnist-notebook-0",  "--", "/bin/sh", "-c", "/scripts/elyra-runtime.sh"]
+        - name: push-model-to-bucket
+          image: quay.io/alegros/minio-client:rhods-mnist
+          command: ['/scripts/push-model.sh']
+          env:
+            - name: NOTEBOOKS_GIT_URL
+              valueFrom:
+                configMapKeyRef: 
+                  name: lab-solve-scripts
+                  key: NOTEBOOKS_GIT_URL
+            - name: MINIO_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: aws-connection-s3-creds
+                  key: AWS_S3_ENDPOINT
+            - name: MINIO_ROOT_USER
+              valueFrom:
+                secretKeyRef: 
+                  name: aws-connection-s3-creds
+                  key: AWS_ACCESS_KEY_ID
+            - name: MINIO_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef: 
+                  name: aws-connection-s3-creds
+                  key: AWS_SECRET_ACCESS_KEY
+          volumeMounts:
+            - name: solve-scripts
+              mountPath: /scripts

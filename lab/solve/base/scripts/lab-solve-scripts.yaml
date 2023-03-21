@@ -1,0 +1,37 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: lab-solve-scripts
+  namespace: mnist
+data:
+  NOTEBOOKS_GIT_URL: "https://github.com/adrien-legros/rhods-mnist-model"
+  KUBEFLOW_ENDPOINT: CHANGE_ME
+  clone-repo.sh: |-
+    #!/usr/bin/env sh
+    set -e
+    rm -rf *
+    git clone ${NOTEBOOKS_GIT_URL}
+  push-model.sh: |-
+    #!/usr/bin/env sh
+    # Push to bucket
+    mc alias set minio ${MINIO_ENDPOINT} ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD}
+    mc mb minio/rhods
+    set -e
+    curl -LJ ${NOTEBOOKS_GIT_URL}/tarball/main -o /tmp/model.tar.gz
+    mkdir /tmp/model
+    tar xzf /tmp/model.tar.gz -C /tmp/model --strip-components 1
+    mc cp /tmp/model/models/model-v2.onnx minio/rhods/onnx/model-v2.onnx
+    echo "Model pushed into bucket"
+  elyra-runtime.sh: |-
+    elyra-metadata remove runtimes --name kubeflow_runtime
+    elyra-metadata create runtimes \
+       --schema_name kfp \
+       --display_name "Kubeflow Runtime" \
+       --api_endpoint ${KUBEFLOW_ENDPOINT} \
+       --auth_type "NO_AUTHENTICATION" \
+       --engine Tekton \
+       --cos_endpoint ${MINIO_ENDPOINT} \
+       --cos_auth_type "USER_CREDENTIALS" \
+       --cos_username minio \
+       --cos_password minio123 \
+       --cos_bucket rhods

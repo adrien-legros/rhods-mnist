@@ -1,0 +1,46 @@
+apiVersion: serving.kserve.io/v1alpha1
+kind: ServingRuntime
+metadata:
+  annotations:
+    enable-auth: "true"
+  labels:
+    name: model-server-mnist
+    opendatahub.io/dashboard: "true"
+  name: model-server-mnist
+  namespace: mnist
+spec:
+  builtInAdapter:
+    memBufferBytes: 134217728
+    modelLoadingTimeoutMillis: 90000
+    runtimeManagementPort: 8888
+    serverType: ovms
+  containers:
+  - args:
+    - --port=8001
+    - --rest_port=8888
+    - --config_path=/models/model_config_list.json
+    - --file_system_poll_wait_seconds=0
+    - --grpc_bind_address=127.0.0.1
+    - --rest_bind_address=127.0.0.1
+    image: registry.redhat.io/rhods/odh-openvino-servingruntime-rhel8@sha256:c8e28103c980aed2ead8e781ba4655b449d93f2e5195f977888f3d9d688ecff2
+    name: ovms
+    resources:
+      limits:
+        cpu: "2"
+        memory: 8Gi
+      requests:
+        cpu: "1"
+        memory: 4Gi
+  grpcDataEndpoint: port:8001
+  grpcEndpoint: port:8085
+  multiModel: true
+  protocolVersions:
+  - grpc-v1
+  replicas: 1
+  supportedModelFormats:
+  - autoSelect: true
+    name: openvino_ir
+    version: opset1
+  - autoSelect: true
+    name: onnx
+    version: "1"

@@ -14,6 +14,7 @@ resources:
   - ./data-science-project/ns.yaml
   - ./data-science-project/pvc.yaml
   - ./data-science-project/s3-connection-secret.yaml
+  - ./data-science-project/s3-connection-secret-rhods.yaml
   # @TODO: Add notebook
   # - ./data-science-project/notebook-cuda.yaml
 
@@ -31,7 +32,8 @@ patches:
   patch: |-
     - op: replace
       path: /stringData/AWS_S3_ENDPOINT
-      value: http://minio-redhat-ods-applications.apps.CLUSTER_NAME.BASE_DOMAIN
+      value: http://minio-redhat-ods-applications.apps.snogpu.redhat.hpecic.net
+#      value: http://minio-redhat-ods-applications.apps.CLUSTER_NAME.BASE_DOMAIN
 - target:
     version: v1beta1
     group: kubeflow.org
@@ -40,4 +42,4 @@ patches:
   patch: |-
     - op: replace
       path: /spec/podTemplateSpec/spec/containers/0/env/2/value
-      value: http://minio-redhat-ods-applications.apps.CLUSTER_NAME.BASE_DOMAIN
+      value: http://minio-redhat-ods-applications.apps.snogpu.redhat.hpecic.net

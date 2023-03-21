@@ -3,22 +3,28 @@ kind: Notebook
 metadata:
   annotations:
     notebooks.opendatahub.io/inject-oauth: "true"
-    notebooks.opendatahub.io/last-image-selection: custom-ds-notebook-cuda-11-4:rhods-mnist-gpu
     notebooks.opendatahub.io/last-size-selection: Small
-    notebooks.opendatahub.io/oauth-logout-url: https://rhods-dashboard-redhat-ods-applications.apps.snogpu.redhat.hpecic.net/projects/mnist?notebookLogout=notebook
-    opendatahub.io/username: admin
     openshift.io/description: ""
-    openshift.io/display-name: notebook
+    openshift.io/display-name: mnist-notebook
   labels:
-    app: notebook
+    app: mnist-notebook
     opendatahub.io/dashboard: "true"
     opendatahub.io/odh-managed: "true"
-    opendatahub.io/user: admin
-  name: notebook
+  name: mnist-notebook
   namespace: mnist
 spec:
   template:
     spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - preference:
+              matchExpressions:
+              - key: nvidia.com/gpu.present
+                operator: NotIn
+                values:
+                - "true"
+            weight: 1
       containers:
       - env:
         - name: NOTEBOOK_ARGS
@@ -26,27 +32,38 @@ spec:
             --ServerApp.port=8888
                               --ServerApp.token=''
                               --ServerApp.password=''
-                              --ServerApp.base_url=/notebook/mnist/notebook
+                              --ServerApp.base_url=/notebook/mnist/mnist-notebook
                               --ServerApp.quit_button=False
-                              --ServerApp.tornado_settings={"user":"kube-3aadmin","hub_host":"https://rhods-dashboard-redhat-ods-applications.apps.snogpu.redhat.hpecic.net","hub_prefix":"/projects/mnist"}
         - name: JUPYTER_IMAGE
           value: image-registry.openshift-image-registry.svc:5000/redhat-ods-applications/custom-ds-notebook-cuda-11-4:rhods-mnist-gpu
-        envFrom:
-        - secretRef:
-            name: aws-connection-s3-creds
+        - name: NOTEBOOKS_GIT_URL
+          valueFrom:
+            configMapKeyRef: 
+              name: lab-solve-scripts
+              key: NOTEBOOKS_GIT_URL
+        - name: KUBEFLOW_ENDPOINT
+          valueFrom:
+            configMapKeyRef:
+              name: lab-solve-scripts
+              key: KUBEFLOW_ENDPOINT
+        - name: MINIO_ENDPOINT
+          valueFrom:
+            secretKeyRef:
+              name: aws-connection-s3-creds
+              key: AWS_S3_ENDPOINT
         image: image-registry.openshift-image-registry.svc:5000/redhat-ods-applications/custom-ds-notebook-cuda-11-4:rhods-mnist-gpu
         imagePullPolicy: Always
         livenessProbe:
           failureThreshold: 3
           httpGet:
-            path: /notebook/mnist/notebook/api
+            path: /notebook/mnist/mnist-notebook/api
             port: notebook-port
             scheme: HTTP
           initialDelaySeconds: 10
           periodSeconds: 5
           successThreshold: 1
           timeoutSeconds: 1
-        name: notebook
+        name: mnist-notebook
         ports:
         - containerPort: 8888
           name: notebook-port
@@ -54,7 +71,7 @@ spec:
         readinessProbe:
           failureThreshold: 3
           httpGet:
-            path: /notebook/mnist/notebook/api
+            path: /notebook/mnist/mnist-notebook/api
             port: notebook-port
             scheme: HTTP
           initialDelaySeconds: 10
@@ -71,12 +88,14 @@ spec:
         volumeMounts:
         - mountPath: /opt/app-root/src
           name: notebook
+        - mountPath: /scripts
+          name: solve-scripts
         workingDir: /opt/app-root/src
       - args:
         - --provider=openshift
         - --https-address=:8443
         - --http-address=
-        - --openshift-service-account=notebook
+        - --openshift-service-account=mnist-notebook
         - --cookie-secret-file=/etc/oauth/config/cookie_secret
         - --cookie-expire=24h0m0s
         - --tls-cert=/etc/tls/private/tls.crt
@@ -85,8 +104,7 @@ spec:
         - --upstream-ca=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
         - --email-domain=*
         - --skip-provider-button
-        - --openshift-sar={"verb":"get","resource":"notebooks","resourceAPIGroup":"kubeflow.org","resourceName":"notebook","namespace":"$(NAMESPACE)"}
-        - --logout-url=https://rhods-dashboard-redhat-ods-applications.apps.snogpu.redhat.hpecic.net/projects/mnist?notebookLogout=notebook
+        - --openshift-sar={"verb":"get","resource":"notebooks","resourceAPIGroup":"kubeflow.org","resourceName":"mnist-notebook","namespace":"$(NAMESPACE)"}
         env:
         - name: NAMESPACE
           valueFrom:
@@ -132,16 +150,20 @@ spec:
         - mountPath: /etc/tls/private
           name: tls-certificates
       enableServiceLinks: false
-      serviceAccountName: notebook
+      serviceAccountName: mnist-notebook
       volumes:
       - name: notebook
         persistentVolumeClaim:
           claimName: notebook
+      - name: solve-scripts
+        configMap:
+          defaultMode: 0777
+          name: lab-solve-scripts
       - name: oauth-config
         secret:
           defaultMode: 420
-          secretName: notebook-oauth-config
+          secretName: mnist-notebook-oauth-config
       - name: tls-certificates
         secret:
           defaultMode: 420
-          secretName: notebook-tls
+          secretName: mnist-notebook-tls
