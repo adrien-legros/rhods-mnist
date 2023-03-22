@@ -10,8 +10,9 @@ This is what you get trough the user interface:
 
 ![final-result.gif](./docs/gif/final-result.gif)
 
-## Lab instruction
+## [Lab instructions](./docs/lab-instructions.md)
 
+Here are the [lab instructions](./docs/lab-instructions.md).  
 This is the lab architecture:
 
 ![archi-schema](./docs/now.png)
