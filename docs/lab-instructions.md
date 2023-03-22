@@ -38,11 +38,11 @@ RHODS is going to pull a few container images especially the one used for the ju
 ## JupyterLab notebooks
 
 You are now in the jupyterlab interface.
-On the left side click on the git clone button and clone this repository: https://github.com/adrien-legros/rhods-mnist.git. 
+On the left side click on the git clone button and clone this repository: https://github.com/adrien-legros/rhods-mnist-model.git. 
 
 ![git-clone](./screenshots/git-clone.png)
 
-Navigate to *./rhods-mnist/notebooks/v2*. Check the following files:
+Navigate to *./notebooks/todo*. Check the following files:
 
 ### Notebooks
 
@@ -70,29 +70,21 @@ See also that we need to reference a Runtime Image where the python code will ru
 
 ## Complete and run the pipeline
 
-### Change the default pipeline properties
+### Select the appropriate runtime image
 
-We need to change the S3 Endpoint used by the notebooks. Open the pipeline properties panel by clicking on the *Open Panel* button, or right clicking to a node, select *Open Properties* and switch tab to *Pipeline Properties*.
+Open the pipeline properties panel by clicking on the *Open Panel* button, or right clicking to a node, select *Open Properties* and switch tab to *Pipeline Properties*.
 
 ![pipeline-properties](./screenshots/pipeline-properties.png)
 
-Scroll down to the environment variable and set AWS_S3_ENDPOINT with the S3 endpoint url of the minio route. Check it in Openshift console or run : 
-```shell
-echo MINIO_ENDPOINT: http://$(oc -n redhat-ods-applications get route minio -ojsonpath='{.status.ingress[0].host}')
-```
-
-### Select the appropriate runtime image
-
-For each step (each notebook), change de runtime:
+Change the default pipeline runtime:
 - **For GPU user**: Ensure the "Custom Runtime for mnist : CUDA11.4/Py38" runtime image is selected
 - **For CPU user**: Ensure the "Custom Runtime for mnist : Py38" runtime image is selected
 
+The warning will disapear as soon as you selected the image runtime.
+
 ### Add a pipeline step
 
-We are going to add the metadata playbook to our pipeline. Open the *mnist.pipeline* file. You can add a step by grabbing a playbook from the file browser to the UI. See the animation bellow. Add the *Metadata.ipynb* notebook. Then bind it to the ouput of the *Train.ipynb* step. Open the *Metadata.ipynb* node properties by right clicking on the object. Add the following properties: 
-- Runtime Image: 
-  - **For GPU user**: Ensure the "Custom Runtime for mnist : CUDA11.4/Py38" runtime image is selected
-  - **For CPU user**: Ensure the "Custom Runtime for mnist : Py38" runtime image is selected
+You are going to add the metadata playbook to the pipeline. Open the *mnist.pipeline* file. You can add a step by grabbing a playbook from the file browser to the UI. See the animation bellow. Add the *Metadata.ipynb* notebook. Then bind it to the ouput of the *Train.ipynb* step. Open the *Metadata.ipynb* node properties by right clicking on the object. Add the following property: 
 - Output Files: Add *tmp/logs/fit/* as output files. This path is used to store Tensorflow logs in the pipeline metadata. We will be able to visualize our logs through a Tensorboard.  
 
 Additionnaly, confirm that environmental variables has been set by default.
@@ -150,7 +142,7 @@ echo https://$(oc -n redhat-ods-applications get route my-viewer -ojsonpath='{.s
 
 ## Model Serving
 
-Now it is time to serve our model using modelmesh serving. Go back to RHODS dashboard. Click on **Configure server**. Secure the model with a **token authorization**. The token authorization uses oauth proxy as backend. You don't need an external route. Choose *model-mesh* as service account name. Finally click on configure:
+Now it is time to serve our model using modelmesh serving. Go back to RHODS dashboard. Click on **Configure server**. Secure the model with a **token authorization**. The token authorization uses oauth proxy as backend. You don't need an external route. Choose *model-mesh* as the service account name. Finally click on configure:
 
 ![model-serving](./screenshots/serving-no-route.png)
 
@@ -159,7 +151,7 @@ Then click on **Deploy model**. Enter **mnist** as model name. Select **onnx - 1
 ![deploy-model](./screenshots/deploy-model.png)
 
 Wait for the model deployment to complete. You can now see the model delpoyment status as well as the token associated with the service account created.  
-**NOTE:** The service account resource as not been created. The model server has created a secret named *model-mesh* containing the token, certificate etc.
+**NOTE:** The service account resource as not been created. The model server has created a service-account-token sercret named *model-mesh* containing the token, certificate etc.
 
 ![model-serving-token](./screenshots/model-serving-status.png)
 ![model-serving-endpoint](./screenshots/model-serving-token.png)
@@ -202,5 +194,5 @@ Draw a digit between 1 and 9. Click on predict and see te ouput. Note: the first
 
 Once you finished and saved all needed files, you can reset the lab by running:
 ```shell
-oc create -f /lab/reset/reset-job.yaml
+oc create -f /lab/reset/job.yaml
 ```
