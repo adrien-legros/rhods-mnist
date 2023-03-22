@@ -32,7 +32,7 @@ First of all connect to your Openshift cluster, with your oc client or through t
 ```shell
 CLUSTER_DOMAIN=$(oc whoami --show-server | grep -oP 'https://api.\K(.*)(?=:6443)')
 sed -i "s/CLUSTER_DOMAIN/${CLUSTER_DOMAIN}/g" openshift-data-science/kustomization.yaml
-sed -i "s/CLUSTER_DOMAIN/${CLUSTER_DOMAIN}/g" solve/base/kustomization.yaml
+sed -i "s/CLUSTER_DOMAIN/${CLUSTER_DOMAIN}/g" lab/solve/base/kustomization.yaml
 ```
 
 #### Manually
