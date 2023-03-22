@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This lab demonstrates how to build and serve a machine learning model through pipelines (MLOPS) by leveraging Openshift Data Science (RHODS). We will deploy a web application as an example of interactions with the model through REST API calls. This web application is a nodejs frontend that calls a Knative service endpoint linked to a serverless function. The serverless function acts as a pre-processor of the data between the client and the model. In more concrete terms, the model is a neural network to predict handwritten digits and the webapp is a UI where you can draw and make a predictions.  
+This lab demonstrates how to build and serve a machine learning model through pipelines (MLOPS) by leveraging Red Hat OpenShift Data Science. We will deploy a web application as an example of interactions with the model through REST API calls. This web application is a nodejs frontend that calls a Knative service endpoint linked to a serverless function. The serverless function acts as a pre-processor of the data between the client and the model. In more concrete terms, the model is a neural network to predict handwritten digits and the webapp is a UI where you can draw and make a predictions.  
 
 Furthermore, we have the abilty to use GPU hardware thanks to Nvida GPU Operator, Node Feature Discovery and the Cuda library.
 
