@@ -15,5 +15,5 @@ patches:
   patch: |-
     - op: replace
       path: /data/KUBEFLOW_ENDPOINT
-      value: http://ds-pipeline-redhat-ods-applications.apps.CLUSTER_DOMAIN
+      value: http://ds-pipeline-redhat-ods-applications.apps.snogpu.redhat.hpecic.net
       
