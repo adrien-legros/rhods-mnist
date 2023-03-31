@@ -3,10 +3,13 @@ kind: Kustomization
 resources:
   - ./serviceaccount/jobs/service-account.yaml
   - ./serviceaccount/jobs/rbac.yaml
-  - ./serviceaccount/modelmesh/service-account-token.yaml
   - ./scripts/lab-solve-scripts.yaml
-  - ./serving/inference-service.yaml
+  - ./serviceaccount/modelmesh/service-account.yaml
+  - ./serviceaccount/modelmesh/rolebinding.yaml
+  - ./serviceaccount/modelmesh/service-account-token.yaml
   - ./serving/serving-runtime.yaml
+  - ./serving/inference-service.yaml
+
 patches:
 - target:
     version: v1
