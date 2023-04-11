@@ -51,6 +51,9 @@ spec:
             secretKeyRef:
               name: aws-connection-s3-creds
               key: AWS_S3_ENDPOINT
+        envFrom:
+          - secretRef:
+              name: aws-connection-s3-creds
         image: image-registry.openshift-image-registry.svc:5000/redhat-ods-applications/custom-ds-notebook:rhods-mnist-cpu
         imagePullPolicy: Always
         livenessProbe:
