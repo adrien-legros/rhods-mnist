@@ -30,7 +30,7 @@ patches:
   patch: |-
     - op: replace
       path: /stringData/AWS_S3_ENDPOINT
-      value: http://minio-redhat-ods-applications.apps.CLUSTER_DOMAIN
+      value: http://minio-redhat-ods-applications.apps.snogpu.redhat.hpecic.net
 - target:
     version: v1beta1
     group: kubeflow.org
@@ -39,4 +39,4 @@ patches:
   patch: |-
     - op: replace
       path: /spec/podTemplateSpec/spec/containers/0/env/2/value
-      value: http://minio-redhat-ods-applications.apps.CLUSTER_DOMAIN
+      value: http://minio-redhat-ods-applications.apps.snogpu.redhat.hpecic.net
