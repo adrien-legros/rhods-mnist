@@ -12,4 +12,4 @@ patches:
   patch: |-
     - op: replace
       path: /stringData/AWS_S3_ENDPOINT
-      value: http://minio-redhat-ods-applications.apps.CLUSTER_DOMAIN
+      value: http://minio-redhat-ods-applications.apps.snogpu.redhat.hpecic.net
