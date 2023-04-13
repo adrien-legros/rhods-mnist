@@ -16,7 +16,7 @@ spec:
       project: model-serving
       source:
         repoURL: https://github.com/adrien-legros/rhods-mnist
-        targetRevision: HEAD
+        targetRevision: snogpu
         path: mlops/model-serving/
       destination:
         server: 'https://kubernetes.default.svc'
