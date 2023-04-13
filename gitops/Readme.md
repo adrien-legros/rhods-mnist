@@ -18,6 +18,13 @@ curl --insecure --silent -X POST -d @gitops/test/body.json https://$(oc -n model
 
 ![mlops](./docs/mlops.png)
 
+## Clean
+
+```shell
+oc delete -f ./gitops/argocd/argocd/
+oc delete -f ./gitops/argocd/openshift/namespace.yaml
+```
+
 ## Notebooks
 
 https://github.com/adrien-legros/rhods-mnist-model
