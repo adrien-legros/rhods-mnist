@@ -11,7 +11,6 @@ spec:
           - metadata-store-mariadb
           - integration-odhdashboard
           - ds-pipeline-ui
-          - component-visualization-server
           - object-store-minio
           - default-configs
         repoRef:
@@ -20,7 +19,7 @@ spec:
       name: data-science-pipelines
   repos:
     - name: manifests
-      uri: 'https://github.com/opendatahub-io/odh-manifests/tarball/master'
+      uri: 'https://github.com/opendatahub-io/odh-manifests/tarball/v1.4.1'
 ---
 apiVersion: dashboard.opendatahub.io/v1
 kind: OdhApplication
