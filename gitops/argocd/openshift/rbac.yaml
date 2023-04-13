@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: model-server-mnist-sa
+  namespace: model-serving-dev
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: model-server-mnist-sa-view
+  namespace: model-serving-dev
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: view
+subjects:
+- kind: ServiceAccount
+  name: model-server-mnist-sa
+  namespace: model-serving-dev
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: model-server-mnist-sa
+  namespace: model-serving-prod
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: model-server-mnist-sa-view
+  namespace: model-serving-prod
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: view
+subjects:
+- kind: ServiceAccount
+  name: model-server-mnist-sa
+  namespace: model-serving-prod
