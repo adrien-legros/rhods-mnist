@@ -17,7 +17,7 @@ spec:
       source:
         repoURL: https://github.com/adrien-legros/rhods-mnist
         targetRevision: snogpu
-        path: mlops/model-serving/
+        path: gitops/model-serving/
       destination:
         server: 'https://kubernetes.default.svc'
         namespace: '{{namespace}}'
