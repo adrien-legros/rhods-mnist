@@ -21,7 +21,7 @@ curl --insecure --silent -X POST -d @gitops/test/body.json https://$(oc -n model
 ## Clean
 
 ```shell
-oc delete -f ./gitops/argocd/argocd/argocd/applicationset.yaml
+oc delete -f ./gitops/argocd/argocd/applicationset.yaml
 oc delete -f ./gitops/argocd/openshift/namespace.yaml
 ```
 
