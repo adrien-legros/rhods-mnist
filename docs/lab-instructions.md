@@ -14,26 +14,25 @@ Go to the **Data Science projects** tab and click on the pre-created **mnist** p
 
 ![data-science-project](./screenshots/ds-project.png)
 
- This project has been created with a pvc for the notebook filesystem (i.e the jupyterlab notebooks). It also has a data connection, which is a secret containing the minio credentials for the S3 storage.  
-You need to create a new workbench. You have to select a notebook image:
-- **If you have GPU available**, please select: "Custom Datascience Notebook Cuda 11.4" image.
-- **If you have CPU available**, please select: "Custom Datascience Notebook" image.
+This project has been created with a pvc for the notebook filesystem (i.e the jupyterlab notebooks). It also has a data connection, which is a secret containing the minio credentials for the S3 storage. We will connect those 2 storages to the workbench we are about to create.  
+Click on *create workbench* and fill up the form:
+- Add a name (we choose *notebook*)
+- Select a notebook image
+  - **If you have GPU available**, please select: "Custom Datascience Notebook Cuda 11.4" image.
+  - **If you have CPU available**, please select: "Custom Datascience Notebook" image.
+- Choose a container size (*small* is suffisent in our example)
+- Select a persistent storage. Use an existing one and select the one that has been created for you during the lab initialization. (named *notebook*).
+- Select a data connection (S3 storage). Use an existing one and select the one that has been created for you during the lab initialization. (named *s3-creds*).
 
-Click on *create workbench* and fill up the form. Don't forget to link the pre-created pvc to the notebook. Complete the form as bellow. We are using the GPU in this example:
+Refer to the bellow example where we deploy a notebook able to use GPU:
 
 ![create-workbench-1](./screenshots/create-notebook-1.png)
 
 ![create-workbench-2](./screenshots/create-notebook-2.png)
 
-### Edit the Data connections secret
-
-You also have to add the S3 credentials to the notebook you just created. This will restart the notebook as the credentials will be mount on a volume from a secret pre-created for you. See the picture bellow:
-
-![create-workbench-3](./screenshots/create-notebook-3.png)
-
 RHODS is going to pull a few container images especially the one used for the jupyterlab notebook server. The "Custom Datascience Notebook Cuda 11.4" notebook image is quite heavy (~ 6GB) as it contains the cuda library required to use the GPU in the model training. It can take a few moment for the first pull only (the image is copied in your openshift internal registry). Checkout the notebook status and click on the *open* link.
 
-![create-workbench-4](./screenshots/create-notebook-4.png)
+![create-workbench-3](./screenshots/create-notebook-3.png)
 
 ## JupyterLab notebooks
 
