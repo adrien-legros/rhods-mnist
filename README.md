@@ -58,6 +58,9 @@ oc apply -f ./pre-requisites/operators-instance/
 ```shell
 # Deploy the data science components
 oc apply -k ./openshift-data-science/
+#Create the initialization job that pull the dataset to minio bucket called *rhods*.
+oc apply -f ./lab/init/scripts/
+oc create -f ./lab/init/job.yaml
 ```
 
 ### Do the lab
