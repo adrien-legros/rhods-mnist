@@ -1,6 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
+  name: lab-init
   generateName: lab-init-
   namespace: redhat-ods-applications
 spec:
