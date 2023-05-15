@@ -12,6 +12,6 @@ stringData:
   AWS_ACCESS_KEY_ID: minio
   AWS_DEFAULT_REGION: us-east-1
   AWS_S3_BUCKET: rhods
-  AWS_S3_ENDPOINT: http://minio-redhat-ods-applications.apps.CLUSTER_DOMAIN
+  AWS_S3_ENDPOINT: minio-redhat-ods-applications.apps.snogpu.redhat.hpecic.net
   AWS_SECRET_ACCESS_KEY: minio123
 type: Opaque
