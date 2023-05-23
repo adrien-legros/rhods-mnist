@@ -9,3 +9,6 @@ spec:
   to:
     kind: Service
     name: minio-service
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
