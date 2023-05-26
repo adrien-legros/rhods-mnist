@@ -1,0 +1,5 @@
+namespace: mnist
+resources:
+- ./rolebinding.yaml
+- ./service-account.yaml
+- ./service-account-token.yaml

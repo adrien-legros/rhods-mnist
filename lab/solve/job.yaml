@@ -2,6 +2,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   generateName: lab-solve-
+  name: lab-solve
   namespace: mnist
 spec:
   parallelism: 1    
@@ -37,7 +38,7 @@ spec:
             - name: NOTEBOOKS_GIT_URL
               valueFrom:
                 configMapKeyRef: 
-                  name: lab-solve-scripts
+                  name: global-demo-configs
                   key: NOTEBOOKS_GIT_URL
             - name: MINIO_ENDPOINT
               valueFrom:
@@ -50,6 +51,11 @@ spec:
                   name: aws-connection-s3-creds
                   key: AWS_ACCESS_KEY_ID
             - name: MINIO_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef: 
+                  name: aws-connection-s3-creds
+                  key: AWS_SECRET_ACCESS_KEY
+            - name: KFP_ENDPOINT
               valueFrom:
                 secretKeyRef: 
                   name: aws-connection-s3-creds
@@ -64,7 +70,7 @@ spec:
             - name: NOTEBOOKS_GIT_URL
               valueFrom:
                 configMapKeyRef: 
-                  name: lab-solve-scripts
+                  name: global-demo-configs
                   key: NOTEBOOKS_GIT_URL
             - name: MINIO_ENDPOINT
               valueFrom:
@@ -81,6 +87,11 @@ spec:
                 secretKeyRef: 
                   name: aws-connection-s3-creds
                   key: AWS_SECRET_ACCESS_KEY
+            - name: MNIST_DATASET
+              valueFrom:
+                configMapKeyRef: 
+                  name: global-demo-configs
+                  key: MNIST_DATASET
           volumeMounts:
             - name: solve-scripts
               mountPath: /scripts

@@ -1,6 +1,0 @@
-resources:
-  - ./openshift/subscription.yaml
-  - ./openshift/namespace.yaml
-  - ./openshift/rbac.yaml
-  - ./argocd/project.yaml
-  - ./argocd/applicationset.yaml

@@ -1,0 +1,4 @@
+namespace: redhat-ods-applications
+resources:
+  - ./serviceaccount.yaml
+  - ./rbac.yaml

@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mnist-webapp
+  labels:
+    app: mnist-webapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mnist-webapp
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: mnist-webapp
+    spec:
+      containers:
+      - env:
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: KNATIVE_SVC
+          value: data-transformation.$(NAMESPACE).svc.cluster.local
+        image: quay.io/alegros/mnist-webapp:v2
+        imagePullPolicy: Always
+        name: mnist-webapp
+        ports:
+        - containerPort: 8080
+          protocol: TCP

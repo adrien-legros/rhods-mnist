@@ -26,26 +26,26 @@ spec:
                 - name: reset-scripts
                   mountPath: /scripts
               env:
+                - name: MINIO_ENDPOINT
+                  valueFrom:
+                    secretKeyRef:
+                      name: aws-connection-s3-creds
+                      key: AWS_S3_ENDPOINT
                 - name: MINIO_ROOT_USER
                   valueFrom:
                     secretKeyRef: 
-                      name: mlpipeline-minio-artifact
-                      key: accesskey
+                      name: aws-connection-s3-creds
+                      key: AWS_ACCESS_KEY_ID
                 - name: MINIO_ROOT_PASSWORD
                   valueFrom:
                     secretKeyRef: 
-                      name: mlpipeline-minio-artifact
-                      key: secretkey
-                - name: MINIO_SERVICE
+                      name: aws-connection-s3-creds
+                      key: AWS_SECRET_ACCESS_KEY
+                - name: MNIST_DATASET
                   valueFrom:
-                    secretKeyRef: 
-                      name: mlpipeline-minio-artifact
-                      key: host
-                - name: MINIO_PORT
-                  valueFrom:
-                    secretKeyRef: 
-                      name: mlpipeline-minio-artifact
-                      key: port
+                    configMapKeyRef: 
+                      name: global-demo-configs
+                      key: MNIST_DATASET
             - name: mariadb-reset
               image: registry.redhat.io/openshift4/ose-cli:v4.11.0-202302061916.p0.g1928ac4.assembly.stream
               command: ['/scripts/reset-mariadb.sh']
