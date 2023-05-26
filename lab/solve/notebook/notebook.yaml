@@ -33,8 +33,10 @@ spec:
                               --ServerApp.password=''
                               --ServerApp.base_url=/notebook/mnist/mnist-notebook
                               --ServerApp.quit_button=False
+        - name: CPU_OR_GPU_IN_NB
+          value: ""
         - name: JUPYTER_IMAGE
-          value: image-registry.openshift-image-registry.svc:5000/redhat-ods-applications/custom-ds-notebook:rhods-mnist-cpu
+          value: image-registry.openshift-image-registry.svc:5000/redhat-ods-applications/custom-ds-notebook:rhods-mnist-$(CPU_OR_GPU_IN_NB)
         - name: NOTEBOOKS_GIT_URL
           value: ""
         - name: DSP_INSTANCE_NAME

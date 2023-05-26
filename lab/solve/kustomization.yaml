@@ -28,7 +28,7 @@ replacements:
       kind: Notebook
       name: mnist-notebook
     fieldPaths:
-    - spec.template.spec.containers.[name=mnist-notebook].image      
+    - spec.template.spec.containers.[name=mnist-notebook].env.[name=CPU_OR_GPU_IN_NB].value  
 - source:
     kind: ConfigMap
     name: global-demo-configs
