@@ -19,7 +19,7 @@ spec:
       containers:
       - env:
         - name: KNATIVE_SVC
-          value: data-transformation.mnist
+          value: data-transformation.digit-recognition.svc.cluster.local
         image: quay.io/alegros/mnist-webapp:v2
         imagePullPolicy: Always
         name: mnist-webapp
