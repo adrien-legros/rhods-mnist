@@ -7,7 +7,6 @@ metadata:
   labels:
     opendatahub.io/dashboard: "true"
   name: notebook
-  namespace: mnist
 spec:
   accessModes:
   - ReadWriteOnce

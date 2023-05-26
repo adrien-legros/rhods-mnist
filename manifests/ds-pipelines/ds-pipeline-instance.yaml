@@ -1,0 +1,15 @@
+apiVersion: datasciencepipelinesapplications.opendatahub.io/v1alpha1
+kind: DataSciencePipelinesApplication
+metadata:
+  name: ds-pipeline
+spec:
+  objectStorage:
+    minio:
+      image: 'quay.io/opendatahub/minio:RELEASE.2019-08-14T20-37-41Z-license-compliance'
+      bucket: 'mlpipeline'
+      s3CredentialsSecret:
+        secretName: 'aws-connection-s3-creds'
+        accessKey: 'AWS_ACCESS_KEY_ID'
+        secretKey: 'AWS_SECRET_ACCESS_KEY'
+  mlpipelineUI:
+    image: 'quay.io/opendatahub/odh-ml-pipelines-frontend-container:beta-ui'
