@@ -43,3 +43,9 @@ oc apply -k ./lab/solve/
 ```shell
 oc apply -k ./lab/reset/
 ```
+
+## Inference
+
+```shell
+oc apply -k ./inference/
+```
