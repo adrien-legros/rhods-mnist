@@ -7,11 +7,13 @@ resources:
   - ./serviceaccount/
   - ./scripts/
   - ./serving/
+  - ./job.yaml
 
 replacements:
 - source:
     kind: ConfigMap
     name: global-demo-configs
+    namespace: mnist
     fieldPath: data.DSP_INSTANCE_NAME
   targets:
   - select:
@@ -22,6 +24,7 @@ replacements:
 - source:
     kind: ConfigMap
     name: global-demo-configs
+    namespace: mnist
     fieldPath: data.CPU_OR_GPU_IN_NB
   targets:
   - select:
@@ -32,6 +35,7 @@ replacements:
 - source:
     kind: ConfigMap
     name: global-demo-configs
+    namespace: mnist    
     fieldPath: data.NOTEBOOKS_GIT_URL
   targets:
   - select:

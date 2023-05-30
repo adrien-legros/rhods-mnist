@@ -3,6 +3,16 @@ kind: DataSciencePipelinesApplication
 metadata:
   name: ds-pipeline
 spec:
+  apiServer:
+    enableOauth: true
+  database:
+    mariaDB:
+      pipelineDBName: mlpipeline
+      pvcSize: 10Gi
+      username: mlpipeline
+      passwordSecret:
+        name: mariadb-password
+        key: password
   objectStorage:
     minio:
       image: 'quay.io/opendatahub/minio:RELEASE.2019-08-14T20-37-41Z-license-compliance'

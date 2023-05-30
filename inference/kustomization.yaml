@@ -30,7 +30,7 @@ replacements:
 - source:
     kind: ConfigMap
     name: inference-configs
-    fieldPath: data.SERVICE_ACCOUNT_NAME
+    fieldPath: data.MM_SERVICE_ACCOUNT_NAME
   targets:
   - select:
       group: serving.knative.dev
@@ -38,7 +38,7 @@ replacements:
       kind: Service
       name: data-transformation
     fieldPaths:
-    - spec.template.spec.containers.[name=serverless-function].env.[name=SERVICE_ACCOUNT_NAME].value
+    - spec.template.spec.containers.[name=serverless-function].env.[name=OAUTH_TOKEN].valueFrom.secretKeyRef.name
 - source:
     kind: ConfigMap
     name: inference-configs

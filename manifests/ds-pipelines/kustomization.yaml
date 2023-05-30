@@ -4,6 +4,9 @@ kind: Kustomization
 namespace: mnist
 
 resources:
+  - mariadb-password.yaml
+  - networkpolicy.yaml
+  - pvc.yaml
   - ds-pipeline-instance.yaml
   - minio-route.yaml
 

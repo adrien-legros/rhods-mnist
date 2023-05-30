@@ -26,8 +26,8 @@ data:
     echo "Creation completed"
   reset-mariadb.sh: |-
     #!/usr/bin/env sh
-    oc -n redhat-ods-applications exec -it deploy/mariadb -- mysql -h 127.0.0.1 -u mlpipeline -pmlpipeline -D mlpipeline -e 'drop database mlpipeline';
-    oc -n redhat-ods-applications exec -it deploy/mariadb -- mysql -h 127.0.0.1 -u mlpipeline -pmlpipeline -e 'create database mlpipeline';
+    oc -n mnist exec -it deploy/mariadb-${DSP_INSTANCE_NAME} -- mysql -h 127.0.0.1 -u mlpipeline -p${MARIADB_PWD} -D mlpipeline -e 'drop database mlpipeline';
+    oc -n mnist exec -it deploy/mariadb-${DSP_INSTANCE_NAME} -- mysql -h 127.0.0.1 -u mlpipeline -p${MARIADB_PWD} -e 'create database mlpipeline';
   reset-jupyterlab.sh: |-
     #!/usr/bin/env sh
     for sts in $(oc -n mnist get sts -oname)
@@ -36,10 +36,10 @@ data:
     done
   redeploy-ds-pipeline.sh: |-
     #!/usr/bin/env sh
-    oc -n redhat-ods-applications get deploy -oname | grep ds-pipeline | xargs oc rollout restart
-    oc -n redhat-ods-applications rollout restart deploy/mariadb
-    oc -n redhat-ods-applications rollout restart deploy/minio
-    oc -n redhat-ods-applications delete taskrun --all
+    oc -n mnist get deploy -oname | grep ds-pipeline | xargs oc rollout restart
+    oc -n mnist rollout restart deploy/mariadb-${DSP_INSTANCE_NAME}
+    oc -n mnist rollout restart deploy/minio-${DSP_INSTANCE_NAME}
+    oc -n mnist delete taskrun --all
   clear-mnist-namespace.sh: |-
     #!/usr/bin/env sh
     oc -n mnist delete notebook --all
