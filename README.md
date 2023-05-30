@@ -48,7 +48,7 @@ oc apply -k ./lab/init/
 
 ### Lab scripts
 
-Scripts are deployed using kustomize. If you want to run the same script more than once, first run bellow command than use `oc create -f ./lab/SCRIPT/job.yaml`, replacing SCRIPT with the right directory.
+Scripts are deployed using kustomize. If you want to run the same script more than once, first delete the completed job using `oc delete -n mnist job <SCRIPT_NAME>`. Replace SCRIPT_NAME with *lab-solve* or *lab-reset*.
 
 #### Solve
 
