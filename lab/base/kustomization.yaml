@@ -1,5 +1,8 @@
 kind: Kustomization
 
+resources:
+- ./serviceaccount/
+
 configMapGenerator:
 - name: global-demo-configs
   namespace: redhat-ods-applications

@@ -1,0 +1,50 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: lab-init
+  generateName: lab-init-
+  namespace: redhat-ods-applications
+spec:
+  parallelism: 1    
+  completions: 1    
+  activeDeadlineSeconds: 1800 
+  backoffLimit: 6
+  template:         
+    metadata:
+      name: lab-init
+    spec:
+      serviceAccountName: jobs
+      restartPolicy: OnFailure
+      volumes:
+        - name: init-scripts
+          configMap:
+            name: init-scripts
+            defaultMode: 0777 
+      containers:
+        - name: minio-init
+          image: quay.io/alegros/minio-client:rhods-mnist
+          command: ['/scripts/init-minio.sh']
+          volumeMounts:
+            - name: init-scripts
+              mountPath: /scripts
+          env:
+            - name: MINIO_ROOT_USER
+              valueFrom:
+                secretKeyRef: 
+                  name: mlpipeline-minio-artifact
+                  key: accesskey
+            - name: MINIO_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef: 
+                  name: mlpipeline-minio-artifact
+                  key: secretkey
+            - name: MINIO_SERVICE
+              valueFrom:
+                secretKeyRef: 
+                  name: mlpipeline-minio-artifact
+                  key: host
+            - name: MINIO_PORT
+              valueFrom:
+                secretKeyRef: 
+                  name: mlpipeline-minio-artifact
+                  key: port

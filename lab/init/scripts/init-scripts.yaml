@@ -1,0 +1,20 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: init-scripts
+  namespace: redhat-ods-applications
+data:
+  init-minio.sh: |-
+    #!/usr/bin/env sh
+    # Create bucket
+    mc alias set minio http://${MINIO_SERVICE}:${MINIO_PORT} ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD}
+    if [ $? -gt 0 ]; then exit 1; fi
+    echo "Creating bucket rhods on minio alias ..."
+    mc mb minio/rhods
+    curl -LJ https://github.com/adrien-legros/datasets/tarball/mnist -o /tmp/dataset.tar.gz
+    mkdir /tmp/dataset
+    tar xzf /tmp/dataset.tar.gz -C /tmp/dataset --strip-components 1
+    unzip /tmp/dataset/digit-recognizer.zip -d /tmp/dataset
+    mc cp /tmp/dataset/train.csv minio/rhods/data/train.csv
+    mc cp /tmp/dataset/test.csv minio/rhods/data/test.csv
+    echo "Creation completed"

@@ -1,0 +1,2 @@
+resources:
+  - ./openshift-serverless-knativeserving.yaml
