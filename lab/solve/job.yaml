@@ -55,11 +55,6 @@ spec:
                 secretKeyRef: 
                   name: aws-connection-s3-creds
                   key: AWS_SECRET_ACCESS_KEY
-            - name: KFP_ENDPOINT
-              valueFrom:
-                secretKeyRef: 
-                  name: aws-connection-s3-creds
-                  key: AWS_SECRET_ACCESS_KEY
           volumeMounts:
             - name: solve-scripts
               mountPath: /scripts
