@@ -48,3 +48,30 @@ spec:
                 configMapKeyRef: 
                   name: global-demo-configs
                   key: MNIST_DATASET
+        - name: push-model-to-bucket
+          image: quay.io/alegros/minio-client:rhods-mnist
+          command: ['/scripts/push-model.sh']
+          env:
+            - name: NOTEBOOKS_GIT_URL
+              valueFrom:
+                configMapKeyRef: 
+                  name: global-demo-configs
+                  key: NOTEBOOKS_GIT_URL
+            - name: MINIO_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: aws-connection-s3-creds
+                  key: AWS_S3_ENDPOINT
+            - name: MINIO_ROOT_USER
+              valueFrom:
+                secretKeyRef: 
+                  name: aws-connection-s3-creds
+                  key: AWS_ACCESS_KEY_ID
+            - name: MINIO_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef: 
+                  name: aws-connection-s3-creds
+                  key: AWS_SECRET_ACCESS_KEY
+          volumeMounts:
+            - name: init-scripts
+              mountPath: /scripts
