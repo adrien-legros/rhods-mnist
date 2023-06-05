@@ -1,5 +1,7 @@
 # Lab Instructions
 
+Follow the deployment instructions [here](https://github.com/adrien-legros/rhods-mnist) before running the lab.
+
 ## Log in to Red Hat OpenShift Data Science (RHODS)
 
 On the top right of the OpenShift console click on the Application Launcher button and click on the Red Hat OpenShift Data Science (RHODS) managed service. Connect to the RHODS console with an existing user that has admin right on mnist namespace. Note that we might reduce admin permission for that user, but for now let's simplify things.

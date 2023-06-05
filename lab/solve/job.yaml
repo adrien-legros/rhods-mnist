@@ -3,7 +3,6 @@ kind: Job
 metadata:
   generateName: lab-solve-
   name: lab-solve
-  namespace: mnist
 spec:
   parallelism: 1    
   completions: 1    

@@ -1,3 +1,4 @@
+namespace: redhat-ods-applications
 resources:
   - ../base
   - ./scripts/

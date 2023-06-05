@@ -1,3 +1,4 @@
+namespace: mnist
 resources:
   - ../base/
   - ./scripts/

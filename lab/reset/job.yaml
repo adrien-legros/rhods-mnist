@@ -3,7 +3,6 @@ kind: Job
 metadata:
   name: lab-reset
   generateName: lab-reset-
-  namespace: mnist
 spec:
   parallelism: 1    
   completions: 1    

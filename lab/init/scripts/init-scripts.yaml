@@ -2,7 +2,6 @@ kind: ConfigMap
 apiVersion: v1
 metadata:
   name: init-scripts
-  namespace: redhat-ods-applications
 data:
   init-minio.sh: |-
     #!/usr/bin/env sh
