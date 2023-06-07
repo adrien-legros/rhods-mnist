@@ -3,10 +3,14 @@ kind: ServingRuntime
 metadata:
   annotations:
     enable-auth: "true"
+    enable-route: "true"
+    opendatahub.io/template-display-name: OpenVINO Model Server
+    opendatahub.io/template-name: ovms
+    openshift.io/display-name: mnist
   labels:
-    name: model-server-mnist
+    name: mnist
     opendatahub.io/dashboard: "true"
-  name: model-server-mnist
+  name: mnist
 spec:
   builtInAdapter:
     memBufferBytes: 134217728
@@ -21,7 +25,7 @@ spec:
     - --file_system_poll_wait_seconds=0
     - --grpc_bind_address=127.0.0.1
     - --rest_bind_address=127.0.0.1
-    image: registry.redhat.io/rhods/odh-openvino-servingruntime-rhel8@sha256:c8e28103c980aed2ead8e781ba4655b449d93f2e5195f977888f3d9d688ecff2
+    image: quay.io/opendatahub/openvino_model_server@sha256:20dbfbaf53d1afbd47c612d953984238cb0e207972ed544a5ea662c2404f276d
     name: ovms
     resources:
       limits:

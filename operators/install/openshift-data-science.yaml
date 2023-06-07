@@ -7,7 +7,7 @@ apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
   generateName: redhat-ods-operator-
-  name: redhat-ods-operator-4579d
+  name: redhat-ods-operator
   namespace: redhat-ods-operator
 spec:
   upgradeStrategy: Default
@@ -19,7 +19,8 @@ metadata:
   namespace: redhat-ods-operator
 spec:
   channel: stable
-  installPlanApproval: Automatic
+  installPlanApproval: Manual
   name: rhods-operator
   source: redhat-operators
   sourceNamespace: openshift-marketplace
+  startingCSV: rhods-operator.1.27.0

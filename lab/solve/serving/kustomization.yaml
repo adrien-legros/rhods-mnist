@@ -1,4 +1,4 @@
 namespace: mnist
 resources:
-  - ./inference-service.yaml
-  - ./serving-runtime.yaml
+  - ./inferenceservice.yaml
+  - ./servingruntime.yaml
