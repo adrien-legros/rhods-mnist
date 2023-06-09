@@ -3,6 +3,7 @@ resources:
   - ../base/
   - ./scripts/
   - ./job.yaml
+  - ./cronjob.yaml
 
 replacements:
 - source:
@@ -21,3 +22,13 @@ replacements:
       name: lab-reset
     fieldPaths:
     - spec.template.spec.containers.[name=redeploy-ds-pipeline].env.[name=DSP_INSTANCE_NAME].value
+  - select:
+      kind: CronJob
+      name: lab-reset-cronjob
+    fieldPaths:
+    - spec.jobTemplate.spec.template.spec.initContainers.[name=mariadb-reset].env.[name=DSP_INSTANCE_NAME].value
+  - select:
+      kind: CronJob
+      name: lab-reset-cronjob
+    fieldPaths:
+    - spec.jobTemplate.spec.template.spec.containers.[name=redeploy-ds-pipeline].env.[name=DSP_INSTANCE_NAME].value

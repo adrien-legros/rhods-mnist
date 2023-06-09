@@ -2,7 +2,6 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: lab-reset-cronjob
-  namespace: redhat-ods-applications
 spec:
   schedule: "0 0 * * *"
   jobTemplate:
@@ -52,6 +51,14 @@ spec:
               volumeMounts:
                 - name: reset-scripts
                   mountPath: /scripts
+              env:
+                - name: DSP_INSTANCE_NAME
+                  value: ""
+                - name: MARIADB_PWD
+                  valueFrom:
+                    secretKeyRef:
+                      name: mariadb-password
+                      key: password
             - name: jupyter-reset
               image: registry.redhat.io/openshift4/ose-cli:v4.11.0-202302061916.p0.g1928ac4.assembly.stream
               command: ['/scripts/reset-jupyterlab.sh']
@@ -65,6 +72,9 @@ spec:
               volumeMounts:
                 - name: reset-scripts
                   mountPath: /scripts
+              env:
+                - name: DSP_INSTANCE_NAME
+                  value: ""
             - name: clear-minst-ns
               image: registry.redhat.io/openshift4/ose-cli:v4.11.0-202302061916.p0.g1928ac4.assembly.stream
               command: ['/scripts/clear-mnist-namespace.sh']

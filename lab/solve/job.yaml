@@ -89,3 +89,9 @@ spec:
           volumeMounts:
             - name: solve-scripts
               mountPath: /scripts
+        - name: restart-mm
+          image: registry.redhat.io/openshift4/ose-cli:v4.11.0-202302061916.p0.g1928ac4.assembly.stream
+          command: ['/scripts/restart-mm.sh']
+          volumeMounts:
+            - name: solve-scripts
+              mountPath: /scripts

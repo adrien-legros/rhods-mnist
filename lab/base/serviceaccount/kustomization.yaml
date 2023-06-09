@@ -1,4 +1,4 @@
-namespace: redhat-ods-applications
+namespace: mnist
 resources:
   - ./serviceaccount.yaml
   - ./rbac.yaml

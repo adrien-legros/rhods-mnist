@@ -43,3 +43,7 @@ data:
        --cos_username minio \
        --cos_password minio123 \
        --cos_bucket rhods
+  restart-mm.sh: |-
+    #!/usr/bin/env sh
+    oc -n mnist wait --for=condition=Ready=true po -l modelmesh-service=modelmesh-serving
+    oc -n mnist delete po -l modelmesh-service=modelmesh-serving

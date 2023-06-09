@@ -5,12 +5,6 @@ resources:
 
 configMapGenerator:
 - name: global-demo-configs
-  namespace: redhat-ods-applications
-  envs:
-  - global.env
-  options:
-    disableNameSuffixHash: true
-- name: global-demo-configs
   namespace: mnist
   envs:
   - global.env
