@@ -65,6 +65,9 @@ spec:
               volumeMounts:
                 - name: reset-scripts
                   mountPath: /scripts
+            - name: elyra-reset-runtime
+              image: registry.redhat.io/openshift4/ose-cli:v4.11.0-202302061916.p0.g1928ac4.assembly.stream
+              command: ["oc", "-n", "mnist", "exec", "-it", "po/mnist-notebook-0",  "--", "/bin/sh", "-c", "rm /opt/app-root/src/.local/share/jupyter/metadata/runtimes/*.json"]
           containers:
             - name: redeploy-ds-pipeline
               image: registry.redhat.io/openshift4/ose-cli:v4.11.0-202302061916.p0.g1928ac4.assembly.stream
