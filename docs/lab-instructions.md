@@ -73,44 +73,66 @@ It is a pipeline generated thanks to Elyra visual editor. You can see how the no
 If you right click on a "node" you can open the properties tab. You can check that there are some envrionemental variables referenced by a secret name and key. The environment variables are passed to the notebook so it can store artifacts to the minio S3 bucket.
 See also that we need to reference a Runtime Image where the python code will run. You will have to choose the runtime image, depending if you selected the CUDA notebook image or not.
 
-## Complete and run the pipeline
+## Review the pipeline
 
-### Select the appropriate runtime image
+### Runtime image
 
-Open the pipeline properties panel by clicking on the *Open Panel* button, or right clicking to a node, select *Open Properties* and switch tab to *Pipeline Properties*.
+Open the pipeline properties panel by clicking on the *Open Panel* button, or right clicking to a node, select *Open Properties* and switch tab to *Pipeline Properties*. The runtime image is used to execute your notebook inside a container on Openshift.
 
 ![pipeline-properties](./screenshots/pipeline-properties.png)
 
-Change the default pipeline runtime:
+Available pipeline runtime on this lab:
 - **For GPU user**: Ensure the "Custom Runtime for mnist : CUDA11.4/Py38" runtime image is selected
 - **For CPU user**: Ensure the "Custom Runtime for mnist : Py38" runtime image is selected
 
-### Review or add a pipeline step
+### Add a pipeline step
 
-You are going to add the metadata playbook to the pipeline. Open the *mnist.pipeline* file. You can add a step by grabbing a playbook from the file browser to the UI. See the animation bellow.
+#### Add a node
 
-Additionnaly, confirm that environmental variables has been set by default.
+Open the *mnist.pipeline* file. You can add a step by grabbing a playbook from the file browser to the UI. See the animation bellow. Add the *Review.ipynb* notebook to the pipeline. Link it to both *Pre-process.ipynb* and *Train.ipynb*. You should have a similar picture at the end:
 
-![node-properties](./gif/add-step.gif)
+![pipeline-completed](./screenshots/pipeline-completed.png)
 
-### Review the Kubeflow Runtime
 
-A Kuflow Runtime has been configured during initialization so that Elyra can trigger Kubeflow Pipeline API to run a data science pipeline. On the left navigation bar, click on Runtimes icon. Click on the Kubeflow Pipeline runtime configuration. See the Kubeflow API endpoint as well as the Minio endpoint and credentials.  
+#### Add properties
 
+We need to pass the processed data to the *Review.ipynb* notebook. We will use a volume to share data between pipeline steps. *Pre-process.ipynb* will write data to this volume and *Review.ipynb* notebook will read data from it.
+
+Open the properties menu. Choose node properties. Scroll down to *Data Volumes*. Complete the following information:
+
+- **Mount Path**: /tmp/ml-pipeline
+- **Persistent Volume Claim Name**: ml-pipeline
+
+### Add the Kubeflow Runtime
+
+We need to add a Kuflow Runtime so Elyra can trigger Kubeflow Pipeline API to run a data science pipeline. On the left navigation bar, click on Runtimes icon. Create a runtime as follow:
+
+- **Display Name**: Kubeflow Runtime
+- **Kubeflow Pipelines API Endpoint**: http://ds-pipeline-ds-pipeline.mnist.svc.cluster.local:8888
+- **Public Kubeflow Pipelines API Endpoint**: @TODO
+- **Kubeflow Pipelines engine**: Tekton
+- **Cloud Object Storage Endpoint**: http://minio-ds-pipeline.mnist.svc.cluster.local:9000
+- **Public Cloud Object Storage Endpoint**: @TODO
+- **Cloud Object Storage Bucket Name**: rhods
+- **Cloud Object Storage Authentication Type**: USER_CREDENTIALS
+- **Cloud Object Storage Username**: minio
+- **Cloud Object Storage Password**:  minio123
+
+![kf-values]()
 
 ### Run the pipeline
 
-Go back to the pipeline and run it.
+Go back to mnist.pipeline. Click on the run button. Choose *Kubeflow Pipelines* as the Runtime Plateform. Then click OK. 
 
 ![run-pipeline](./screenshots/run-pipeline.png)
 
+![run-success]()
+
+Click on the *Run Details* link to go to Kubeflow Pipeline dashboard. This dashboard enables you to see your pipeline runs.
+
 ## Navigate to Kubeflow Pipeline
 
-Go to **Administrator Console > Networking > Routes** in the *mnist* namespace. Open the *ds-pipeline-ui-ds-pipeline* url to open Kubeflow Pipeline. Alternatively, get the url with:
-```shell
-echo https://$(oc -n mnist get route ds-pipeline-ui-ds-pipeline -ojsonpath='{.status.ingress[0].host}')
-```
-Navigate to the **Runs** tab. A new run has been launched for you by Elyra. Click on it. You can see a graph with your pipeline steps.  
+Once in the Kubeflow Pipeline dashboard navigate to the **Runs** tab. A new run has been launched for you by Elyra. Click on it. You can see a graph with your pipeline steps.  
 Check out the logs by clicking on a step, then on the log tab.
 
 ![pipeline-logs](./screenshots/pipeline-logs.png)
