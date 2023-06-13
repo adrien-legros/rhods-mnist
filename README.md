@@ -44,7 +44,7 @@ oc apply -k ./lab/init/
 
 ### Lab instructions
 
-[DEPRECATED] Lab instrcutions can be found [here](./docs/lab-instructions.md).
+Lab instrcutions can be found [here](./docs/lab-instructions.md).
 
 ### Lab scripts
 
