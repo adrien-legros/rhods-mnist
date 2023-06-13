@@ -47,3 +47,4 @@ data:
     oc -n mnist delete servingruntimes --all
     oc -n mnist delete ksvc --all
     oc -n mnist delete all -l app=mnist-webapp
+    oc -n mnist delete po -l component=data-science-pipelines

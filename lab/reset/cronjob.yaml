@@ -17,6 +17,9 @@ spec:
               configMap:
                 name: reset-scripts
                 defaultMode: 0777 
+            - name: notebook-data
+              persistentVolumeClaim:
+                claimName: notebook
           initContainers:
             - name: minio-reset
               image: quay.io/alegros/minio-client:rhods-mnist
@@ -67,7 +70,10 @@ spec:
                   mountPath: /scripts
             - name: elyra-reset-runtime
               image: registry.redhat.io/openshift4/ose-cli:v4.11.0-202302061916.p0.g1928ac4.assembly.stream
-              command: ["oc", "-n", "mnist", "exec", "-it", "po/mnist-notebook-0",  "--", "/bin/sh", "-c", "rm /opt/app-root/src/.local/share/jupyter/metadata/runtimes/*.json"]
+              command: ["rm", "-rf", "/vol/.local/share/jupyter/metadata/runtimes/kubeflow_runtime.json"]
+              volumeMounts:
+                - name: notebook-data
+                  mountPath: /vol
           containers:
             - name: redeploy-ds-pipeline
               image: registry.redhat.io/openshift4/ose-cli:v4.11.0-202302061916.p0.g1928ac4.assembly.stream

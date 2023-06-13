@@ -3,7 +3,6 @@ resources:
   - ../base/
   - ./scripts/
   - ./job.yaml
-  - ./cronjob.yaml
 
 replacements:
 - source:
