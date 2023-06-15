@@ -65,7 +65,7 @@ spec:
             - name: jupyter-reset
               image: registry.redhat.io/openshift4/ose-cli:v4.11.0-202302061916.p0.g1928ac4.assembly.stream
               command: ["/bin/sh"]
-              args: ["-c", "rm -rvf /vol/.local/share/jupyter/metadata/runtimes/* /vol/*"]
+              args: ["-c", "rm -rvf /vol/.local/share/jupyter/metadata/runtimes/* /vol/.local/share/jupyter/metadata/runtime-images/* /vol/*"]
               volumeMounts:
                 - name: notebook-data
                   mountPath: /vol
