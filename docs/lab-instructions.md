@@ -1,6 +1,20 @@
 # Lab Instructions
 
-Follow the deployment instructions [here](https://github.com/adrien-legros/rhods-mnist) before running the lab.
+In this lab you will: 
+- Setup a data science environment
+- Create and run a deep learning model
+- Create a data science pipeine for reproducibility
+- Run, see and compare the outputs
+- Serve your model to make it accessible to applications
+- Deploy an application to interact with your model and make predictions
+
+You have access to a GPU inside your notebooks and during the pipeline runs.
+
+## Log in
+
+Whenever you are asked to authenticate please log in with *my_htpasswd_provider* and use the user:
+- **Username**: hpe_redhat
+- **Password**: hpe_redhat
 
 ## Log in to Red Hat OpenShift Data Science (RHODS)
 
@@ -19,7 +33,7 @@ Go to the **Data Science projects** tab and click on the pre-created **mnist** p
 This project has been created with a pvc for the notebook filesystem (i.e the jupyterlab notebooks). It also contains a data connection which is a secret containing the minio credentials for the S3 storage. We will connect those 2 storages to the workbench we are about to create.  
 Click on *create workbench* and fill up the form:
 - Enter *mnist-notebook* as the name.
-- Select the notebook image: *Custom Datascience Notebook*.
+- Select the notebook image: *Custom Datascience Notebook CUDA 11.4*.
 - Choose a container size (*small* is suffisent in our example)
 - Select a persistent storage. Use an existing one and select *notebook*.
 - Select a data connection (S3 storage). Use an existing one and select *s3-creds*.
@@ -82,6 +96,14 @@ Open the *mnist.pipeline* file. You can add a step by grabbing a playbook from t
 
 ![add-step](./gif/add-step.gif)
 
+### Enable GPU inside the pipeline
+
+On the left side navigation bar click on *Runtime Images*. Add a new one with the configurations:
+- **Name**: GPU runtime
+- **Image Name**: quay.io/alegros/runtime-image:rhods-mnist-gpu 
+
+Go back to *mnist.pipeline* file. Right click on a node (i.e a notebook). Open properties. Select on the top right *Pipeline Properties*. Scroll down and change the default runtime image selecting *GPU runtime*.
+
 ### Review and add properties
 
 Right click on the Review step and open the properties panel. Note that the default runtime image is already selected and will be used to execute your notebook inside a container on Openshift.
@@ -97,30 +119,18 @@ Open the node properties menu, scroll down to *Data Volumes*. Add a new volume a
 
 We need to add a Kuflow Runtime so Elyra can trigger Kubeflow Pipeline API to run a data science pipeline. On the left navigation bar, click on Runtimes icon. Create a runtime as follow:
 
-First get you public kubeflow pipeline endpoint by either looking into administration dashboard > **Networking** > **Routes** > **ds-pipeline-ui-ds-pipeline** or running the command: 
-```shell
-echo https://$(oc -n mnist get route ds-pipeline-ui-ds-pipeline -ojsonpath='{.spec.host}')
-```
-Replace *MY_KFP_ENDPOINT* in the following section with this value.
-
-(Optionnal) Secondly get your public cloud object storage endpoint by either looking into administration dashboard > **Networking** > **Routes** > **minio** or running the command: 
-```shell
-echo https://$(oc -n mnist get route minio -ojsonpath='{.spec.host}')
-```
-Replace *MY_S3_ENDPOINT* in the following section with this value.
-
 - **Display Name**: Kubeflow Runtime
 - **Kubeflow Pipelines API Endpoint**: http://ds-pipeline-ds-pipeline.mnist.svc.cluster.local:8888
-- **Public Kubeflow Pipelines API Endpoint**: MY_KFP_ENDPOINT
+- **Public Kubeflow Pipelines API Endpoint**: https://ds-pipeline-ui-ds-pipeline-mnist.apps.snogpu.redhat.hpecic.net
 - **Kubeflow Pipelines engine**: Tekton
 - **Cloud Object Storage Endpoint**: http://minio-ds-pipeline.mnist.svc.cluster.local:9000
-- **Public Cloud Object Storage Endpoint**: MY_S3_ENDPOINT
+- **Public Cloud Object Storage Endpoint**: https://minio-mnist.apps.snogpu.redhat.hpecic.net
 - **Cloud Object Storage Bucket Name**: rhods
 - **Cloud Object Storage Authentication Type**: USER_CREDENTIALS
 - **Cloud Object Storage Username**: minio
 - **Cloud Object Storage Password**:  minio123
 
-![kf-values](./screenshots/kfp-values-main.png)
+![kf-values](./screenshots/kfp-values-hpe.png)
 
 Save your configurations and close the tab.
 
@@ -184,15 +194,12 @@ For more information conerning the serverless function check out the openshift-s
 
 See also ./inference/openshift-serverless/manifests/service.yaml. Note that we specify as environment variable the name of the service account created previously so our serverless function can authenticate to the model server.
 
-Deploy the serverless function and the frontend web application:
+Deploy the serverless function and the frontend web application. If you have access to the Openshift client, please run:
 ```shell
 oc apply -k ./inference/
 ```
+Otherwise, follow [this link](../inference/combined.yaml) and copy the yaml file. Navigate to the Openshift console, click on the **+** sign on the top right of the console. Paste the yaml file and create the applications.
 
-Get the route endpoint and visit the url!
-
-```shell
-echo http://$(oc -n mnist get route mnist-webapp -ojsonpath='{.status.ingress[0].host}')
-```
+Then follow this link to access the graphical user interface: http://mnist-webapp-mnist.apps.snogpu.redhat.hpecic.net/
 
 Draw a digit between 1 and 9. Click on predict and see te ouput. Note: the first prediction can take more time as the serverless function might not be running. The following predictions will be much faster.
