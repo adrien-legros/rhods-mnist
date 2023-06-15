@@ -96,14 +96,6 @@ Open the *mnist.pipeline* file. You can add a step by grabbing a playbook from t
 
 ![add-step](./gif/add-step.gif)
 
-### Enable GPU inside the pipeline
-
-On the left side navigation bar click on *Runtime Images*. Add a new one with the configurations:
-- **Name**: GPU runtime
-- **Image Name**: quay.io/alegros/runtime-image:rhods-mnist-gpu 
-
-Go back to *mnist.pipeline* file. Right click on a node (i.e a notebook). Open properties. Select on the top right *Pipeline Properties*. Scroll down and change the default runtime image selecting *GPU runtime*.
-
 ### Review and add properties
 
 Right click on the Review step and open the properties panel. Note that the default runtime image is already selected and will be used to execute your notebook inside a container on Openshift.
@@ -114,6 +106,14 @@ Open the node properties menu, scroll down to *Data Volumes*. Add a new volume a
 
 - **Mount Path**: /tmp/ml-pipeline
 - **Persistent Volume Claim Name**: ml-pipeline
+
+### Enable GPU inside the pipeline
+
+On the left side navigation bar click on *Runtime Images*. Add a new one with the configurations:
+- **Name**: GPU runtime
+- **Image Name**: quay.io/alegros/runtime-image:rhods-mnist-gpu 
+
+Go back to *mnist.pipeline* file. Right click on the Train node (i.e a notebook). Open properties. Ensure that the opened tab is the *Node Properties*. Scroll down and change the runtime image. Select *GPU runtime* as the runtime image. During the pipeline run, the train step will use GPU for the model training.
 
 ### Add the Kubeflow Runtime
 
