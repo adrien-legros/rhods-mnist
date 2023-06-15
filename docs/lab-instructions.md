@@ -8,7 +8,7 @@ On the top right of the OpenShift console click on the Application Launcher butt
 
 ![launch-dashboard](./screenshots/launch-dashboard.png)
 
-## Start a new data science project
+## Data science environement setup
 
 ### Create the workbench
 
@@ -16,7 +16,7 @@ Go to the **Data Science projects** tab and click on the pre-created **mnist** p
 
 ![data-science-project](./screenshots/ds-project.png)
 
-This project has been created with a pvc for the notebook filesystem (i.e the jupyterlab notebooks). It also has a data connection which is a secret containing the minio credentials for the S3 storage. We will connect those 2 storages to the workbench we are about to create.  
+This project has been created with a pvc for the notebook filesystem (i.e the jupyterlab notebooks). It also contains a data connection which is a secret containing the minio credentials for the S3 storage. We will connect those 2 storages to the workbench we are about to create.  
 Click on *create workbench* and fill up the form:
 - Enter *mnist-notebook* as the name.
 - Select the notebook image: *Custom Datascience Notebook*.
@@ -122,9 +122,11 @@ Replace *MY_S3_ENDPOINT* in the following section with this value.
 
 ![kf-values](./screenshots/kfp-values-main.png)
 
+Save your configurations and close the tab.
+
 ### Run the pipeline
 
-Go back to mnist.pipeline. Click on the run button. Choose *Kubeflow Pipelines* as the Runtime Plateform. Then click OK. 
+On the file browser, go back to mnist.pipeline. Click on the *Run Pipeline* button. Choose *Kubeflow Pipelines* as the Runtime Plateform. Then click OK. 
 
 ![run-pipeline](./screenshots/run-pipeline.png)
 
@@ -141,7 +143,7 @@ Check out the logs by clicking on a step, then on the log tab.
 
 The pipeline completed after approximatively 5 minutes.
 
-Click on the **Run Ouput** tab. Notice that few metadata artifacts has been created throughout the pipeline. By default, you can retrieve all logs in html or ipynb format. Click on a link to redirect to minio bucket.  
+Click on the **Run Ouput** tab. Notice that few metadata artifacts has been created throughout the pipeline. You can retrieve the precision metrics of your model. Note that all the cell outputs are logged inside your S3 bucket.  
 
 ![artifacts](./screenshots/run-output.png)
 
