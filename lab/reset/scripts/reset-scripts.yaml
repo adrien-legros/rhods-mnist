@@ -26,14 +26,8 @@ data:
     echo "Creation completed"
   reset-mariadb.sh: |-
     #!/usr/bin/env sh
-    oc -n mnist exec -it deploy/mariadb-${DSP_INSTANCE_NAME} -- mysql -h 127.0.0.1 -u mlpipeline -p${MARIADB_PWD} -D mlpipeline -e 'drop database mlpipeline';
-    oc -n mnist exec -it deploy/mariadb-${DSP_INSTANCE_NAME} -- mysql -h 127.0.0.1 -u mlpipeline -p${MARIADB_PWD} -e 'create database mlpipeline';
-  reset-jupyterlab.sh: |-
-    #!/usr/bin/env sh
-    for sts in $(oc -n mnist get sts -oname)
-    do 
-      oc -n mnist exec -it $sts -- /bin/sh -c "rm -rf *";
-    done
+    mysql -h mariadb-${DSP_INSTANCE_NAME} -u mlpipeline -p${MARIADB_PWD} -D mlpipeline -e 'drop database mlpipeline';
+    mysql -h mariadb-${DSP_INSTANCE_NAME} -u mlpipeline -p${MARIADB_PWD} -e 'create database mlpipeline';
   redeploy-ds-pipeline.sh: |-
     #!/usr/bin/env sh
     oc -n mnist get deploy -oname | grep ds-pipeline | xargs oc rollout restart

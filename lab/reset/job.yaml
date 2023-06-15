@@ -51,7 +51,7 @@ spec:
                   name: global-demo-configs
                   key: MNIST_DATASET
         - name: mariadb-reset
-          image: registry.redhat.io/openshift4/ose-cli:v4.11.0-202302061916.p0.g1928ac4.assembly.stream
+          image: registry.redhat.io/rhel8/mysql-80@sha256:77663c0acff95b432298404af90c065990f91a2534e213788c85ee6a933a77c9
           command: ['/scripts/reset-mariadb.sh']
           volumeMounts:
             - name: reset-scripts
@@ -66,13 +66,8 @@ spec:
                   key: password
         - name: jupyter-reset
           image: registry.redhat.io/openshift4/ose-cli:v4.11.0-202302061916.p0.g1928ac4.assembly.stream
-          command: ['/scripts/reset-jupyterlab.sh']
-          volumeMounts:
-            - name: reset-scripts
-              mountPath: /scripts
-        - name: elyra-reset-runtime
-          image: registry.redhat.io/openshift4/ose-cli:v4.11.0-202302061916.p0.g1928ac4.assembly.stream
-          command: ["rm", "-rf", "/vol/.local/share/jupyter/metadata/runtimes/kubeflow_runtime.json"]
+          command: ["/bin/sh"]
+          args: ["-c", "rm -rvf /vol/.local/share/jupyter/metadata/runtimes/* /vol/*"]
           volumeMounts:
             - name: notebook-data
               mountPath: /vol
