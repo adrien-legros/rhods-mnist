@@ -1,0 +1,365 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: mnist
+  annotations:
+    tekton.dev/output_artifacts: '{"run-a-file": [{"key": "artifacts/$PIPELINERUN/run-a-file/mlpipeline-metrics.tgz",
+      "name": "mlpipeline-metrics", "path": "/tmp/mlpipeline-metrics.json"}, {"key":
+      "artifacts/$PIPELINERUN/run-a-file/mlpipeline-ui-metadata.tgz", "name": "mlpipeline-ui-metadata",
+      "path": "/tmp/mlpipeline-ui-metadata.json"}], "run-a-file-2": [{"key": "artifacts/$PIPELINERUN/run-a-file-2/mlpipeline-metrics.tgz",
+      "name": "mlpipeline-metrics", "path": "/tmp/mlpipeline-metrics.json"}, {"key":
+      "artifacts/$PIPELINERUN/run-a-file-2/mlpipeline-ui-metadata.tgz", "name": "mlpipeline-ui-metadata",
+      "path": "/tmp/mlpipeline-ui-metadata.json"}], "run-a-file-3": [{"key": "artifacts/$PIPELINERUN/run-a-file-3/mlpipeline-metrics.tgz",
+      "name": "mlpipeline-metrics", "path": "/tmp/mlpipeline-metrics.json"}, {"key":
+      "artifacts/$PIPELINERUN/run-a-file-3/mlpipeline-ui-metadata.tgz", "name": "mlpipeline-ui-metadata",
+      "path": "/tmp/mlpipeline-ui-metadata.json"}], "run-a-file-4": [{"key": "artifacts/$PIPELINERUN/run-a-file-4/mlpipeline-metrics.tgz",
+      "name": "mlpipeline-metrics", "path": "/tmp/mlpipeline-metrics.json"}, {"key":
+      "artifacts/$PIPELINERUN/run-a-file-4/mlpipeline-ui-metadata.tgz", "name": "mlpipeline-ui-metadata",
+      "path": "/tmp/mlpipeline-ui-metadata.json"}]}'
+    tekton.dev/input_artifacts: '{}'
+    tekton.dev/artifact_bucket: mlpipeline
+    tekton.dev/artifact_endpoint: minio-service.kubeflow:9000
+    tekton.dev/artifact_endpoint_scheme: http://
+    tekton.dev/artifact_items: '{"run-a-file": [["mlpipeline-metrics", "/tmp/mlpipeline-metrics.json"],
+      ["mlpipeline-ui-metadata", "/tmp/mlpipeline-ui-metadata.json"]], "run-a-file-2":
+      [["mlpipeline-metrics", "/tmp/mlpipeline-metrics.json"], ["mlpipeline-ui-metadata",
+      "/tmp/mlpipeline-ui-metadata.json"]], "run-a-file-3": [["mlpipeline-metrics",
+      "/tmp/mlpipeline-metrics.json"], ["mlpipeline-ui-metadata", "/tmp/mlpipeline-ui-metadata.json"]],
+      "run-a-file-4": [["mlpipeline-metrics", "/tmp/mlpipeline-metrics.json"], ["mlpipeline-ui-metadata",
+      "/tmp/mlpipeline-ui-metadata.json"]]}'
+    sidecar.istio.io/inject: "false"
+    pipelines.kubeflow.org/big_data_passing_format: $(workspaces.$TASK_NAME.path)/artifacts/$ORIG_PR_NAME/$TASKRUN_NAME/$TASK_PARAM_NAME
+    pipelines.kubeflow.org/pipeline_spec: '{"name": "mnist"}'
+spec:
+  pipelineSpec:
+    tasks:
+    - name: run-a-file
+      taskSpec:
+        steps:
+        - name: main
+          args:
+          - |
+            sh -c "mkdir -p ./jupyter-work-dir && cd ./jupyter-work-dir"
+            sh -c "echo 'Downloading https://raw.githubusercontent.com/elyra-ai/elyra/v3.14.2/elyra/kfp/bootstrapper.py' && curl --fail -H 'Cache-Control: no-cache' -L https://raw.githubusercontent.com/elyra-ai/elyra/v3.14.2/elyra/kfp/bootstrapper.py --output bootstrapper.py"
+            sh -c "echo 'Downloading https://raw.githubusercontent.com/elyra-ai/elyra/v3.14.2/etc/generic/requirements-elyra.txt' && curl --fail -H 'Cache-Control: no-cache' -L https://raw.githubusercontent.com/elyra-ai/elyra/v3.14.2/etc/generic/requirements-elyra.txt --output requirements-elyra.txt"
+            sh -c "echo 'Downloading https://raw.githubusercontent.com/elyra-ai/elyra/v3.14.2/etc/generic/requirements-elyra-py37.txt' && curl --fail -H 'Cache-Control: no-cache' -L https://raw.githubusercontent.com/elyra-ai/elyra/v3.14.2/etc/generic/requirements-elyra-py37.txt --output requirements-elyra-py37.txt"
+            sh -c "python3 -m pip install  packaging && python3 -m pip freeze > requirements-current.txt && python3 bootstrapper.py --pipeline-name 'mnist' --cos-endpoint 'http://minio-ds-pipeline.mnist.svc.cluster.local:9000/' --cos-bucket 'rhods' --cos-directory 'mnist-0620115554' --cos-dependencies-archive 'Pre-process-41e11d28-821e-4cfa-b292-5671fc807c72.tar.gz' --file 'rhods-mnist-model/notebooks/Pre-process.ipynb' "
+          command:
+          - sh
+          - -c
+          env:
+          - name: ELYRA_RUNTIME_ENV
+            value: kfp
+          - name: AWS_ACCESS_KEY_ID
+            value: minio
+          - name: AWS_SECRET_ACCESS_KEY
+            value: minio123
+          - name: ELYRA_ENABLE_PIPELINE_INFO
+            value: "True"
+          - name: ELYRA_WRITABLE_CONTAINER_DIR
+            value: /tmp
+          - name: ELYRA_RUN_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.annotations['pipelines.kubeflow.org/run_name']
+          - name: AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                key: AWS_ACCESS_KEY_ID
+                name: aws-connection-s3-creds
+          - name: AWS_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                key: AWS_SECRET_ACCESS_KEY
+                name: aws-connection-s3-creds
+          - name: AWS_S3_BUCKET
+            valueFrom:
+              secretKeyRef:
+                key: AWS_S3_BUCKET
+                name: aws-connection-s3-creds
+          - name: AWS_S3_ENDPOINT
+            valueFrom:
+              secretKeyRef:
+                key: AWS_S3_ENDPOINT
+                name: aws-connection-s3-creds
+          image: quay.io/alegros/runtime-image:rhods-mnist-cpu
+          volumeMounts:
+          - mountPath: /tmp/ml-pipeline
+            name: ml-pipeline
+            readOnly: false
+        stepTemplate:
+          volumeMounts:
+          - name: mlpipeline-metrics
+            mountPath: /tmp
+        volumes:
+        - name: ml-pipeline
+          persistentVolumeClaim:
+            claimName: ml-pipeline
+        - name: mlpipeline-metrics
+          emptyDir: {}
+        metadata:
+          labels:
+            elyra/node-type: notebook-script
+            elyra/pipeline-name: mnist
+            elyra/pipeline-version: ''
+            elyra/experiment-name: ''
+            elyra/node-name: Pre-process
+            pipelines.kubeflow.org/cache_enabled: "true"
+          annotations:
+            elyra/node-file-name: rhods-mnist-model/notebooks/Pre-process.ipynb
+            elyra/pipeline-source: mnist.pipeline
+            pipelines.kubeflow.org/task_display_name: Pre-process
+            pipelines.kubeflow.org/component_spec_digest: '{"name": "Run a file",
+              "outputs": [], "version": "Run a file@sha256=88f8051a2d5d793f5ee09571cb695a53c1644ffe4eb8528d80c3d14215754dd1"}'
+            tekton.dev/template: ''
+      timeout: 525600m
+    - name: run-a-file-2
+      taskSpec:
+        steps:
+        - name: main
+          args:
+          - |
+            sh -c "mkdir -p ./jupyter-work-dir && cd ./jupyter-work-dir"
+            sh -c "echo 'Downloading https://raw.githubusercontent.com/elyra-ai/elyra/v3.14.2/elyra/kfp/bootstrapper.py' && curl --fail -H 'Cache-Control: no-cache' -L https://raw.githubusercontent.com/elyra-ai/elyra/v3.14.2/elyra/kfp/bootstrapper.py --output bootstrapper.py"
+            sh -c "echo 'Downloading https://raw.githubusercontent.com/elyra-ai/elyra/v3.14.2/etc/generic/requirements-elyra.txt' && curl --fail -H 'Cache-Control: no-cache' -L https://raw.githubusercontent.com/elyra-ai/elyra/v3.14.2/etc/generic/requirements-elyra.txt --output requirements-elyra.txt"
+            sh -c "echo 'Downloading https://raw.githubusercontent.com/elyra-ai/elyra/v3.14.2/etc/generic/requirements-elyra-py37.txt' && curl --fail -H 'Cache-Control: no-cache' -L https://raw.githubusercontent.com/elyra-ai/elyra/v3.14.2/etc/generic/requirements-elyra-py37.txt --output requirements-elyra-py37.txt"
+            sh -c "python3 -m pip install  packaging && python3 -m pip freeze > requirements-current.txt && python3 bootstrapper.py --pipeline-name 'mnist' --cos-endpoint 'http://minio-ds-pipeline.mnist.svc.cluster.local:9000/' --cos-bucket 'rhods' --cos-directory 'mnist-0620115554' --cos-dependencies-archive 'Train-3262df5b-8ee0-4e73-8188-aef81f9162a5.tar.gz' --file 'rhods-mnist-model/notebooks/Train.ipynb' "
+          command:
+          - sh
+          - -c
+          env:
+          - name: ELYRA_RUNTIME_ENV
+            value: kfp
+          - name: AWS_ACCESS_KEY_ID
+            value: minio
+          - name: AWS_SECRET_ACCESS_KEY
+            value: minio123
+          - name: ELYRA_ENABLE_PIPELINE_INFO
+            value: "True"
+          - name: ELYRA_WRITABLE_CONTAINER_DIR
+            value: /tmp
+          - name: ELYRA_RUN_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.annotations['pipelines.kubeflow.org/run_name']
+          - name: AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                key: AWS_ACCESS_KEY_ID
+                name: aws-connection-s3-creds
+          - name: AWS_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                key: AWS_SECRET_ACCESS_KEY
+                name: aws-connection-s3-creds
+          - name: AWS_S3_BUCKET
+            valueFrom:
+              secretKeyRef:
+                key: AWS_S3_BUCKET
+                name: aws-connection-s3-creds
+          - name: AWS_S3_ENDPOINT
+            valueFrom:
+              secretKeyRef:
+                key: AWS_S3_ENDPOINT
+                name: aws-connection-s3-creds
+          image: quay.io/alegros/runtime-image:rhods-mnist-cpu
+          volumeMounts:
+          - mountPath: /tmp/ml-pipeline
+            name: ml-pipeline
+            readOnly: false
+        stepTemplate:
+          volumeMounts:
+          - name: mlpipeline-metrics
+            mountPath: /tmp
+        volumes:
+        - name: ml-pipeline
+          persistentVolumeClaim:
+            claimName: ml-pipeline
+        - name: mlpipeline-metrics
+          emptyDir: {}
+        metadata:
+          labels:
+            elyra/node-type: notebook-script
+            elyra/pipeline-name: mnist
+            elyra/pipeline-version: ''
+            elyra/experiment-name: ''
+            elyra/node-name: Train
+            pipelines.kubeflow.org/cache_enabled: "true"
+          annotations:
+            elyra/node-file-name: rhods-mnist-model/notebooks/Train.ipynb
+            elyra/pipeline-source: mnist.pipeline
+            pipelines.kubeflow.org/task_display_name: Train
+            pipelines.kubeflow.org/component_spec_digest: '{"name": "Run a file",
+              "outputs": [], "version": "Run a file@sha256=8fd59cac370aa2a2f82171f46e1adb76b9f1bb3f9eb2fd40a57e895398477014"}'
+            tekton.dev/template: ''
+      runAfter:
+      - run-a-file
+      timeout: 525600m
+    - name: run-a-file-3
+      taskSpec:
+        steps:
+        - name: main
+          args:
+          - |
+            sh -c "mkdir -p ./jupyter-work-dir && cd ./jupyter-work-dir"
+            sh -c "echo 'Downloading https://raw.githubusercontent.com/elyra-ai/elyra/v3.14.2/elyra/kfp/bootstrapper.py' && curl --fail -H 'Cache-Control: no-cache' -L https://raw.githubusercontent.com/elyra-ai/elyra/v3.14.2/elyra/kfp/bootstrapper.py --output bootstrapper.py"
+            sh -c "echo 'Downloading https://raw.githubusercontent.com/elyra-ai/elyra/v3.14.2/etc/generic/requirements-elyra.txt' && curl --fail -H 'Cache-Control: no-cache' -L https://raw.githubusercontent.com/elyra-ai/elyra/v3.14.2/etc/generic/requirements-elyra.txt --output requirements-elyra.txt"
+            sh -c "echo 'Downloading https://raw.githubusercontent.com/elyra-ai/elyra/v3.14.2/etc/generic/requirements-elyra-py37.txt' && curl --fail -H 'Cache-Control: no-cache' -L https://raw.githubusercontent.com/elyra-ai/elyra/v3.14.2/etc/generic/requirements-elyra-py37.txt --output requirements-elyra-py37.txt"
+            sh -c "python3 -m pip install  packaging && python3 -m pip freeze > requirements-current.txt && python3 bootstrapper.py --pipeline-name 'mnist' --cos-endpoint 'http://minio-ds-pipeline.mnist.svc.cluster.local:9000/' --cos-bucket 'rhods' --cos-directory 'mnist-0620115554' --cos-dependencies-archive 'Evaluate-58c33e51-dee3-40dd-859b-7be8006b6ae6.tar.gz' --file 'rhods-mnist-model/notebooks/Evaluate.ipynb' "
+          command:
+          - sh
+          - -c
+          env:
+          - name: ELYRA_RUNTIME_ENV
+            value: kfp
+          - name: AWS_ACCESS_KEY_ID
+            value: minio
+          - name: AWS_SECRET_ACCESS_KEY
+            value: minio123
+          - name: ELYRA_ENABLE_PIPELINE_INFO
+            value: "True"
+          - name: ELYRA_WRITABLE_CONTAINER_DIR
+            value: /tmp
+          - name: ELYRA_RUN_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.annotations['pipelines.kubeflow.org/run_name']
+          - name: AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                key: AWS_ACCESS_KEY_ID
+                name: aws-connection-s3-creds
+          - name: AWS_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                key: AWS_SECRET_ACCESS_KEY
+                name: aws-connection-s3-creds
+          - name: AWS_S3_BUCKET
+            valueFrom:
+              secretKeyRef:
+                key: AWS_S3_BUCKET
+                name: aws-connection-s3-creds
+          - name: AWS_S3_ENDPOINT
+            valueFrom:
+              secretKeyRef:
+                key: AWS_S3_ENDPOINT
+                name: aws-connection-s3-creds
+          image: quay.io/alegros/runtime-image:rhods-mnist-cpu
+          volumeMounts:
+          - mountPath: /tmp/ml-pipeline
+            name: ml-pipeline
+            readOnly: false
+        stepTemplate:
+          volumeMounts:
+          - name: mlpipeline-metrics
+            mountPath: /tmp
+        volumes:
+        - name: ml-pipeline
+          persistentVolumeClaim:
+            claimName: ml-pipeline
+        - name: mlpipeline-metrics
+          emptyDir: {}
+        metadata:
+          labels:
+            elyra/node-type: notebook-script
+            elyra/pipeline-name: mnist
+            elyra/pipeline-version: ''
+            elyra/experiment-name: ''
+            elyra/node-name: Evaluate
+            pipelines.kubeflow.org/cache_enabled: "true"
+          annotations:
+            elyra/node-file-name: rhods-mnist-model/notebooks/Evaluate.ipynb
+            elyra/pipeline-source: mnist.pipeline
+            pipelines.kubeflow.org/task_display_name: Evaluate
+            pipelines.kubeflow.org/component_spec_digest: '{"name": "Run a file",
+              "outputs": [], "version": "Run a file@sha256=8a384ba52a33268509880c72a4505ba0050634562eae898d1dbfef2dd42dbf93"}'
+            tekton.dev/template: ''
+      runAfter:
+      - run-a-file-2
+      timeout: 525600m
+    - name: run-a-file-4
+      taskSpec:
+        steps:
+        - name: main
+          args:
+          - |
+            sh -c "mkdir -p ./jupyter-work-dir && cd ./jupyter-work-dir"
+            sh -c "echo 'Downloading https://raw.githubusercontent.com/elyra-ai/elyra/v3.14.2/elyra/kfp/bootstrapper.py' && curl --fail -H 'Cache-Control: no-cache' -L https://raw.githubusercontent.com/elyra-ai/elyra/v3.14.2/elyra/kfp/bootstrapper.py --output bootstrapper.py"
+            sh -c "echo 'Downloading https://raw.githubusercontent.com/elyra-ai/elyra/v3.14.2/etc/generic/requirements-elyra.txt' && curl --fail -H 'Cache-Control: no-cache' -L https://raw.githubusercontent.com/elyra-ai/elyra/v3.14.2/etc/generic/requirements-elyra.txt --output requirements-elyra.txt"
+            sh -c "echo 'Downloading https://raw.githubusercontent.com/elyra-ai/elyra/v3.14.2/etc/generic/requirements-elyra-py37.txt' && curl --fail -H 'Cache-Control: no-cache' -L https://raw.githubusercontent.com/elyra-ai/elyra/v3.14.2/etc/generic/requirements-elyra-py37.txt --output requirements-elyra-py37.txt"
+            sh -c "python3 -m pip install  packaging && python3 -m pip freeze > requirements-current.txt && python3 bootstrapper.py --pipeline-name 'mnist' --cos-endpoint 'http://minio-ds-pipeline.mnist.svc.cluster.local:9000/' --cos-bucket 'rhods' --cos-directory 'mnist-0620115554' --cos-dependencies-archive 'Review-0a2b2c67-599e-4e0f-a03b-a7223bfaf1cc.tar.gz' --file 'rhods-mnist-model/notebooks/Review.ipynb' "
+          command:
+          - sh
+          - -c
+          env:
+          - name: ELYRA_RUNTIME_ENV
+            value: kfp
+          - name: AWS_ACCESS_KEY_ID
+            value: minio
+          - name: AWS_SECRET_ACCESS_KEY
+            value: minio123
+          - name: ELYRA_ENABLE_PIPELINE_INFO
+            value: "True"
+          - name: ELYRA_WRITABLE_CONTAINER_DIR
+            value: /tmp
+          - name: ELYRA_RUN_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.annotations['pipelines.kubeflow.org/run_name']
+          - name: AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                key: AWS_ACCESS_KEY_ID
+                name: aws-connection-s3-creds
+          - name: AWS_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                key: AWS_SECRET_ACCESS_KEY
+                name: aws-connection-s3-creds
+          - name: AWS_S3_BUCKET
+            valueFrom:
+              secretKeyRef:
+                key: AWS_S3_BUCKET
+                name: aws-connection-s3-creds
+          - name: AWS_S3_ENDPOINT
+            valueFrom:
+              secretKeyRef:
+                key: AWS_S3_ENDPOINT
+                name: aws-connection-s3-creds
+          image: quay.io/alegros/runtime-image:rhods-mnist-cpu
+          volumeMounts:
+          - mountPath: /tmp/ml-pipeline
+            name: ml-pipeline
+            readOnly: false
+        stepTemplate:
+          volumeMounts:
+          - name: mlpipeline-metrics
+            mountPath: /tmp
+        volumes:
+        - name: ml-pipeline
+          persistentVolumeClaim:
+            claimName: ml-pipeline
+        - name: mlpipeline-metrics
+          emptyDir: {}
+        metadata:
+          labels:
+            elyra/node-type: notebook-script
+            elyra/pipeline-name: mnist
+            elyra/pipeline-version: ''
+            elyra/experiment-name: ''
+            elyra/node-name: Review
+            pipelines.kubeflow.org/cache_enabled: "true"
+          annotations:
+            elyra/node-file-name: rhods-mnist-model/notebooks/Review.ipynb
+            elyra/pipeline-source: mnist.pipeline
+            pipelines.kubeflow.org/task_display_name: Review
+            pipelines.kubeflow.org/component_spec_digest: '{"name": "Run a file",
+              "outputs": [], "version": "Run a file@sha256=4d714842e61640858b605f28a04f88065c8b61209b72e0db6eefd65804c983f8"}'
+            tekton.dev/template: ''
+      runAfter:
+      - run-a-file
+      - run-a-file-2
+      timeout: 525600m
+  timeouts:
+    pipeline: 1051200m
+    tasks: 525600m
