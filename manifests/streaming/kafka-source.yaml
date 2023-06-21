@@ -1,0 +1,15 @@
+apiVersion: sources.knative.dev/v1beta1
+kind: KafkaSource
+metadata:
+  name: mnist-images
+spec:
+  consumerGroup: data-transformation
+  bootstrapServers:
+    - mnist-streaming-cluster-bootstrap:9092
+  topics:
+    - mnist-images
+  sink:
+    ref: 
+      apiVersion: serving.knative.dev/v1
+      kind: Service
+      name: data-transformation

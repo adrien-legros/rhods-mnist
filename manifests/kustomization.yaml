@@ -5,6 +5,7 @@ resources:
   - ./project/
   - ./notebook-images/
   - ./ds-pipelines/
+  - ./streaming/
 
 secretGenerator:
 - name: aws-connection-s3-creds

@@ -1,0 +1,8 @@
+kind: Kustomization
+
+namespace: mnist
+
+resources:
+  - cluster-kafka.yaml
+  - topics-kafka.yaml
+  - kafka-source.yaml
