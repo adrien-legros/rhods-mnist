@@ -199,7 +199,7 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.labels['custom.tekton.dev/originalPipelineRun']
-          image: quay.io/alegros/runtime-image:cuda-ubi8-py38
+          image: quay.io/alegros/runtime-image:rhods-mnist-cpu
         - image: busybox
           name: output-taskrun-name
           command:
@@ -386,7 +386,7 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.labels['custom.tekton.dev/originalPipelineRun']
-          image: quay.io/alegros/runtime-image:cuda-ubi8-py38
+          image: quay.io/alegros/runtime-image:rhods-mnist-cpu
         - image: busybox
           name: output-taskrun-name
           command:
@@ -596,7 +596,7 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.labels['custom.tekton.dev/originalPipelineRun']
-          image: quay.io/alegros/runtime-image:cuda-ubi8-py38
+          image: quay.io/alegros/runtime-image:rhods-mnist-cpu
         params:
         - name: train-trname
         metadata:
