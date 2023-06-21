@@ -453,8 +453,6 @@ spec:
       - pre-process
     - name: evaluate
       params:
-      - name: pre-process-trname
-        value: $(tasks.pre-process.results.taskrun-name)
       - name: train-trname
         value: $(tasks.train.results.taskrun-name)
       taskSpec:
@@ -600,7 +598,6 @@ spec:
                 fieldPath: metadata.labels['custom.tekton.dev/originalPipelineRun']
           image: quay.io/alegros/runtime-image:cuda-ubi8-py38
         params:
-        - name: pre-process-trname
         - name: train-trname
         metadata:
           labels:
@@ -616,9 +613,6 @@ spec:
       - name: evaluate
         workspace: mnist-pipeline
       runAfter:
-      - pre-process
-      - pre-process
-      - pre-process
       - train
     workspaces:
     - name: mnist-pipeline
