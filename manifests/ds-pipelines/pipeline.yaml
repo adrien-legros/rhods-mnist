@@ -455,6 +455,8 @@ spec:
       params:
       - name: train-trname
         value: $(tasks.train.results.taskrun-name)
+      - name: pre-process-trname
+        value: $(tasks.pre-process.results.taskrun-name)
       taskSpec:
         steps:
         - name: main
@@ -599,6 +601,7 @@ spec:
           image: quay.io/alegros/runtime-image:rhods-mnist-cpu
         params:
         - name: train-trname
+        - name: pre-process-trname
         metadata:
           labels:
             pipelines.kubeflow.org/cache_enabled: "true"
