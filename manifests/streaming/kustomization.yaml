@@ -4,5 +4,9 @@ namespace: mnist
 
 resources:
   - cluster-kafka.yaml
+  - kafka-metrics.yaml
+  - kafka-monitor.yaml
   - topics-kafka.yaml
+  - kafdrop.yaml
+  - minio-source-binding.yaml
   - kafka-source.yaml
