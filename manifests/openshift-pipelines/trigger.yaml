@@ -1,0 +1,11 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: Trigger
+metadata:
+  name: trigger
+spec:
+  interceptors:
+  - name: gitea
+    ref:
+      name: gitea
+      kind: ClusterInterceptor
+      apiVersion: triggers.tekton.dev

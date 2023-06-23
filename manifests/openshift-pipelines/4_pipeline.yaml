@@ -1,0 +1,57 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: ds-pipeline-trigger
+spec:
+  params:
+    - name: GIT_REPO
+      type: string
+      default: "https://gitea-ds-testings.apps.cluster-xm7z7.xm7z7.sandbox1971.opentlc.com/data-scientist-1/ds-trigger-test"
+    - name: GIT_REVISION
+      type: string
+      default: main
+  workspaces:
+    - name: tekton-pvc
+  tasks:
+    - name: fetch-repository
+      taskRef:
+        name: git-clone
+        kind: ClusterTask
+      workspaces:
+        - name: output
+          workspace: tekton-pvc
+      params:
+        - name: url
+          value: $(params.GIT_REPO)
+        - name: revision
+          value: $(params.GIT_REVISION)
+
+    - name: start-ds-pipeline
+      params:
+        - name: DIGEST
+          value: $(tasks.fetch-repository.results.commit)
+      taskSpec:
+        params:
+          - name: DIGEST
+            type: string
+        steps:
+        - image: quay.io/alegros/mnist-pipeline-exec:latest
+          script: |
+            echo "DIGEST: $(params.DIGEST)"
+            python /workspace/output/kfp/model.py --tag $(params.DIGEST)
+      workspaces:
+        - name: output
+          workspace: tekton-pvc
+      runAfter:
+        - fetch-repository
+
+    # - name: gitea-status
+    #   taskRef:
+    #     name: openshift-client
+    #     kind: ClusterTask
+    #   runAfter:
+    #     - build
+    #   params:
+    #   - name: SCRIPT
+    #     value: |
+    #       oc new-app --docker-image $(params.IMAGE_NAME)

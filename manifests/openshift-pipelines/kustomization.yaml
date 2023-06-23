@@ -1,0 +1,6 @@
+resources:
+  - 0_gitea-tekton-interceptor.yaml
+  - 1_cluster-trigger-binding.yaml
+  - 2_trigger-template.yaml
+  - 3_event-listener.yaml
+  - 4_pipeline.yaml

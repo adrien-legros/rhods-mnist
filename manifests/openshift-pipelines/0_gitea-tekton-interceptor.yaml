@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: gitea-interceptor
+    app.kubernetes.io/name: gitea-interceptor
+  name: gitea-interceptor
+  namespace: ds-testings
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: gitea-interceptor
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: gitea-interceptor
+        app.kubernetes.io/name: gitea-interceptor
+    spec:
+      containers:
+        - command:
+          - /giteainterceptor
+          args:
+            - '-logtostderr'
+            - '-stderrthreshold'
+            - INFO
+          env:
+            - name: SYSTEM_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: CONFIG_LOGGING_NAME
+              value: config-logging-triggers
+            - name: CONFIG_OBSERVABILITY_NAME
+              value: config-observability-triggers
+            - name: METRICS_DOMAIN
+              value: tekton.dev/triggers
+          image: quay.io/itix/gitea-tekton-interceptor:latest
+          imagePullPolicy: IfNotPresent
+          name: tekton-triggers-gitea-interceptor
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /ready
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - all
+            runAsGroup: 65532
+            runAsUser: 65532
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: tekton-triggers-core-interceptors
+      serviceAccountName: tekton-triggers-core-interceptors
+      terminationGracePeriodSeconds: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: gitea-interceptor
+    app.kubernetes.io/name: gitea-interceptor
+  name: gitea-interceptor
+  namespace: ds-testings
+spec:
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app.kubernetes.io/name: gitea-interceptor
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: ClusterInterceptor
+metadata:
+  name: gitea
+spec:
+  clientConfig:
+    service:
+      name: gitea-interceptor
+      namespace: tekton-pipelines
