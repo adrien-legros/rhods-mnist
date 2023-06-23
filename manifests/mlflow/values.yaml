@@ -3,7 +3,6 @@ odhApplication:
 objectStorage:
   objectBucketClaim:
     enabled: false
-  objectStorage:
-    s3AccessKeyId: minio
-    s3EndpointUrl: http://minio-ds-pipeline.mnist.svc.cluster.local:9000/
-    s3SecretAccessKey: minio123
+  s3AccessKeyId: minio
+  s3EndpointUrl: http://minio-pipelines-definition.mnist.svc.cluster.local:9000/
+  s3SecretAccessKey: minio123
