@@ -33,4 +33,4 @@ spec:
       workspaces:
         - name: tekton-pvc
           persistentVolumeClaim:
-            claimName: tekton-pvc
+            claimName: ml-pipeline

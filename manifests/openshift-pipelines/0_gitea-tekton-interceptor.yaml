@@ -70,8 +70,8 @@ spec:
       restartPolicy: Always
       schedulerName: default-scheduler
       securityContext: {}
-      serviceAccount: tekton-triggers-core-interceptors
-      serviceAccountName: tekton-triggers-core-interceptors
+      serviceAccount: pipeline
+      serviceAccountName: pipeline
       terminationGracePeriodSeconds: 30
 ---
 apiVersion: v1
@@ -100,4 +100,4 @@ spec:
   clientConfig:
     service:
       name: gitea-interceptor
-      namespace: tekton-pipelines
+      namespace: mnist

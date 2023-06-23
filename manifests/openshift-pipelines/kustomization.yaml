@@ -1,6 +1,7 @@
 namespace: mnist
 
 resources:
+  - 0_serviceaccount.yaml
   - 0_gitea-tekton-interceptor.yaml
   - 1_cluster-trigger-binding.yaml
   - 2_trigger-template.yaml
