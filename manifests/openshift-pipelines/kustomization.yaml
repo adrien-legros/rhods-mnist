@@ -1,3 +1,5 @@
+namespace: mnist
+
 resources:
   - 0_gitea-tekton-interceptor.yaml
   - 1_cluster-trigger-binding.yaml

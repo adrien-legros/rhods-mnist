@@ -6,7 +6,7 @@ spec:
   params:
     - name: GIT_REPO
       type: string
-      default: "https://gitea-ds-testings.apps.cluster-xm7z7.xm7z7.sandbox1971.opentlc.com/data-scientist-1/ds-trigger-test"
+      default: "http://gitea.gitea.svc.cluster.local:3000/data-scientist-1/digit-recognition"
     - name: GIT_REVISION
       type: string
       default: main

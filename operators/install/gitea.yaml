@@ -12,10 +12,10 @@ spec:
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
-  name: gitea
+  name: gitea-operator
   namespace: openshift-operators
 spec:
-  channel: latest
-  name: redhat-gpte-gitea
+  channel: stable
+  name: gitea-operator
   source: redhat-gpte-gitea
   sourceNamespace: openshift-marketplace 

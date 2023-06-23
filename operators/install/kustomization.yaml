@@ -1,4 +1,6 @@
 resources:
+  - ./pgo.yaml
+  - ./gitea.yaml
   - ./openshift-data-science.yaml
   - ./openshift-pipelines.yaml
   - ./openshift-serverless.yaml

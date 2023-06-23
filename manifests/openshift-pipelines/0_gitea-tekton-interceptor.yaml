@@ -5,7 +5,6 @@ metadata:
     app: gitea-interceptor
     app.kubernetes.io/name: gitea-interceptor
   name: gitea-interceptor
-  namespace: ds-testings
 spec:
   progressDeadlineSeconds: 600
   replicas: 1
@@ -82,7 +81,6 @@ metadata:
     app: gitea-interceptor
     app.kubernetes.io/name: gitea-interceptor
   name: gitea-interceptor
-  namespace: ds-testings
 spec:
   ports:
     - name: http

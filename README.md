@@ -44,7 +44,7 @@ oc apply -k ./operators/instance/
 ```shell
 helm repo add strangiato https://strangiato.github.io/helm-charts/
 helm repo update
-helm upgrade -i mlflow-server strangiato/mlflow-server --values ./manifests/mlflow/values.yaml
+helm upgrade -i mlflow-server --create-namespace --namespace mlflow strangiato/mlflow-server --values ./manifests/mlflow/values.yaml
 ```
 
 ## Lab deployment
