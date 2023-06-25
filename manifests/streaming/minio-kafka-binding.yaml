@@ -17,7 +17,7 @@ spec:
   - ref:
       kind: Kamelet
       apiVersion: camel.apache.org/v1alpha1
-      name: json-serialize-action
+      name: json-serialize-stream 
   sink:
     ref:
       kind: KafkaTopic
