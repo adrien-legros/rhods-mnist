@@ -42,7 +42,7 @@ spec:
         - name: DSP_INSTANCE_NAME
           value: ""
         - name: KFP_ENDPOINT
-          value: "http://$(DSP_INSTANCE_NAME)-ds-pipeline.mnist.svc.cluster.local:8888/"
+          value: "http://ds-pipeline-$(DSP_INSTANCE_NAME).mnist.svc.cluster.local:8888/"
         - name: MINIO_ENDPOINT
           valueFrom:
             secretKeyRef:

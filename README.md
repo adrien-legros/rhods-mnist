@@ -83,7 +83,7 @@ oc apply -k ./lab/solve/
 #### Reset
 
 ```shell
-oc 
+oc apply -k ./lab/reset/
 ```
 
 ## Inference

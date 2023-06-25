@@ -56,7 +56,7 @@ spec:
                   mountPath: /scripts
               env:
                 - name: DSP_INSTANCE_NAME
-                  value: "ds-pipeline"
+                  value: "pipelines-definition"
                 - name: MARIADB_PWD
                   valueFrom:
                     secretKeyRef:
@@ -78,7 +78,7 @@ spec:
                   mountPath: /scripts
               env:
                 - name: DSP_INSTANCE_NAME
-                  value: "ds-pipeline"
+                  value: "pipelines-definition"
             - name: clear-minst-ns
               image: registry.redhat.io/openshift4/ose-cli:v4.11.0-202302061916.p0.g1928ac4.assembly.stream
               command: ['/scripts/clear-mnist-namespace.sh']
