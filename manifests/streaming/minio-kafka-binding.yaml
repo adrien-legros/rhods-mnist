@@ -1,0 +1,25 @@
+apiVersion: camel.apache.org/v1alpha1
+kind: KameletBinding
+metadata:
+  name: minio-source-binding
+spec:
+  source:
+    ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1alpha1
+      name: minio-source
+    properties:
+      accessKey: minio
+      bucketName: images
+      endpoint: http://minio-ds-pipeline:9000
+      secretKey: minio123
+  steps:
+  - ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1alpha1
+      name: json-serialize-stream 
+  sink:
+    ref:
+      kind: KafkaTopic
+      apiVersion: kafka.strimzi.io/v1beta1
+      name: mnist-images
