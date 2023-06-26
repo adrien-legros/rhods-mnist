@@ -11,7 +11,7 @@ spec:
     properties:
       accessKey: minio
       bucketName: images
-      endpoint: http://minio-ds-pipeline:9000
+      endpoint: http://minio-pipelines-definition:9000
       secretKey: minio123
   steps:
   - ref:
