@@ -5,10 +5,12 @@ metadata:
 spec:
   params:
   - name: GIT_REVISION
-    value: $(body.head_commit.id)
+    value: $(body.pull_request.head.sha)
   - name: GIT_REPO
     value: $(body.repository.clone_url)
   - name: GIT_REPO_NAME
     value: $(body.repository.name)
   - name: GIT_REPO_FULL_NAME
     value: $(body.repository.full_name)
+  - name: ISSUE_NB
+    value: $(body.pull_request.id)

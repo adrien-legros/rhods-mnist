@@ -1,0 +1,46 @@
+apiVersion: tekton.dev/v1beta1
+kind: ClusterTask
+metadata:
+  name: gitea-comment-pr
+spec:
+  description: >-
+    Comment gitea PR - HTTP
+  params:
+  - name: ISSUE_NB
+    type: string
+  - name: RUN_ID
+    type: string
+    description: KFP run id
+  - name: DASHBOARD
+    type: string
+  - name: accuracy
+    type: string
+  - name: loss
+    type: string
+  - name: lr
+    type: string
+  - name: val_acc
+    type: string
+  - name: val_loss
+    type: string
+  steps:
+  - name: post-comment
+    image: registry.redhat.io/ubi8/ubi@sha256:a7143118671dfc61aca46e8ab9e488500495a3c4c73a69577ca9386564614c13
+    script: |
+      #!/bin/sh
+      cat << EOF > body.json
+        {
+          "body": "
+          ### Data Science Pipeline Run Completed\n\n
+          **RUN_ID**: $(params.RUN_ID)\n
+          DASHBOARD: $(params.DASHBOARD)\n\n
+          |Metric|Value|\n
+          |---|---|\n
+          |Accuracy|$(params.accuracy)|\n
+          |Loss|$(params.loss)|\n
+          |Learning Rate|$(params.lr)|\n
+          |Validation Accuracy|$(params.val_acc)|\n
+          |Validation Loss|$(params.val_loss)|\n"
+        }
+      EOF
+      curl -X POST -H "Content-Type: application/json" -d @./body.json http://data-scientist-1:rhods@gitea.gitea:3000/api/v1/repos/data-scientist-1/digit-recognition/issues/$(params.ISSUE_NB)/comments
