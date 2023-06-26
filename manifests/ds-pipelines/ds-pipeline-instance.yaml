@@ -2,7 +2,6 @@ apiVersion: datasciencepipelinesapplications.opendatahub.io/v1alpha1
 kind: DataSciencePipelinesApplication
 metadata:
   name: pipelines-definition
-  namespace: ds-testings
 spec:
   apiServer:
     applyTektonCustomResource: true

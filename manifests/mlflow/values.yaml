@@ -1,0 +1,8 @@
+odhApplication:
+  namespaceOverride: redhat-ods-applications
+objectStorage:
+  objectBucketClaim:
+    enabled: false
+  s3AccessKeyId: minio
+  s3EndpointUrl: http://minio-pipelines-definition.mnist.svc.cluster.local:9000/
+  s3SecretAccessKey: minio123

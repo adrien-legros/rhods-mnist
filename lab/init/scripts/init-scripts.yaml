@@ -8,9 +8,10 @@ data:
     # Create bucket
     mc alias set minio ${MINIO_ENDPOINT} ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD}
     if [ $? -gt 0 ]; then exit 1; fi
-    echo "Creating bucket rhods on minio alias ..."
+    echo "Creating buckets on minio alias ..."
     mc mb minio/rhods
     mc mb minio/images
+    mc mb minio/mlflow
     curl -LJ ${MNIST_DATASET} -o /tmp/dataset.tar.gz
     mkdir /tmp/dataset
     tar xzf /tmp/dataset.tar.gz -C /tmp/dataset --strip-components 1

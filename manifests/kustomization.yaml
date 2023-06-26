@@ -4,6 +4,8 @@ kind: Kustomization
 resources:
   - ./project/
   - ./notebook-images/
+  - ./gitea/
+  - ./openshift-pipelines/
   - ./ds-pipelines/
   - ./streaming/
 

@@ -1,0 +1,19 @@
+apiVersion: gpte.opentlc.com/v1
+kind: Gitea
+metadata:
+  name: gitea
+spec:
+  giteaAdminEmail: admin@rhods-mnist.com
+  giteaAdminPassword: gitea
+  giteaAdminPasswordLength: 5
+  giteaAdminUser: gitea
+  giteaCreateUsers: true
+  giteaGenerateUserFormat: data-scientist-%d
+  giteaMigrateRepositories: true
+  giteaRepositoriesList:
+  - name: digit-recognition
+    private: false
+    repo: https://github.com/adrien-legros/rhods-mnist-model.git
+  giteaSsl: true
+  giteaUserNumber: 2
+  giteaUserPassword: rhods

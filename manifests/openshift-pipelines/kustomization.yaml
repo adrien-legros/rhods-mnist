@@ -1,0 +1,11 @@
+namespace: mnist
+
+resources:
+  - serviceaccount.yaml
+  - gitea-tekton-interceptor.yaml
+  - cluster-trigger-binding.yaml
+  - trigger-template.yaml
+  - event-listener.yaml
+  - mlflow-get-metrics-task.yaml
+  - gitea-comment-task.yaml
+  - pipeline.yaml
