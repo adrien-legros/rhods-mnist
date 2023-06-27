@@ -6,3 +6,4 @@ resources:
   - ./openshift-serverless.yaml
   - ./openshift-amq-streams.yaml
   - ./openshift-integration-camelk.yaml
+  - ./grafana.yaml
