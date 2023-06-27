@@ -5,3 +5,4 @@ resources:
   - ./openshift-pipelines.yaml
   - ./openshift-serverless.yaml
   - ./openshift-amq-streams.yaml
+  - ./openshift-integration-camelk.yaml

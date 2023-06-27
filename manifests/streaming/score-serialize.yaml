@@ -11,26 +11,21 @@ metadata:
     camel.apache.org/kamelet.bundled: "true"
     camel.apache.org/kamelet.readonly: "true"
     camel.apache.org/kamelet.type: action
-  name: json-serialize-stream
+  name: score-serialize
 spec:
   definition:
-    description: Serialize payload to specific JSON
-    title: Json Serialize Action For PNG
+    description: Serialize score to specific JSON
+    title: Json Serialize Score
     type: object
   dependencies:
   - camel:kamelet
   - camel:core
   - camel:jackson
-  template:
+  - camel:http
+  flow:
     from:
-      steps:
-        - marshal:
-            json:
-              library: Jackson
-        - set-body:
-            simple: '{"png": ${body}, "provider": "kafka"}'
-        - set-header:
-            constant: application/json
-            name: Content-Type
-        - log: ${body}
       uri: 'kamelet:source'
+      steps:
+        - log: ${body}
+        - to: "http://modelmesh-serving.mnist:8008"
+        - log: ${body}
