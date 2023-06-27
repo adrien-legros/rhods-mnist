@@ -12,3 +12,5 @@ resources:
   - kafdrop.yaml
   - minio-kafka-binding.yaml
   - json-serialize-stream.yaml
+  - score-kafka-binding.yaml
+  - score-serialize.yaml
