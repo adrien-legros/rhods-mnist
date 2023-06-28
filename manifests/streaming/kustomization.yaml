@@ -3,14 +3,6 @@ kind: Kustomization
 namespace: mnist
 
 resources:
-  - cluster-kafka.yaml
-  - kafka-metrics.yaml
-  - kafka-monitor.yaml
-  - topics-kafka.yaml
-  - kafka-source.yaml
-  - minio-source.yaml
-  - kafdrop.yaml
-  - minio-kafka-binding.yaml
-  - json-serialize-stream.yaml
-  - score-kafka-binding.yaml
-  - score-serialize.yaml
+  - ./kafka
+  - ./minio-to-kafka
+  - ./kafka-to-sql

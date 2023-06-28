@@ -1,0 +1,23 @@
+apiVersion: camel.apache.org/v1
+kind: Integration
+metadata:
+  name: minio-to-sql
+spec:
+  sources:
+  - content: |
+      class MessageType {
+        String time;
+        String score;
+        String prediction;
+        String png;
+      }
+      from("kamelet:kafka-source?topic=mnist-scoring-results&bootstrapServers=mnist-streaming-cluster-kafka-bootstrap:9092&user=kafka-user&password=password&securityProtocol=PLAINTEXT")
+      .to("log:info")
+      .unmarshal().json(MessageType.class)
+      .to("log:info")
+      .setBody(simple('{"png": "${body.png}", "score": "${body.score}", "prediction": "${body.prediction}", "time": "${body.time}"}'))
+      .setHeader("Content-Type", constant("application/json"))
+      .to("log:info")
+      .to("kamelet:mysql-sink?serverName=mnistdb&username=mnist&password=mnist&query=INSERT INTO scoring (time,png,score, prediction) VALUES (:#time, :#png, :#score, :#prediction)&databaseName=mnistdb")
+    name: kafka-to-sql.groovy
+  traits: {}

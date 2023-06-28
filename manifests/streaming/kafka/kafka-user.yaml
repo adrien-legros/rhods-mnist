@@ -1,0 +1,23 @@
+kind: Secret
+apiVersion: v1
+metadata:
+  name: kafka-user
+stringData:
+  password: password
+type: Opaque
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaUser
+metadata:
+  name: kafka-user
+  labels:
+    strimzi.io/cluster: mnist-streaming-cluster
+    app.kubernetes.io/instance: mnist-streaming-cluster
+spec:
+  authentication:
+    password:
+      valueFrom:
+        secretKeyRef:
+          name: kafka-user
+          key: password
+    type: scram-sha-512
