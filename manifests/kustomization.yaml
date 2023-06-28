@@ -8,6 +8,7 @@ resources:
   - ./openshift-pipelines/
   - ./ds-pipelines/
   - ./streaming/
+  - ./grafana/
 
 secretGenerator:
 - name: aws-connection-s3-creds
