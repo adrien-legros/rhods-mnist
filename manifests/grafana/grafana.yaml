@@ -1,0 +1,16 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: Grafana
+metadata:
+  name: mnist-grafana
+  labels:
+    dashboards: "grafana"
+spec:
+  config:
+    auth:
+      disable_login_form: 'false'
+    log:
+      level: warn
+      mode: console
+    security:
+      admin_password: secret
+      admin_user: root

@@ -1,0 +1,11 @@
+kind: Kustomization
+
+namespace: mnist
+
+resources:
+  - db-secret.yaml
+  - database.yaml
+  - grafana.yaml
+  - datasource.yaml
+  - dashboard.yaml
+  - route.yaml

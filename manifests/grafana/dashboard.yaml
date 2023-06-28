@@ -1,0 +1,197 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: scoring-dashboard
+spec:
+  resyncPeriod: 10m
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  plugins:
+    - name: volkovlabs-image-panel
+      version: 3.6.0
+  json: >
+    {
+      "annotations": {
+        "list": [
+          {
+            "builtIn": 1,
+            "datasource": {
+              "type": "grafana",
+              "uid": "-- Grafana --"
+            },
+            "enable": true,
+            "hide": true,
+            "iconColor": "rgba(0, 211, 255, 1)",
+            "name": "Annotations & Alerts",
+            "target": {
+              "limit": 100,
+              "matchAny": false,
+              "tags": [],
+              "type": "dashboard"
+            },
+            "type": "dashboard"
+          }
+        ]
+      },
+      "editable": true,
+      "fiscalYearStartMonth": 0,
+      "graphTooltip": 0,
+      "id": 2,
+      "links": [],
+      "liveNow": false,
+      "panels": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "9ab14720-030a-4fa5-9e06-e586d4ed3506"
+          },
+          "description": "",
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 0,
+            "y": 0
+          },
+          "id": 2,
+          "options": {
+            "autoPlay": true,
+            "buttons": [],
+            "controls": true,
+            "height": 0,
+            "heightMode": "auto",
+            "name": "png",
+            "toolbar": true,
+            "width": 0,
+            "widthMode": "original"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "mysql",
+                "uid": "9ab14720-030a-4fa5-9e06-e586d4ed3506"
+              },
+              "format": "table",
+              "group": [],
+              "metricColumn": "none",
+              "rawQuery": true,
+              "rawSql": "SELECT png\nFROM scoring\nORDER BY time\nDESC LIMIT 1",
+              "refId": "A",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "png"
+                    ],
+                    "type": "column"
+                  }
+                ]
+              ],
+              "table": "scoring",
+              "timeColumn": "time",
+              "timeColumnType": "timestamp",
+              "where": []
+            }
+          ],
+          "title": "Last Processed Image",
+          "type": "volkovlabs-image-panel"
+        },
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "9ab14720-030a-4fa5-9e06-e586d4ed3506"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "inspect": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 0
+          },
+          "id": 4,
+          "options": {
+            "footer": {
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true
+          },
+          "pluginVersion": "9.1.6",
+          "targets": [
+            {
+              "datasource": {
+                "type": "mysql",
+                "uid": "9ab14720-030a-4fa5-9e06-e586d4ed3506"
+              },
+              "format": "table",
+              "group": [],
+              "metricColumn": "none",
+              "rawQuery": true,
+              "rawSql": "SELECT time, score\nFROM scoring\nORDER BY time\nDESC LIMIT 1",
+              "refId": "A",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "score"
+                    ],
+                    "type": "column"
+                  }
+                ]
+              ],
+              "table": "scoring",
+              "timeColumn": "time",
+              "timeColumnType": "timestamp",
+              "where": []
+            }
+          ],
+          "title": "Associated Score",
+          "type": "table"
+        }
+      ],
+      "schemaVersion": 37,
+      "style": "dark",
+      "tags": [],
+      "templating": {
+        "list": []
+      },
+      "time": {
+        "from": "now-6h",
+        "to": "now"
+      },
+      "timepicker": {},
+      "timezone": "",
+      "title": "Last Processed Image",
+      "uid": "HDNaHZr4k",
+      "version": 3,
+      "weekStart": ""
+    }
