@@ -1,6 +1,0 @@
-kind: Kustomization
-
-namespace: mnist
-
-resources:
-  - blabla.yaml
