@@ -5,7 +5,6 @@ resources:
   - ./project/
   - ./notebook-images/
   - ./gitea/
-  - ./knative-instance/
   - ./openshift-pipelines/
   - ./ds-pipelines/
   - ./streaming/
