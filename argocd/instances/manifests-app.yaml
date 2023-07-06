@@ -13,7 +13,6 @@ spec:
       recurse: false
   destination:
     server: https://kubernetes.default.svc
-    namespace: mnist
   syncPolicy:
     syncOptions:
     - CreateNamespace=false

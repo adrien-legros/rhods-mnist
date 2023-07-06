@@ -3,12 +3,7 @@ kind: Kustomization
 
 resources:
   - ./project/
-  - ./gitea/
-  - ./knative-instance/
-  - ./openshift-pipelines/
   - ./ds-pipelines/
-  - ./streaming/
-  - ./grafana/
 
 secretGenerator:
 - name: aws-connection-s3-creds
