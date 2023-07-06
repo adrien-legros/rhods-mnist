@@ -3,4 +3,4 @@ kind: Kustomization
 
 resources:
   - ./project/
-  - ./gitea/
+  - ./openshift-pipelines/
