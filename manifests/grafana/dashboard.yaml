@@ -88,7 +88,7 @@ spec:
               "group": [],
               "metricColumn": "none",
               "rawQuery": true,
-              "rawSql": "SELECT png\nFROM scoring\nORDER BY time\nDESC LIMIT 1",
+              "rawSql": "SELECT png\nFROM scoring\nORDER BY id\nDESC LIMIT 1",
               "refId": "A",
               "select": [
                 [
@@ -169,7 +169,7 @@ spec:
               "group": [],
               "metricColumn": "none",
               "rawQuery": true,
-              "rawSql": "SELECT time, score, prediction\nFROM scoring\nORDER BY time\nDESC LIMIT 1",
+              "rawSql": "SELECT time, prediction, score\nFROM scoring\nORDER BY id\nDESC LIMIT 1",
               "refId": "A",
               "select": [
                 [
@@ -262,7 +262,7 @@ spec:
               "group": [],
               "metricColumn": "none",
               "rawQuery": true,
-              "rawSql": "SELECT time, prediction, score\nFROM scoring\nORDER BY time\nDESC",
+              "rawSql": "SELECT time, prediction, score\nFROM scoring\nORDER BY id\nDESC",
               "refId": "A",
               "select": [
                 [

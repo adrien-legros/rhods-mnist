@@ -1,34 +1,97 @@
-# Rhods Mnist
+# An MLOPS journey
+
+## Table of content
+
+1. [About](#about)
+2. [User story](#user-story)
+3. [Architecture](#architecture)
+4. [Highlights](#highlights)
+5. [Use as a lab](#use-as-a-lab)
+6. [Deployment](#deployment)
 
 ## About
 
-This git repository aims to demonstrates how to leverage Red Hat Openshift Data Science (RHODS) to:
-- Setup a data science environment
-- Create and run a deep learning model
-- Create a data science pipeine for reproducibility
-- Run, see and compare the outputs
-- Serve your model to make it accessible to applications
-- Deploy an application to interact with your model and make predictions
+This demo demonstrates an end to end automated MLOps approach for model training and serving. It leverages Red Hat Openshift Data Science (RHODS) as well as other products from Red Hat portfolio. 
 
-This readme provides commands to deploy the lab. There are also few jobs that enables you to initialize, solve or reset the lab. You will also find in the docs the [lab instructions](./docs/lab-instructions.md) with step by step explanations.
+## User story
 
-## Result
+A data scientist setup his Jupyter envrionement and develops his model. Once statisfied he commits his code and makes a pull request to merge into the production branch. He wants to train and deploy his model in production. The pull request automatically triggers a data science pipeline. During the training process, the model is tagged and stored into a bucket storage. A model server is serving this model and reconciles whenerer it is updated. The new model is automatically served and is consumable through api requests. It becomes a scalable model that can be used for live inference or batch streaming.
 
-![final-result.gif](./docs/gif/final-result.gif)
+## Architecture
 
-## Installation
+![global-architecture](./docs/schemas/global-architecture.png)
+
+## Highlights
+
+Non exhaustive list of highlights you can show using this demo:
+
+- Data Science Envrionement
+    - Setup a data science environment configuring Jupyter Notebooks
+    - Create and run a machine learning model
+    - Create a data science pipeine for reproducibility
+- Data science pipeline
+    - Run, see and compare the outputs
+    - Create and run a pipeline from elyra GUI
+    - Commit you code to git and create a pull request to start the automated worflow
+- Model server
+    - Serve your model
+    - Deploy a pre-processing serverless function for the inference
+    - Batch inference
+    - Online inference with a frontend
+- Streaming
+    - Add Camel integrations to automate the batch inference
+    - Grafana dashboard to watch the batch inference results
+
+## Use as a lab
+
+This demo might be used as a lab. Some instructions that do not contain the streaming features yet are [available here](./docs/lab-instructions.md). There are also [lab jobs](./lab/) that can be use to initialize, reset or complete the lab. Thoses jobs only works on the RHODS data science for now.
+
+## Deployment
+
+1. Install the operators. Some of them (typically RHODS) might require your manual approval. Go to the Openshift console and approve them.
+```shell
+oc apply -k ./operators/
+```
+2. Wait for the installations to complete. Confirm that all operators are ready with the screenshot. Confirm that the RHODS operator finished all the pod deployments with the command line.  
+![operator-validaiton](./docs/screenshots/operator-validation.png)
+```shell
+oc wait
+```
+3. Deploy the manifests.
+```shell
+oc apply -k ./manifests/
+```
+4. Initialize the lab.
+
+This job will push the datasets into your object storage.
+```shell
+oc apply -k ./lab/init/
+```
+5. Deploy MLFlow
+
+The [helm cli](https://helm.sh/docs/intro/install/) has to be installed. Then run the script.
+```shell
+helm repo add strangiato https://strangiato.github.io/helm-charts/
+helm repo update
+helm upgrade -i mlflow-server --create-namespace --namespace mlflow strangiato/mlflow-server --values ./manifests/mlflow/values.yaml
+```
+
+6. Configure gitea
+7. Configure DB
 
 ### Operators list
+
+#### Core demo
 
 - [Red Hat Openshift Data Science](https://www.redhat.com/en/technologies/cloud-computing/openshift/openshift-data-science)
 - [Openshift Pipeline](https://docs.openshift.com/container-platform/4.13/cicd/pipelines/op-release-notes.html)
 - [Openshift Serverless](https://docs.openshift.com/serverless/1.28/about/about-serverless.html)
 
-### Operators installation
+#### MLOps automation
 
-```shell
-oc apply -k ./operators/install/
-```
+#### Streaming
+
+
 
 ### Enable Knative serving
 
@@ -41,53 +104,3 @@ oc apply -k ./operators/instance/
 
 ### Mlflow
 
-```shell
-helm repo add strangiato https://strangiato.github.io/helm-charts/
-helm repo update
-helm upgrade -i mlflow-server --create-namespace --namespace mlflow strangiato/mlflow-server --values ./manifests/mlflow/values.yaml
-```
-
-## Lab deployment
-
-```shell
-# Setup the environement
-oc apply -k ./manifests/
-```
-
-## Lab
-
-### Initialization
-
-Initialisation in mandatory. It pushes the data used by notebooks into a minio S3 bucket.
-
-```shell
-oc apply -k ./lab/init/
-```
-
-### Lab instructions
-
-Lab instrcutions can be found [here](./docs/lab-instructions.md).
-
-### Lab scripts
-
-Scripts are deployed using kustomize. If you want to run the same script more than once, first delete the completed job using `oc delete -n mnist job <SCRIPT_NAME>`. Replace SCRIPT_NAME with *lab-solve* or *lab-reset*.
-
-#### Solve
-
-```shell
-oc apply -k ./lab/solve/
-```
-
-#### Reset
-
-```shell
-oc apply -k ./lab/reset/
-```
-
-## Inference
-
-Deploy the web application for drawing as well as the servless function to transform inference data.
-
-```shell
-oc apply -k ./inference/
-```
