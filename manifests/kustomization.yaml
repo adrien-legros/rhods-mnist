@@ -3,7 +3,6 @@ kind: Kustomization
 
 resources:
   - ./project/
-  - ./notebook-images/
   - ./gitea/
   - ./knative-instance/
   - ./openshift-pipelines/
