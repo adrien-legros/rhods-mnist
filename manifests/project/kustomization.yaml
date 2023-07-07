@@ -5,3 +5,18 @@ namespace: mnist
 resources:
   - namespace.yaml
   - pvc.yaml
+
+secretGenerator:
+- name: aws-connection-s3-creds
+  namespace: mnist
+  envs:
+  - minio.env
+  type: Opaque
+  options:
+    disableNameSuffixHash: true
+    labels:
+      opendatahub.io/dashboard: 'true'
+      opendatahub.io/managed: 'true'
+    annotations:
+      opendatahub.io/connection-type: s3
+      openshift.io/display-name: s3-creds
