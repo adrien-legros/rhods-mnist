@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://github.com/adrien-legros/rhods-mnist
     targetRevision: v3
-    path: ./manifests/
+    path: ./manifests/project/
     directory:
       recurse: false
   destination:

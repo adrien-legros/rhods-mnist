@@ -1,0 +1,5 @@
+resources:
+  - ./secret.yaml
+  - ./database.yaml
+  - ./script.yaml
+  - ./init-job.yaml

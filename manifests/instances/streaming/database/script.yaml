@@ -1,0 +1,11 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: init-db
+data:
+  init-db.sh: |
+    #!/usr/bin/env sh
+    mysql -u root;
+    USE mnistdb;
+    DROP TABLE scoring;
+    CREATE TABLE scoring(id int NOT NULL AUTO_INCREMENT, time TIMESTAMP, png VARCHAR(10000), score VARCHAR(255), prediction VARCHAR(255), PRIMARY KEY (id));

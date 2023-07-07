@@ -1,0 +1,18 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: init-db
+spec:
+  template:
+    spec:
+      serviceAccountName: jobs
+      initContainers:
+        - name: wait-for-mnistdb
+          image: registry.redhat.io/openshift4/ose-cli:v4.11.0-202302061916.p0.g1928ac4.assembly.stream
+          command: ["oc", "-n", "mnist", "wait", "--for=condition=Ready=true", "po", "-l=app=mnistdb"]
+      containers:
+      - name: init-db
+        image: registry.redhat.io/openshift4/ose-cli:v4.11.0-202302061916.p0.g1928ac4.assembly.stream
+        command: ["oc", "-n", "mnist", "exec", "-it", "dc/mnistdb",  "--", "/bin/sh", "-c", "/scripts/init-db.sh"]
+      restartPolicy: Never
+  backoffLimit: 4

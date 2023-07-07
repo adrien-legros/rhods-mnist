@@ -53,15 +53,17 @@ This demo might be used as a lab. Some instructions that do not contain the stre
 oc apply -k ./operators/
 ```
 2. Wait for the installations to complete. Confirm that all operators are ready with the screenshot. Confirm that the RHODS operator finished all the pod deployments with the command line.  
-![operator-validaiton](./docs/screenshots/operator-validation.png)
+
+![operators-validation](./docs/screenshots/operators-validation.png)
 ```shell
-oc wait
+chmod +x ./lab/solve/scripts/wait-for-rhods.sh
+./lab/solve/scripts/wait-for-rhods.sh
 ```
 3. Deploy the manifests.
 ```shell
 oc apply -k ./manifests/
 ```
-4. Initialize the lab.
+4. Configure data science project (notebooks + serving).
 
 This job will push the datasets into your object storage.
 ```shell

@@ -1,0 +1,7 @@
+resources:
+  - ./knative-instance/
+  - ./project/
+  - ./notebook-images/
+  - ./ds-pipelines/
+  - ./inference/
+  - ./lab/solve/

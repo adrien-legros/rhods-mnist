@@ -7,4 +7,5 @@ metadata:
     kubernetes.io/metadata.name: mnist
     modelmesh-enabled: "true"
     opendatahub.io/dashboard: "true"
+    argocd.argoproj.io/managed-by: openshift-gitops
   name: mnist

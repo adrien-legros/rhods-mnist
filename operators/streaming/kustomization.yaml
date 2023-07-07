@@ -1,4 +1,0 @@
-resources:
-  - ./grafana.yaml
-  - ./openshift-amq-streams.yaml
-  - ./openshift-integration-camel.yaml
