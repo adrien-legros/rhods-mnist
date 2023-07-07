@@ -1,0 +1,4 @@
+resources:
+  - ./openshift-data-science.yaml
+  - ./openshift-pipelines.yaml
+  - ./openshift-serverless.yaml

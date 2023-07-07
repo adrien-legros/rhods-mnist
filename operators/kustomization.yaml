@@ -1,9 +1,4 @@
 resources:
-  - ./pgo.yaml
-  - ./gitea.yaml
-  - ./openshift-data-science.yaml
-  - ./openshift-pipelines.yaml
-  - ./openshift-serverless.yaml
-  - ./openshift-amq-streams.yaml
-  - ./openshift-integration-camelk.yaml
-  - ./grafana.yaml
+  - ./core/
+  - ./automated-pipelines/
+  - ./streaming/
