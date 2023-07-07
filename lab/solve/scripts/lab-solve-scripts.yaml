@@ -52,3 +52,5 @@ data:
     oc -n redhat-ods-applications wait --for=condition=Ready=true po -l app=notebook-controller --timeout=10m
     wait_for_exists "app=rhods-dashboard" "redhat-ods-applications"
     oc -n redhat-ods-applications wait --for=condition=Ready=true po -l app=rhods-dashboard --timeout=10m
+    wait_for_exists "notebook=mnist-notebook" "redhat-ods-applications"
+    oc -n mnist wait --for=condition=Ready=true po -l notebook=mnist-notebook
