@@ -3,7 +3,8 @@ kind: Kustomization
 namespace: mnist
 
 resources:
-  - ../base
+  - ../base/
+  - ../init/
   - ./notebook/
   - ./serviceaccount/
   - ./scripts/

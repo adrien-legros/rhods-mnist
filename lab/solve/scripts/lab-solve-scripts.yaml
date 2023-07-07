@@ -8,28 +8,6 @@ data:
     set -e
     rm -rf *
     git clone ${NOTEBOOKS_GIT_URL}
-  push-model.sh: |-
-    #!/usr/bin/env sh
-    # Push to bucket
-    mc alias set minio ${MINIO_ENDPOINT} ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD}
-    mc mb minio/rhods
-    set -e
-    curl -LJ ${NOTEBOOKS_GIT_URL}/tarball/main -o /tmp/model.tar.gz
-    mkdir /tmp/model
-    tar xzf /tmp/model.tar.gz -C /tmp/model --strip-components 1
-    mc cp /tmp/model/models/model-v2.onnx minio/rhods/onnx/model-v2.onnx
-    echo "Model pushed into bucket"
-  push-data.sh: |-
-    #!/usr/bin/env sh
-    mc alias set minio ${MINIO_ENDPOINT} ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD}
-    mc mb minio/rhods
-    curl -LJ ${MNIST_DATASET} -o /tmp/dataset.tar.gz
-    mkdir /tmp/dataset
-    tar xzf /tmp/dataset.tar.gz -C /tmp/dataset --strip-components 1
-    unzip /tmp/dataset/digit-recognizer.zip -d /tmp/dataset
-    mc cp /tmp/dataset/train.csv minio/rhods/data/train.csv
-    mc cp /tmp/dataset/test.csv minio/rhods/data/test.csv
-    echo "Creation completed"
   elyra-runtime.sh: |-
     elyra-metadata remove runtimes --name kubeflow_runtime
     elyra-metadata create runtimes \
@@ -47,3 +25,30 @@ data:
     #!/usr/bin/env sh
     oc -n mnist wait --for=condition=Ready=true po -l modelmesh-service=modelmesh-serving
     oc -n mnist delete po -l modelmesh-service=modelmesh-serving
+  wait-for-rhods.sh: |-
+    #!/usr/bin/env sh
+    wait_for_exists () {
+        # Arg1: selector
+        # Arg2: namespace
+        while true; do
+            pod_exists=$(oc -n $2 get po -oname -l $1 | wc -l)
+            if [ $pod_exists -gt 0 ]; then
+                echo "Selector $1 found in namespace $2"
+                break
+            fi
+            echo "Wait for selector $1 in namspace $2"
+            sleep 5
+        done;
+    }
+    wait_for_exists "name=rhods-operator" "redhat-ods-operator"
+    oc -n redhat-ods-operator wait --for=condition=Ready=true po -l name=rhods-operator --timeout=10m
+    wait_for_exists "app=model-mesh" "redhat-ods-applications"
+    oc -n redhat-ods-applications wait --for=condition=Ready=true po -l app=model-mesh --timeout=10m
+    wait_for_exists "control-plane=controller-manager" "redhat-ods-applications"
+    oc -n redhat-ods-applications wait --for=condition=Ready=true po -l control-plane=controller-manager --timeout=10m
+    wait_for_exists "control-plane=odh-model-controller" "redhat-ods-applications"
+    oc -n redhat-ods-applications wait --for=condition=Ready=true po -l control-plane=odh-model-controller --timeout=10m
+    wait_for_exists "app=notebook-controller" "redhat-ods-applications"
+    oc -n redhat-ods-applications wait --for=condition=Ready=true po -l app=notebook-controller --timeout=10m
+    wait_for_exists "app=rhods-dashboard" "redhat-ods-applications"
+    oc -n redhat-ods-applications wait --for=condition=Ready=true po -l app=rhods-dashboard --timeout=10m
