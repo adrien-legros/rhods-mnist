@@ -5,10 +5,9 @@ metadata:
   labels:
     app: grafana
 spec:
-  resyncPeriod: 10m
   plugins:
-    - name: volkovlabs-image-panel
-      version: 3.6.0
+    - name: "volkovlabs-image-panel"
+      version: "3.6.0"
   json: >
     {
       "annotations": {

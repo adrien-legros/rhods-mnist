@@ -10,12 +10,23 @@ spec:
           name: serverless-function
           env:
             - name: INFERENCE_ENDPOINT
-              value: ""
+              valueFrom:
+                configMapKeyRef:
+                  name: global-demo-configs
+                  key: INFERENCE_ENDPOINT
             - name: USE_OAUTH_PROXY
-              value: ""
+              valueFrom:
+                configMapKeyRef:
+                  name: global-demo-configs
+                  key: INFERENCE_AUTHENTICATION
+            - name: MM_SA_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: global-demo-configs
+                  key: MM_SA_NAME
             - name: OAUTH_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: ""
+                  name: $(MM_SA_NAME)
                   key: token
                   optional: true

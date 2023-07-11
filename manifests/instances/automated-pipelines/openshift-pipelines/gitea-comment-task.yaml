@@ -6,6 +6,18 @@ spec:
   description: >-
     Comment gitea PR - HTTP
   params:
+  - name: GITEA_USERNAME
+    type: string
+    default: data-scientist-1
+  - name: GITEA_PWD
+    type: string
+    default: rhods
+  - name: GITEA_SVC
+    type: string
+    default: gitea-http
+  - name: GITEA_NS
+    type: string
+    default: gitea
   - name: ISSUE_NB
     type: string
   - name: RUN_ID
@@ -33,4 +45,4 @@ spec:
           "body": "### Data Science Pipeline Run Completed\n\n**RUN_ID**: $(params.RUN_ID)\nDASHBOARD: $(params.DASHBOARD)\n\n|Metric|Value|\n|---|---|\n|Accuracy|$(params.accuracy)|\n|Loss|$(params.loss)|\n|Learning Rate|$(params.lr)|\n|Validation Accuracy|$(params.val_acc)|\n|Validation Loss|$(params.val_loss)|\n"
         }
       EOF
-      curl -X POST -H "Content-Type: application/json" -d @./body.json http://data-scientist-1:rhods@gitea.gitea:3000/api/v1/repos/data-scientist-1/digit-recognition/issues/$(params.ISSUE_NB)/comments
+      curl -X POST -H "Content-Type: application/json" -d @./body.json http://$(params.GITEA_USERNAME):$(params.GITEA_PWD)@$(params.GITEA_SVC).$(params.GITEA_NS):3000/api/v1/repos/data-scientist-1/digit-recognition/issues/$(params.ISSUE_NB)/comments

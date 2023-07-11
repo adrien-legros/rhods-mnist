@@ -1,3 +1,13 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: init-db
+data:
+  init-db.sh: |
+    #!/usr/bin/env sh
+    DROP TABLE IF EXISTS scoring;
+    CREATE TABLE scoring(id int NOT NULL AUTO_INCREMENT, time TIMESTAMP, png VARCHAR(10000), score VARCHAR(255), prediction VARCHAR(255), PRIMARY KEY (id));
+---
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -13,6 +23,6 @@ spec:
       containers:
       - name: init-db
         image: registry.redhat.io/openshift4/ose-cli:v4.11.0-202302061916.p0.g1928ac4.assembly.stream
-        command: ["oc", "-n", "mnist", "exec", "-it", "dc/mnistdb",  "--", "/bin/sh", "-c", "/scripts/init-db.sh"]
+        command: ["oc", "-n", "mnist", "exec", "-it", "dc/mnistdb",  "--", "/bin/sh", "-c", "mysql -u root mnistdb < /scripts/init-db.sh"]
       restartPolicy: Never
   backoffLimit: 4

@@ -1,7 +1,7 @@
 apiVersion: camel.apache.org/v1alpha1
 kind: KameletBinding
 metadata:
-  name: minio-source-binding
+  name: minio-to-kafka
 spec:
   source:
     ref:

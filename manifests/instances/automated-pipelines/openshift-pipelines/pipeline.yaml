@@ -6,12 +6,10 @@ spec:
   params:
     - name: GIT_REPO
       type: string
-      default: "http://gitea.gitea.svc.cluster.local:3000/data-scientist-1/digit-recognition"
     - name: GIT_REVISION
       type: string
     - name: ISSUE_NB
       type: string
-      default: "1"
   workspaces:
     - name: tekton-pvc
   tasks:
@@ -68,6 +66,8 @@ spec:
       params:
         - name: DIGEST
           value: $(tasks.fetch-repository.results.commit)
+        - name: MLFLOW_SERVER_ENDPOINT
+          value: "http://mnist-mlflow-server.mlflow:8080"
       runAfter:
         - wait-ds-pipeline
 

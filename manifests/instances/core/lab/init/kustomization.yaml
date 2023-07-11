@@ -1,5 +1,0 @@
-namespace: mnist
-resources:
-  - ../base
-  - ./scripts/
-  - ./job.yaml

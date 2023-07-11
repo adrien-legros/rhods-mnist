@@ -1,7 +1,7 @@
 resources:
-  - ./knative-instance/
-  - ./project/
+  - ./base/
   - ./notebook-images/
-  - ./ds-pipelines/
+  - ./data-science-project/
+  - ./data-science-pipelines/
   - ./inference/
-  - ./lab/solve/
+  - ./jobs/

@@ -1,5 +1,15 @@
 namespace: gitea
-
 resources:
-  - namespace.yaml
-  - gitea.yaml
+  - ./namespace.yaml
+  - ./scc-binding.yaml
+  - ./serviceaccount.yaml
+  - ./scripts.yaml
+  - ./job.yaml
+  - ./route.yaml
+helmCharts:
+- name: gitea
+  releaseName: gitea
+  repo: https://dl.gitea.io/charts/
+  version: 8.3.0
+  namespace: gitea
+  valuesFile: values.yaml

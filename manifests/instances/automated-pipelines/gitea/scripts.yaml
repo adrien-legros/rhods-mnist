@@ -1,0 +1,63 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: hook-creation
+data:
+  wait.sh: |
+    #!/usr/bin/env sh
+    wait_for_exists () {
+        # Arg1: selector
+        # Arg2: namespace
+        echo "IN"
+        while true; do
+            pod_exists=$(oc -n $2 get po -oname -l $1 | wc -l)
+            if [ $pod_exists -gt 0 ]; then
+                echo "Selector $1 found in namespace $2"
+                break
+            fi
+            echo "Wait for selector $1 in namspace $2"
+            sleep 5
+        done;
+    }
+    wait_for_exists "app=gitea,role=server" "gitea"
+    oc -n gitea wait --timeout=10m --for=condition=Ready=true po -l app=gitea,role=server
+    wait_for_exists "eventlistener=ds-pipeline-trigger-listener" "mnist"
+    oc -n mnist wait --timeout=10m --for=condition=Ready=true po -l eventlistener=ds-pipeline-trigger-listener
+  hook-creation.sh: |
+    #!/usr/bin/env sh
+    # Variables
+    OWNER=data-scientist-1
+    OWNER_PWD=rhods
+    REPO=digit-recognition
+    GITEA_ENDPOINT="http://gitea-http.gitea.svc.cluster.local:3000"
+    MIGRATE_API_ENDPOINT=${GITEA_ENDPOINT}/api/v1/repos/migrate
+    HOOK_API_ENDPOINT=${GITEA_ENDPOINT}/api/v1/repos/${OWNER}/${REPO}/hooks
+    EL_ENDPOINT="http://el-ds-pipeline-trigger-listener.mnist.svc.cluster.local:8080"
+    # Clone git repo
+    migrate_payload() {
+        cat <<EOF
+    {
+        "clone_addr": "https://github.com/adrien-legros/rhods-mnist-model",
+        "repo_name": "digit-recognition",
+        "repo_owner": "data-scientist-1"
+    }
+    EOF
+    }
+    curl -X POST -H "Content-Type: application/json" -u ${OWNER}:${OWNER_PWD} --data "$(migrate_payload)" ${MIGRATE_API_ENDPOINT}
+    # Add the webhook
+    hook_payload() {
+        cat <<EOF
+    {
+        "active": true,
+        "config": {
+            "content_type": "json",
+            "url": "${EL_ENDPOINT}"
+        },
+        "events": [
+            "pull_request"
+        ],
+        "type": "gitea"
+    }
+    EOF
+    }
+    curl -X POST -H "Content-Type: application/json" -u ${OWNER}:${OWNER_PWD} --data "$(hook_payload)" ${HOOK_API_ENDPOINT}

@@ -3,7 +3,7 @@ kind: Grafana
 metadata:
   name: mnist-grafana
   labels:
-    dashboards: "grafana"
+    app: "grafana"
 spec:
   config:
     auth:
@@ -12,8 +12,8 @@ spec:
       level: warn
       mode: console
     security:
-      admin_password: secret
-      admin_user: root
+      admin_password: admin
+      admin_user: admin
   dashboardLabelSelector:
     - matchExpressions:
         - { key: app, operator: In, values: [grafana] }

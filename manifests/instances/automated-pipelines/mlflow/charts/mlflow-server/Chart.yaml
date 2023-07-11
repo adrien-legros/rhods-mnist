@@ -1,0 +1,16 @@
+apiVersion: v2
+appVersion: "2.3"
+dependencies:
+- condition: crunchyPostgres.enabled
+  name: postgrescluster
+  repository: https://strangiato.github.io/helm-charts/
+  version: 0.2.2
+description: A Helm chart for deploying mlflow on OpenShift
+icon: https://avatars.githubusercontent.com/u/39938107
+kubeVersion: '>= 1.21.0'
+name: mlflow-server
+sources:
+- https://github.com/strangiato/helm-charts/tree/main/charts/mlflow-server
+- https://github.com/strangiato/mlflow-server
+type: application
+version: 0.5.8

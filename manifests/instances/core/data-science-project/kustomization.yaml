@@ -1,0 +1,5 @@
+namespace: mnist
+resources:
+  - namespace.yaml
+  - pvc.yaml
+  - notebook.yaml
