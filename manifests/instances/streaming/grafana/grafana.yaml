@@ -13,7 +13,7 @@ spec:
       mode: console
     security:
       admin_password: admin
-      admin_user: admin
+      admin_user: rhods
   dashboardLabelSelector:
     - matchExpressions:
         - { key: app, operator: In, values: [grafana] }

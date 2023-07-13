@@ -7,7 +7,7 @@ metadata:
 spec:
   plugins:
     - name: "volkovlabs-image-panel"
-      version: "3.6.0"
+      version: "1.0.1"
   json: >
     {
       "annotations": {
@@ -33,14 +33,15 @@ spec:
         ]
       },
       "editable": true,
-      "fiscalYearStartMonth": 0,
+      "gnetId": null,
       "graphTooltip": 0,
       "id": 3,
+      "iteration": 1689150572161,
       "links": [],
-      "liveNow": false,
       "panels": [
         {
           "collapsed": false,
+          "datasource": null,
           "gridPos": {
             "h": 1,
             "w": 24,
@@ -53,14 +54,15 @@ spec:
           "type": "row"
         },
         {
-          "datasource": {
-            "type": "mysql",
-            "uid": "a40dfe20-2423-48d7-b4a4-094b3150ea5a"
-          },
+          "datasource": "${datasource}",
           "description": "",
+          "fieldConfig": {
+            "defaults": {},
+            "overrides": []
+          },
           "gridPos": {
             "h": 9,
-            "w": 12,
+            "w": 9,
             "x": 0,
             "y": 1
           },
@@ -78,10 +80,6 @@ spec:
           },
           "targets": [
             {
-              "datasource": {
-                "type": "mysql",
-                "uid": "9ab14720-030a-4fa5-9e06-e586d4ed3506"
-              },
               "format": "table",
               "group": [],
               "metricColumn": "none",
@@ -108,10 +106,7 @@ spec:
           "type": "volkovlabs-image-panel"
         },
         {
-          "datasource": {
-            "type": "mysql",
-            "uid": "a40dfe20-2423-48d7-b4a4-094b3150ea5a"
-          },
+          "datasource": "${datasource}",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -120,7 +115,7 @@ spec:
               "custom": {
                 "align": "auto",
                 "displayMode": "auto",
-                "inspect": false
+                "filterable": false
               },
               "mappings": [],
               "thresholds": {
@@ -141,8 +136,8 @@ spec:
           },
           "gridPos": {
             "h": 9,
-            "w": 12,
-            "x": 12,
+            "w": 15,
+            "x": 9,
             "y": 1
           },
           "id": 4,
@@ -154,9 +149,10 @@ spec:
               ],
               "show": false
             },
-            "showHeader": true
+            "showHeader": true,
+            "sortBy": []
           },
-          "pluginVersion": "9.1.6",
+          "pluginVersion": "7.5.17",
           "targets": [
             {
               "datasource": {
@@ -189,6 +185,7 @@ spec:
           "type": "table"
         },
         {
+          "datasource": null,
           "gridPos": {
             "h": 1,
             "w": 24,
@@ -200,10 +197,7 @@ spec:
           "type": "row"
         },
         {
-          "datasource": {
-            "type": "mysql",
-            "uid": "a40dfe20-2423-48d7-b4a4-094b3150ea5a"
-          },
+          "datasource": "${datasource}",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -212,7 +206,7 @@ spec:
               "custom": {
                 "align": "left",
                 "displayMode": "auto",
-                "inspect": false,
+                "filterable": false,
                 "width": 300
               },
               "mappings": [],
@@ -249,14 +243,14 @@ spec:
             },
             "showHeader": true
           },
-          "pluginVersion": "9.1.6",
+          "pluginVersion": "7.5.17",
           "targets": [
             {
               "datasource": {
                 "type": "mysql",
                 "uid": "a40dfe20-2423-48d7-b4a4-094b3150ea5a"
               },
-              "format": "time_series",
+              "format": "table",
               "group": [],
               "metricColumn": "none",
               "rawQuery": true,
@@ -287,11 +281,33 @@ spec:
         }
       ],
       "refresh": "5s",
-      "schemaVersion": 37,
+      "schemaVersion": 27,
       "style": "dark",
       "tags": [],
       "templating": {
-        "list": []
+        "list": [
+          {
+            "current": {
+              "selected": true,
+              "text": "MySQL",
+              "value": "MySQL"
+            },
+            "description": null,
+            "error": null,
+            "hide": 0,
+            "includeAll": false,
+            "label": null,
+            "multi": false,
+            "name": "datasource",
+            "options": [],
+            "query": "mysql",
+            "queryValue": "",
+            "refresh": 1,
+            "regex": "",
+            "skipUrlSync": false,
+            "type": "datasource"
+          }
+        ]
       },
       "time": {
         "from": "now-6h",
@@ -301,6 +317,5 @@ spec:
       "timezone": "",
       "title": "Inference Dashboard",
       "uid": "inferencedashboard",
-      "version": 1,
-      "weekStart": ""
+      "version": 4
     }
