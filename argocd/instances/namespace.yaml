@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  annotations:
+    openshift.io/display-name: mnist
+  labels:
+    kubernetes.io/metadata.name: mnist
+    modelmesh-enabled: "true"
+    opendatahub.io/dashboard: "true"
+    argocd.argoproj.io/managed-by: openshift-gitops
+  name: mnist

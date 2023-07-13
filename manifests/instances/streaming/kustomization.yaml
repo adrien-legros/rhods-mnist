@@ -1,0 +1,10 @@
+kind: Kustomization
+
+namespace: mnist
+
+resources:
+  - ./kafka/
+  - ./minio-to-kafka/
+  - ./kafka-to-sql/
+  - ./database/
+  - ./grafana/

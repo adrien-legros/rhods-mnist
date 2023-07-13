@@ -1,93 +1,65 @@
-# Rhods Mnist
+# An MLOPS journey
+
+## Table of content
+
+1. [About](#about)
+2. [User story](#user-story)
+3. [Architecture](#architecture)
+4. [Walkthrough](#walkthrough)
+5. [Deployment](#deployment)  
 
 ## About
 
-This git repository aims to demonstrates how to leverage Red Hat Openshift Data Science (RHODS) to:
-- Setup a data science environment
-- Create and run a deep learning model
-- Create a data science pipeine for reproducibility
-- Run, see and compare the outputs
-- Serve your model to make it accessible to applications
-- Deploy an application to interact with your model and make predictions
+This demo demonstrates an end to end automated MLOps approach for model training and inference. It leverages Red Hat Openshift Data Science (RHODS) as well as other products from Red Hat portfolio. 
 
-This readme provides commands to deploy the lab. There are also few jobs that enables you to initialize, solve or reset the lab. You will also find in the docs the [lab instructions](./docs/lab-instructions.md) with step by step explanations.
+## User story
 
-## Result
+A data scientist setup his Jupyter envrionement and develops his model. Once statisfied he commits his code and makes a pull request to merge into the production branch. The pull request automatically triggers a data science pipeline. During the training process, the model is tagged and stored into a bucket storage. A model server is serving this model and reconciles whenerer it is updated. The new model is automatically served and is consumable through api requests. It becomes a scalable model that can be used for live inference or batch streaming.
 
-![final-result.gif](./docs/gif/final-result.gif)
+## Architecture
 
-## Installation
+![global-architecture](./docs/schemas/global-architecture.png)
 
-### Operators list
+## Walkthrough
 
-- [Red Hat Openshift Data Science](https://www.redhat.com/en/technologies/cloud-computing/openshift/openshift-data-science)
-- [Openshift Pipeline](https://docs.openshift.com/container-platform/4.13/cicd/pipelines/op-release-notes.html)
-- [Openshift Serverless](https://docs.openshift.com/serverless/1.28/about/about-serverless.html)
+Walkthourgh and highlights can be found on [this documentation](./docs/walkthrough.md).
 
-### Operators installation
+## Deployment
+
+The following procedure will deploy all the demo components. If you want to deploy only specific components, look at [this documentation](./manifests/readme.md).
+
+### Operators 
+
+Install the operators.
 
 ```shell
-oc apply -k ./operators/install/
+oc apply -k ./manifests/operators/
 ```
 
-### Enable Knative serving
+Wait for the installations to complete. Confirm that all operators are ready. Compare your operators status to this screenshot. 
 
-Wait until the operators installation to finish and run:
+![operators-validation](./docs/screenshots/operators-validation.png)
+
+
+### Knative instances
+
+Deploy the knative namespaces and instances by runnning:
 
 ```shell
-# Instanciate Serving
-oc apply -k ./operators/instance/
+oc apply -k ./manifests/operators-instances/
 ```
 
-### Mlflow
+### Demo environment.
+
+Firstly wait for the RHODS operator to finish deploying. You can run the following command that will wait for this condition.
 
 ```shell
-helm repo add strangiato https://strangiato.github.io/helm-charts/
-helm repo update
-helm upgrade -i mlflow-server --create-namespace --namespace mlflow strangiato/mlflow-server --values ./manifests/mlflow/values.yaml
+chmod +x ./manifests/operators/wait-for-rhods.sh
+./manifests/operators/wait-for-rhods.sh
 ```
 
-## Lab deployment
+Then deploy the demo environment with:
 
 ```shell
-# Setup the environement
-oc apply -k ./manifests/
-```
-
-## Lab
-
-### Initialization
-
-Initialisation in mandatory. It pushes the data used by notebooks into a minio S3 bucket.
-
-```shell
-oc apply -k ./lab/init/
-```
-
-### Lab instructions
-
-Lab instrcutions can be found [here](./docs/lab-instructions.md).
-
-### Lab scripts
-
-Scripts are deployed using kustomize. If you want to run the same script more than once, first delete the completed job using `oc delete -n mnist job <SCRIPT_NAME>`. Replace SCRIPT_NAME with *lab-solve* or *lab-reset*.
-
-#### Solve
-
-```shell
-oc apply -k ./lab/solve/
-```
-
-#### Reset
-
-```shell
-oc apply -k ./lab/reset/
-```
-
-## Inference
-
-Deploy the web application for drawing as well as the servless function to transform inference data.
-
-```shell
-oc apply -k ./inference/
+oc kustomize ./manifests/instances/ --enable-helm | oc apply -f -
 ```

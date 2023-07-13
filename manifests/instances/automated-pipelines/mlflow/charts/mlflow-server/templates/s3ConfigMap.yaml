@@ -1,0 +1,11 @@
+{{- if not .Values.objectStorage.objectBucketClaim.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "mlflow-server.fullname" . }}
+  labels:
+    {{- include "mlflow-server.labels" . | nindent 4 }}
+data:
+  BUCKET_NAME: {{ .Values.objectStorage.mlflowBucketName }}
+  S3_ENDPOINT_URL: {{ .Values.objectStorage.s3EndpointUrl }}
+{{- end }}

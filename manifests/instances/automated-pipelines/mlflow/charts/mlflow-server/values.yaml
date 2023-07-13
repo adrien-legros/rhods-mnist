@@ -1,0 +1,176 @@
+# -- String to partially override fullname template (will maintain the release name)
+nameOverride: ""
+# -- String to fully override fullname template
+fullnameOverride: ""
+
+# -- replicas of MLFlow Server
+replicaCount: 1
+
+# -- The image pull secret for the image repository
+imagePullSecrets: []
+
+image:
+  # -- The image repository to use
+  repository: quay.io/troyer/mlflow-server
+  # -- The docker image pull policy
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  # -- The image tag to use
+  # @default -- Chart appVersion
+  tag: ""
+
+odhApplication:
+  # -- Enable the ODH Dashboard Application tile for MLFlow
+  enabled: false
+  # -- Used to specify the namespace ODH is installed in if installed in a different namespace from MLFlow
+  namespaceOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  # -- Enable creation of ServiceAccount for MLFlow Server pod
+  create: true
+  # Annotations to add to the service account
+  # -- Additional custom annotations for the ServiceAccount
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  # -- The name of the ServiceAccount to use.
+  # @default -- fullname template
+  name: ""
+
+database:
+  migration:
+    enabled: false
+
+# -- Map of annotations to add to the pods
+podAnnotations: {}
+
+# -- 
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+objectStorage:
+  objectBucketClaim:
+    # -- Enable creation of s3 bucket with objectBucketClaim for artifact storage
+    enabled: true
+    # -- StorageClassName for creation of the objectBucketClaim
+    storageClassName: openshift-storage.noobaa.io
+    # -- BucketClass name for the creation of the objectBucketClaim
+    bucketclass: noobaa-default-bucket-class
+    # -- Additional custom annotations for the objectBucketClaim
+    annotations: {}
+  # -- URL for s3 endpoint if the objectBucketClaim is disabled
+  s3EndpointUrl: ""
+  # -- Name of the s3 bucket if the objectBucketClaim is disabled
+  mlflowBucketName: "mlflow"
+  # -- S3 Access Key ID if the objectBucketClaim is disabled
+  s3AccessKeyId: ""
+  # -- S3 Secret Access Key if the objectBucketClaim is disabled
+  s3SecretAccessKey: ""
+
+crunchyPostgres:
+  # -- Enable creation of a postgres instance using crunchyPostgres operator
+  enabled: true
+
+service:
+  # -- Kubernetes Service type
+  type: ClusterIP
+  # -- MLFlow server port
+  port: 8080
+
+ingress:
+  enabled: false
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths: []
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+openshiftOauth: 
+  # -- Secures MLFlow with OpenShift Oauth Proxy.  If disabling this option it is recommended to set `route.tls.termination: edge`.
+  enabled: true
+  # -- Enable access to MLFlow using an OpenShift Bearer Token.  This feature enables users from outside of the cluster to read/write to MLFlow using the API.  
+  # Warning: This feature requires cluster admin to install.
+  enableBearerTokenAccess: false
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+route:
+  # -- Enable creation of the OpenShift Route object
+  enabled: true
+  # Allow OCP to determine the host if left blank
+  # -- The hostname for the route
+  # @default -- Set by OpenShift
+  host: ""
+  # -- The path for the OpenShift route
+  path: ""
+  tls:
+    # -- Enable secure route settings
+    enabled: true
+    # -- Secure route termination policy
+    termination: reencrypt
+    # -- Insecure route termination policy
+    insecureEdgeTerminationPolicy: Redirect
+  # -- Additional custom annotations for the route
+  annotations: {}
+
+# -- Resource configuration for the MLFlow Server pod
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+# -- Node selector for the MlFlow Server pod
+nodeSelector: {}
+
+# -- Tolerations for the MLFlow Server pod
+tolerations: []
+
+# -- Affinity configuration for the MLFlow Server pod
+affinity: {}
+
+trainingTestImage:
+  # -- The image repository used for the helm training test
+  repository: quay.io/troyer/mlflow-server-training-test
+  # -- The docker image pull policy
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  # -- The image tag to use
+  # @default -- Chart appVersion
+  tag: "latest"

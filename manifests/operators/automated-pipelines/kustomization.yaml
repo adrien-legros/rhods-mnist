@@ -1,0 +1,3 @@
+resources:
+  - ./gitea.yaml
+  - ./pgo.yaml

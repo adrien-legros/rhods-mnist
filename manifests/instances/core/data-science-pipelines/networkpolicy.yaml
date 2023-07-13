@@ -1,0 +1,15 @@
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: allow-wildcard-to-kfp
+spec:
+  podSelector:
+    matchLabels:
+      app: ds-pipeline-pipelines-definition
+      component: data-science-pipelines
+  ingress:
+    - from:
+        - podSelector: {}
+          namespaceSelector: {}
+  policyTypes:
+    - Ingress

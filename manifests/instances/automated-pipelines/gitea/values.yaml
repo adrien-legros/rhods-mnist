@@ -1,0 +1,14 @@
+gitea:
+  admin:
+    username: data-scientist-1
+    password: rhods
+  config:
+    webhook:
+      ALLOWED_HOST_LIST: "*"
+    security:
+      MIN_PASSWORD_LENGTH: 5
+    server:
+      ROOT_URL: http://gitea-http.gitea:3000
+statefulset:
+  labels:
+    role: server

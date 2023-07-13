@@ -1,5 +1,0 @@
-namespace: gitea
-
-resources:
-  - namespace.yaml
-  - gitea.yaml
