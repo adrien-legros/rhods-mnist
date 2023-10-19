@@ -4,9 +4,6 @@ metadata:
   name: mysql-grafana-datasource
 spec:
   name: mysql
-  instanceSelector:
-    matchLabels:
-      app: grafana
   datasources:
   - access: proxy
     name: MySQL

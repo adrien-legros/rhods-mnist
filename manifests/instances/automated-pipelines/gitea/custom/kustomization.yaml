@@ -1,0 +1,8 @@
+namespace: gitea
+resources:
+  - ./namespace.yaml
+  - ./scc-binding.yaml
+  - ./serviceaccount.yaml
+  - ./scripts.yaml
+  - ./job.yaml
+  - ./route.yaml
