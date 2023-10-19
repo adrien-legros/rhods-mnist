@@ -25,3 +25,10 @@ subjects:
 - apiGroup: rbac.authorization.k8s.io
   kind: User
   name: hpe_redhat
+---
+apiVersion: user.openshift.io/v1
+kind: Group
+metadata:
+  name: rhods-users
+users:
+- hpe_redhat
