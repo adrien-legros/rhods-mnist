@@ -12,3 +12,10 @@ gitea:
 statefulset:
   labels:
     role: server
+image:
+  registry: ""
+  repository: quay.io/alegros/gitea
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "1.19.3"
+  pullPolicy: Always
+  rootless: false # only possible when running 1.14 or later
