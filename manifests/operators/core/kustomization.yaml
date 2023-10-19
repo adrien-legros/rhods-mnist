@@ -1,0 +1,28 @@
+resources:
+  - ./openshift-data-science.yaml
+  - ./openshift-pipelines.yaml
+  - ./openshift-serverless.yaml
+  - ./rhods-update-approbation.yaml
+
+
+configMapGenerator:
+- name: rhods-demo-version
+  namespace: redhat-ods-operator
+  envs:
+  - rhods-version.env
+  options:
+    disableNameSuffixHash: true
+
+replacements:
+- source:
+    kind: ConfigMap
+    name: rhods-demo-version
+    namespace: redhat-ods-operator
+    fieldPath: data.RHODS_VERSION
+  targets:
+  - select:
+      group: operators.coreos.com/v1alpha1
+      kind: Subscription
+      name: rhods-operator
+    fieldPaths:
+    - .spec.startingCSV

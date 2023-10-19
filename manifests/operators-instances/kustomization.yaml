@@ -1,0 +1,4 @@
+resources:
+  - ./openshift-serverless-knativeserving.yaml
+  - ./openshift-serverless-knativeeventing.yaml
+  - ./openshift-serverless-knativekafka.yaml

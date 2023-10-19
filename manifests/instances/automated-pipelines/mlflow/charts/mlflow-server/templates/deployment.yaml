@@ -1,0 +1,175 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "mlflow-server.fullname" . }}
+  annotations:
+    app.openshift.io/vcs-uri: github.com/strangiato/mlflow-server
+  labels:
+    {{- include "mlflow-server.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "mlflow-server.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "mlflow-server.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "mlflow-server.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: mlflow-server
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: mlflow-server
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: mlflow-server
+            initialDelaySeconds: 30
+          env:
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "mlflow-server.fullname" . }}
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "mlflow-server.fullname" . }}
+                  key: AWS_SECRET_ACCESS_KEY
+            - name: MLFLOW_S3_BUCKET_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "mlflow-server.fullname" . }}
+                  key: BUCKET_NAME
+            {{ if .Values.objectStorage.objectBucketClaim.enabled }}
+            - name: BUCKET_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "mlflow-server.fullname" . }}
+                  key: BUCKET_HOST
+            - name: BUCKET_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "mlflow-server.fullname" . }}
+                  key: BUCKET_PORT
+            - name: MLFLOW_S3_ENDPOINT_URL
+              value: 'https://$(BUCKET_HOST):$(BUCKET_PORT)'
+            {{ else  }}
+            - name: MLFLOW_S3_ENDPOINT_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "mlflow-server.fullname" . }}
+                  key: S3_ENDPOINT_URL
+            {{ end }}
+            - name: AWS_CA_BUNDLE
+              value: /run/secrets/kubernetes.io/serviceaccount/service-ca.crt
+            {{ if .Values.crunchyPostgres.enabled }}
+            - name: PGBOUNCE_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-pguser-{{ .Release.Name }}
+                  key: pgbouncer-host
+            - name: PGBOUNCE_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-pguser-{{ .Release.Name }}
+                  key: pgbouncer-port
+            - name: MLFLOW_DATABASE_HOST
+              value: $(PGBOUNCE_HOST):$(PGBOUNCE_PORT)
+            - name: MLFLOW_DATABASE_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-pguser-{{ .Release.Name }}
+                  key: dbname
+            - name: MLFLOW_DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-pguser-{{ .Release.Name }}
+                  key: password
+            - name: MLFLOW_DATABASE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-pguser-{{ .Release.Name }}
+                  key: user
+            {{- end }}
+            - name: MLFLOW_PORT
+              value: '8080'
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+        {{- if .Values.openshiftOauth.enabled }}
+        - name: oauth-proxy
+          image: registry.redhat.io/openshift4/ose-oauth-proxy:v4.10
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8443
+              name: oauth-proxy
+          args:
+            - --https-address=:8443
+            - --provider=openshift
+            {{- if .Values.openshiftOauth.enableBearerTokenAccess }}
+            - '--openshift-delegate-urls={"/": {"resource": "service", "verb": "get", "name": "{{ include "mlflow-server.fullname" . }}"}}'
+            {{- else }}
+            - --openshift-sar={"namespace":"{{ .Release.Namespace }}","resource":"services","resourceName":"{{ include "mlflow-server.fullname" . }}","verb":"get"}
+            {{- end }}
+            - --openshift-service-account={{ include "mlflow-server.serviceAccountName" . }}
+            - --upstream=http://localhost:8080
+            - --tls-cert=/etc/tls/private/tls.crt
+            - --tls-key=/etc/tls/private/tls.key
+            - --cookie-secret=SECRET
+          volumeMounts:
+            - mountPath: /etc/tls/private
+              name: oauth-tls
+          livenessProbe:
+            httpGet:
+              path: /oauth/healthz
+              port: 8443
+              scheme: HTTPS
+          readinessProbe:
+            httpGet:
+              path: /oauth/healthz
+              port: 8443
+              scheme: HTTPS
+          resources:
+            {{- toYaml .Values.openshiftOauth.resources | nindent 12 }}
+        {{- end }}
+      {{- if .Values.openshiftOauth.enabled }}
+      volumes:
+        - name: oauth-tls
+          secret:
+            secretName: {{ include "mlflow-server.fullname" . }}-tls
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

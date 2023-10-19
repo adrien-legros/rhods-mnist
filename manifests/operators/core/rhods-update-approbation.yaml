@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: jobs
+  namespace: redhat-ods-operator
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: job-admin-rhods-operator
+subjects:
+- kind: ServiceAccount
+  name: jobs
+  namespace: redhat-ods-operator
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: rbac.authorization.k8s.io
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: approve-install-plan
+  namespace: redhat-ods-operator
+data:
+  approve.sh: |
+    #!/usr/bin/env sh
+    RHODS_VERSION=$1
+    echo "Approving rhods version: $RHODS_VERSION"
+    oc -n redhat-ods-operator wait --for=jsonpath='.spec.clusterServiceVersionNames[0]'=${RHODS_VERSION} installplan -l=operators.coreos.com/rhods-operator.redhat-ods-operator
+    INSTALL_PLAN=$(oc -n redhat-ods-operator get installplan -ojsonpath="{.items[?(@.spec.clusterServiceVersionNames[0]=='"${RHODS_VERSION}"')].metadata.name}")
+    oc -n redhat-ods-operator patch installplan ${INSTALL_PLAN} --type merge --patch '{"spec":{"approved":true}}'
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: approve-install-plan
+  namespace: redhat-ods-operator
+spec:
+  template:
+    spec:
+      serviceAccountName: jobs
+      containers:
+      - name: approve
+        image: registry.redhat.io/openshift4/ose-cli:v4.11.0-202302061916.p0.g1928ac4.assembly.stream
+        env:
+        - name: RHODS_VERSION
+          valueFrom:
+            configMapKeyRef:
+              name: rhods-demo-version
+              key: RHODS_VERSION
+        command: ["/scripts/approve.sh"]
+        args: ["$(RHODS_VERSION)"]
+        volumeMounts:
+          - name: scripts
+            mountPath: /scripts
+      volumes:
+        - name: scripts
+          configMap:
+            name: approve-install-plan
+            defaultMode: 0777 
+      restartPolicy: Never
+  backoffLimit: 4

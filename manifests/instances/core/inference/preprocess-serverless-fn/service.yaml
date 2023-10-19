@@ -1,0 +1,32 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: data-transformation
+spec:
+  template:
+    spec:
+      containers:
+        - image: quay.io/alegros/mnist-serverless-fn:v3
+          name: serverless-function
+          env:
+            - name: INFERENCE_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: global-demo-configs
+                  key: INFERENCE_ENDPOINT
+            - name: USE_OAUTH_PROXY
+              valueFrom:
+                configMapKeyRef:
+                  name: global-demo-configs
+                  key: INFERENCE_AUTHENTICATION
+            - name: MM_SA_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: global-demo-configs
+                  key: MM_SA_NAME
+            - name: OAUTH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: mnist-sa
+                  key: token
+                  optional: true

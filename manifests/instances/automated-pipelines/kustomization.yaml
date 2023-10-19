@@ -1,0 +1,4 @@
+resources:
+  - ./mlflow/
+  - ./openshift-pipelines/
+  - ./gitea/

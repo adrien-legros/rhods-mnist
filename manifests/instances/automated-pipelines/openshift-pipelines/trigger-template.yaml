@@ -1,0 +1,39 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerTemplate
+metadata:
+  annotations:
+    triggers.tekton.dev/old-escape-quotes: "true"
+  name: ds-pipeline-trigger
+spec:
+  params:
+  - name: GIT_REPO
+  - name: GIT_REVISION
+  - name: GIT_REPO_NAME
+  - name: GIT_REPO_FULL_NAME
+  - name: ISSUE_NB
+  resourcetemplates:
+  - apiVersion: tekton.dev/v1beta1
+    kind: PipelineRun
+    metadata:
+      generateName: ds-pipeline-trigger-
+      labels:
+        app-name: ds-pipeline-trigger
+    spec:
+      params:
+        - name: GIT_REPO
+          value: $(tt.params.GIT_REPO)
+        - name: GIT_REVISION
+          value: $(tt.params.GIT_REVISION)
+        - name: GIT_REPO_NAME
+          value: $(tt.params.GIT_REPO_NAME)
+        - name: GIT_REPO_FULL_NAME
+          value: $(tt.params.GIT_REPO_FULL_NAME)
+        - name: ISSUE_NB
+          value: $(tt.params.ISSUE_NB)
+      pipelineRef:
+        name: ds-pipeline-trigger
+      timeout: 1h0m0s
+      workspaces:
+        - name: tekton-pvc
+          persistentVolumeClaim:
+            claimName: ml-pipeline

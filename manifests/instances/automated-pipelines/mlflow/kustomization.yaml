@@ -1,0 +1,9 @@
+namespace: mlflow
+resources:
+  - ./namespace.yaml
+helmCharts:
+- name: mlflow-server
+  releaseName: mnist
+  version: 0.5.8
+  namespace: mlflow
+  valuesFile: values.yaml

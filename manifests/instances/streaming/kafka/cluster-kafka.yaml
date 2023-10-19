@@ -1,0 +1,103 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: Kafka
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"kafka.strimzi.io/v1beta2","kind":"Kafka","metadata":{"annotations":{},"labels":{"app.kubernetes.io/instance":"kafka"},"name":" mnist-streaming-cluster","namespace":"mnist"},"spec":{"entityOperator":{"tlsSidecar":{},"topicOperator":{"reconciliationIntervalSeconds":60},"userOperator":{"reconciliationIntervalSeconds":60}},"kafka":{"authorization":{"superUsers":["admin-user"],"type":"simple"},"config":{"auto.create.topics.enable":false,"default.replication.factor":3,"log.cleaner.delete.retention.ms":3600000,"log.cleaner.enable":true,"log.cleanup.policy":"delete","log.retention.hours":24,"message.max.bytes":52428800,"min.insync.replicas":2,"num.partitions":1,"offsets.topic.replication.factor":3,"transaction.state.log.min.isr":2,"transaction.state.log.replication.factor":3},"listeners":[{"name":"plain","port":9092,"tls":false,"type":"internal"},{"authentication":{"type":"tls"},"name":"tls","port":9093,"tls":true,"type":"internal"},{"authentication":{"type":"scram-sha-512"},"name":"scram","port":9094,"tls":false,"type":"internal"},{"authentication":{"type":"scram-sha-512"},"name":"external","port":9095,"tls":true,"type":"route"}],"livenessProbe":{"initialDelaySeconds":60,"timeoutSeconds":5},"metricsConfig":{"type":"jmxPrometheusExporter","valueFrom":{"configMapKeyRef":{"key":"kafka-metrics-config.yml","name":"kafka-metrics"}}},"readinessProbe":{"initialDelaySeconds":60,"timeoutSeconds":5},"replicas":3,"storage":{"type":"jbod","volumes":[{"deleteClaim":true,"id":0,"size":"10Gi","type":"persistent-claim"},{"deleteClaim":true,"id":1,"size":"10Gi","type":"persistent-claim"}]},"version":"3.2.3"},"kafkaExporter":{"groupRegex":".*","topicRegex":".*"},"zookeeper":{"livenessProbe":{"initialDelaySeconds":60,"timeoutSeconds":5},"metricsConfig":{"type":"jmxPrometheusExporter","valueFrom":{"configMapKeyRef":{"key":"zookeeper-metrics-config.yml","name":"kafka-metrics"}}},"readinessProbe":{"initialDelaySeconds":60,"timeoutSeconds":5},"replicas":3,"storage":{"deleteClaim":true,"size":"5Gi","type":"persistent-claim"}}}}
+  labels:
+    app.kubernetes.io/instance: kafka
+  name: mnist-streaming-cluster
+spec:
+  entityOperator:
+    tlsSidecar: {}
+    topicOperator:
+      reconciliationIntervalSeconds: 60
+    userOperator:
+      reconciliationIntervalSeconds: 60
+  kafka:
+    authorization:
+      # superUsers:
+      # - admin-user
+      # type: simple
+    config:
+      auto.create.topics.enable: false
+      default.replication.factor: 3
+      log.cleaner.delete.retention.ms: 3600000
+      log.cleaner.enable: true
+      log.cleanup.policy: delete
+      log.retention.hours: 24
+      message.max.bytes: 52428800
+      min.insync.replicas: 2
+      num.partitions: 1
+      offsets.topic.replication.factor: 3
+      transaction.state.log.min.isr: 2
+      transaction.state.log.replication.factor: 3
+    listeners:
+    - name: plain
+      port: 9092
+      tls: false
+      type: internal
+    - authentication:
+        type: tls
+      name: tls
+      port: 9093
+      tls: true
+      type: internal
+    - authentication:
+        type: scram-sha-512
+      name: scram
+      port: 9094
+      tls: false
+      type: internal
+    - authentication:
+        type: scram-sha-512
+      name: external
+      port: 9095
+      tls: true
+      type: route
+    livenessProbe:
+      initialDelaySeconds: 60
+      timeoutSeconds: 5
+    metricsConfig:
+      type: jmxPrometheusExporter
+      valueFrom:
+        configMapKeyRef:
+          key: kafka-metrics-config.yml
+          name: kafka-metrics
+    readinessProbe:
+      initialDelaySeconds: 60
+      timeoutSeconds: 5
+    replicas: 3
+    storage:
+      type: jbod
+      volumes:
+      - deleteClaim: true
+        id: 0
+        size: 10Gi
+        type: persistent-claim
+      - deleteClaim: true
+        id: 1
+        size: 10Gi
+        type: persistent-claim
+    version: 3.5.0
+  kafkaExporter:
+    groupRegex: .*
+    topicRegex: .*
+  zookeeper:
+    livenessProbe:
+      initialDelaySeconds: 60
+      timeoutSeconds: 5
+    metricsConfig:
+      type: jmxPrometheusExporter
+      valueFrom:
+        configMapKeyRef:
+          key: zookeeper-metrics-config.yml
+          name: kafka-metrics
+    readinessProbe:
+      initialDelaySeconds: 60
+      timeoutSeconds: 5
+    replicas: 3
+    storage:
+      deleteClaim: true
+      size: 5Gi
+      type: persistent-claim

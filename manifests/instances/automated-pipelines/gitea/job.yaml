@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: hook-creation
+spec:
+  template:
+    spec:
+      serviceAccountName: jobs
+      initContainers:
+      - name: wait-for-prerequisites
+        image: registry.redhat.io/openshift4/ose-cli:v4.11.0-202302061916.p0.g1928ac4.assembly.stream
+        command: ["/scripts/wait.sh"]
+        volumeMounts:
+          - name: scripts
+            mountPath: /scripts
+      containers:
+      - name: hook-creation
+        image: registry.redhat.io/openshift4/ose-cli:v4.11.0-202302061916.p0.g1928ac4.assembly.stream
+        command: ["/scripts/hook-creation.sh"]
+        volumeMounts:
+          - name: scripts
+            mountPath: /scripts
+      volumes:
+        - name: scripts
+          configMap:
+            name: hook-creation
+            defaultMode: 0777 
+      restartPolicy: Never
+  backoffLimit: 4

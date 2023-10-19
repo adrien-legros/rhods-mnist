@@ -1,0 +1,4 @@
+namespace: mnist
+resources:
+- ./service-account.yaml
+- ./service-account-token.yaml

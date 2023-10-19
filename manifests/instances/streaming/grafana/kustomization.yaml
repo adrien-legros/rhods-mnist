@@ -1,0 +1,8 @@
+kind: Kustomization
+
+namespace: mnist
+resources:
+  - grafana.yaml
+  - datasource.yaml
+  - dashboard.yaml
+  - route.yaml

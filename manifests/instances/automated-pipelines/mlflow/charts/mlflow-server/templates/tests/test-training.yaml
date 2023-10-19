@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "mlflow-server.fullname" . }}-test-training"
+  labels:
+    {{- include "mlflow-server.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: training
+      image: "{{ .Values.trainingTestImage.repository }}:{{ .Values.trainingTestImage.tag | default .Chart.AppVersion }}"
+      imagePullPolicy: "{{ .Values.trainingTestImage.pullPolicy}}"
+      env:
+        - name: MLFLOW_TRACKING_URI
+          value: 'http://{{ include "mlflow-server.fullname" . }}:{{ .Values.service.port }}'
+        - name: MLFLOW_EXPERIMENT
+          value: helm-test
+  restartPolicy: Never
+  serviceAccountName: {{ include "mlflow-server.serviceAccountName" . }}

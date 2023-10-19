@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  annotations:
+    openshift.io/display-name: mnist
+  labels:
+    kubernetes.io/metadata.name: mnist
+    modelmesh-enabled: "true"
+    opendatahub.io/dashboard: "true"
+  name: mnist
+---
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: grafana-operator-group
+  namespace: mnist
+spec:
+  targetNamespaces:
+    - mnist
+  upgradeStrategy: Default
+---
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: grafana-operator
+  namespace: mnist
+spec:
+  channel: v4
+  name: grafana-operator
+  source: community-operators
+  sourceNamespace: openshift-marketplace
+  installPlanApproval: Automatic

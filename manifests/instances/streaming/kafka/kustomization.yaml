@@ -1,0 +1,11 @@
+kind: Kustomization
+
+namespace: mnist
+
+resources:
+  - ./cluster-kafka.yaml
+  - ./kafka-user.yaml
+  - ./kafka-metrics.yaml
+  - ./kafka-monitor.yaml
+  - ./kafka-topics.yaml
+  - ./kafdrop.yaml

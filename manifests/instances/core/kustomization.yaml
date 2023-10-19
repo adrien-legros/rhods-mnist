@@ -1,0 +1,7 @@
+resources:
+  - ./base/
+  - ./notebook-images/
+  - ./data-science-project/
+  - ./data-science-pipelines/
+  - ./inference/
+  - ./jobs/
