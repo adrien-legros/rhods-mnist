@@ -8,4 +8,3 @@ resources:
   - ./kafka-metrics.yaml
   - ./kafka-monitor.yaml
   - ./kafka-topics.yaml
-  - ./kafdrop.yaml
