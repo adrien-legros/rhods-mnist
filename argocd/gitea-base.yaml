@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: gitea-base
+  namespace: openshift-gitops
+spec:
+  project: default
+  sources:
+  - repoURL: https://dl.gitea.io/charts/
+    chart: gitea
+    targetRevision: 8.3.0
+    helm:
+      releaseName: gitea
+      valueFiles:
+      - $values/manifests/instances/automated-pipelines/gitea/base/values.yaml
+  - repoURL: https://github.com/adrien-legros/rhods-mnist
+    targetRevision: hpe
+    ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: gitea
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true
+    automated:
+      selfHeal: true
+      prune: true
+    managedNamespaceMetadata:
+      labels:
+        argocd.argoproj.io/managed-by: openshift-gitops

@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: openshift-pipelines
+  namespace: openshift-gitops
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/adrien-legros/rhods-mnist
+    targetRevision: hpe
+    path: ./manifests/instances/automated-pipelines/openshift-pipelines
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: mnist
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true
+    automated:
+      selfHeal: true
+      prune: false
+    managedNamespaceMetadata:
+      labels:
+        argocd.argoproj.io/managed-by: openshift-gitops
