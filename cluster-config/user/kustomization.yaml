@@ -1,4 +1,0 @@
-resources:
-- htpasswd.yaml
-- oauth.yaml
-- roles.yaml
