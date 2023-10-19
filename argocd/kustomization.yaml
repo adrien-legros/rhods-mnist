@@ -1,5 +1,6 @@
 resources:
 - rbac.yaml
+- cluster-config.yaml
 - core.yaml
 - streaming.yaml
 - gitea-base.yaml
