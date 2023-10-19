@@ -200,13 +200,13 @@ spec:
               fieldRef:
                 fieldPath: metadata.labels['custom.tekton.dev/originalPipelineRun']
           image: quay.io/alegros/runtime-image:rhods-mnist-cpu
-        - image: busybox
+        - image: quay.io/alegros/busybox:latest
           name: output-taskrun-name
           command:
           - sh
           - -ec
           - echo -n "$(context.taskRun.name)" > "$(results.taskrun-name.path)"
-        - image: busybox
+        - image: quay.io/alegros/busybox:latest
           name: copy-results-artifacts
           command:
           - sh
@@ -387,13 +387,13 @@ spec:
               fieldRef:
                 fieldPath: metadata.labels['custom.tekton.dev/originalPipelineRun']
           image: quay.io/alegros/runtime-image:rhods-mnist-cpu
-        - image: busybox
+        - image: quay.io/alegros/busybox:latest
           name: output-taskrun-name
           command:
           - sh
           - -ec
           - echo -n "$(context.taskRun.name)" > "$(results.taskrun-name.path)"
-        - image: busybox
+        - image: quay.io/alegros/busybox:latest
           name: copy-results-artifacts
           command:
           - sh

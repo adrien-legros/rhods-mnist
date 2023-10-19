@@ -38,6 +38,7 @@ spec:
         - image: quay.io/alegros/mnist-pipeline-exec:latest
           script: |
             echo "DIGEST: $(params.DIGEST)"
+            sed -i -e 's/TEKTON_BASH_STEP_IMAGE = \(.*\)/TEKTON_BASH_STEP_IMAGE = "quay.io\/alegros\/busybox:latest"/g' /opt/app-root/lib/python3.8/site-packages/kfp_tekton/compiler/_op_to_template.py
             python /workspace/output/kfp/model.py --tag $(params.DIGEST) | grep -oP 'RUN_ID:\s\K\w+(.*)' | tr -d '\n' > "$(results.run-id.path)"
             cat $(results.run-id.path)
         results:

@@ -27,6 +27,6 @@ spec:
             - name: OAUTH_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: $(MM_SA_NAME)
+                  name: mnist-sa
                   key: token
                   optional: true

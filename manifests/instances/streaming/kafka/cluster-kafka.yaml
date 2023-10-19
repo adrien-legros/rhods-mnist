@@ -79,7 +79,7 @@ spec:
         id: 1
         size: 10Gi
         type: persistent-claim
-    version: 3.3.1
+    version: 3.5.0
   kafkaExporter:
     groupRegex: .*
     topicRegex: .*

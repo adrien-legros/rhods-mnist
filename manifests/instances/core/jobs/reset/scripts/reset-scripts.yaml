@@ -2,6 +2,7 @@ kind: ConfigMap
 apiVersion: v1
 metadata:
   name: reset-scripts
+  generateName: reset-scripts-
 data:
   reset-minio.sh: |-
     #!/usr/bin/env sh
@@ -15,15 +16,6 @@ data:
       mc rb --force minio/${buck}
     done
     echo "Deletion phase completed"
-    echo "Creating bucket rhods on minio alias ..."
-    mc mb minio/rhods
-    curl -LJ ${MNIST_DATASET} -o /tmp/dataset.tar.gz
-    mkdir /tmp/dataset
-    tar xzf /tmp/dataset.tar.gz -C /tmp/dataset --strip-components 1
-    unzip /tmp/dataset/digit-recognizer.zip -d /tmp/dataset
-    mc cp /tmp/dataset/train.csv minio/rhods/data/train.csv
-    mc cp /tmp/dataset/test.csv minio/rhods/data/test.csv
-    echo "Creation completed"
   reset-mariadb.sh: |-
     #!/usr/bin/env sh
     mysql -h mariadb-${DSP_INSTANCE_NAME} -u mlpipeline -p${MARIADB_PWD} -D mlpipeline -e 'drop database mlpipeline';

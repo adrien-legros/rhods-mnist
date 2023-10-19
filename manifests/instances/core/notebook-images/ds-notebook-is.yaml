@@ -5,7 +5,7 @@ metadata:
     opendatahub.io/notebook-image-desc: "Custom Datascience Notebook"
     opendatahub.io/notebook-image-name: "Custom Datascience Notebook"
     opendatahub.io/notebook-image-origin: Admin
-    opendatahub.io/notebook-image-url: quay.io/alegros/notebook:rhods-mnist-cpu
+    opendatahub.io/notebook-image-url: quay.io/alegros/notebook:rhods-mnist-gpu
   labels:
     opendatahub.io/dashboard: "true"
     opendatahub.io/notebook-image: "true"
@@ -17,11 +17,11 @@ spec:
   - annotations:
       opendatahub.io/notebook-python-dependencies: '[]'
       opendatahub.io/notebook-software: '[]'
-      openshift.io/imported-from: quay.io/alegros/notebook:rhods-mnist-cpu
+      openshift.io/imported-from: quay.io/alegros/notebook:rhods-mnist-gpu
     from:
       kind: DockerImage
-      name: quay.io/alegros/notebook:rhods-mnist-cpu
+      name: quay.io/alegros/notebook:rhods-mnist-gpu
     importPolicy: {}
-    name: rhods-mnist-cpu	
+    name: rhods-mnist-gpu	
     referencePolicy:
       type: Source

@@ -62,7 +62,7 @@ spec:
         envFrom:
           - secretRef:
               name: aws-connection-s3-creds
-        image: image-registry.openshift-image-registry.svc:5000/redhat-ods-applications/custom-ds-notebook:rhods-mnist-cpu
+        image: image-registry.openshift-image-registry.svc:5000/redhat-ods-applications/custom-ds-notebook:rhods-mnist-gpu
         imagePullPolicy: Always
         livenessProbe:
           failureThreshold: 3
@@ -101,6 +101,8 @@ spec:
           name: notebook
         - mountPath: /scripts
           name: solve-scripts
+        - name: runtime-config
+          mountPath: /opt/app-root/share/jupyter/metadata/runtime-images/
         workingDir: /opt/app-root/src
       - args:
         - --provider=openshift
@@ -178,3 +180,6 @@ spec:
         secret:
           defaultMode: 420
           secretName: mnist-notebook-tls
+      - name: runtime-config
+        configMap:
+          name: runtime-config
