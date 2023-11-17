@@ -21,8 +21,8 @@ replacements:
     fieldPath: data.RHODS_VERSION
   targets:
   - select:
-      group: operators.coreos.com/v1alpha1
       kind: Subscription
+      namespace: redhat-ods-operator
       name: rhods-operator
     fieldPaths:
-    - .spec.startingCSV
+    - spec.startingCSV
