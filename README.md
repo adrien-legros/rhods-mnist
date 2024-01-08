@@ -41,9 +41,9 @@ Wait for the installations to complete. Confirm that all operators are ready. Co
 ![operators-validation](./docs/screenshots/operators-validation.png)
 
 
-### Knative instances
+### Operator instances
 
-Deploy the knative namespaces and instances by runnning:
+Deploy the data science cluster and the knative instances by runnning:
 
 ```shell
 oc apply -k ./manifests/operators-instances/
@@ -51,14 +51,8 @@ oc apply -k ./manifests/operators-instances/
 
 ### Demo environment.
 
-Firstly wait for the RHODS operator to finish deploying. You can run the following command that will wait for this condition.
 
-```shell
-chmod +x ./manifests/operators/wait-for-rhods.sh
-./manifests/operators/wait-for-rhods.sh
-```
-
-Then deploy the demo environment with:
+Deploy the demo instances:
 
 ```shell
 oc kustomize ./manifests/instances/ --enable-helm | oc apply -f -
