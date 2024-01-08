@@ -10,3 +10,6 @@ spec:
   to:
     kind: Service
     name: mnist-webapp
+  tls:
+    termination: edge
+  wildcardPolicy: None
