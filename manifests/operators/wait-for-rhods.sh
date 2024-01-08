@@ -14,14 +14,14 @@ wait_for_exists () {
     done;
 }
 wait_for_exists "name=rhods-operator" "redhat-ods-operator"
-oc -n redhat-ods-operator wait --for=condition=Ready=true po -l name=rhods-operator --timeout=10m
+oc -n redhat-ods-operator wait --for=condition=Ready=true po -l name=rhods-operator --timeout=-1m
 wait_for_exists "app=model-mesh" "redhat-ods-applications"
-oc -n redhat-ods-applications wait --for=condition=Ready=true po -l app=model-mesh --timeout=10m
+oc -n redhat-ods-applications wait --for=condition=Ready=true po -l app=model-mesh --timeout=-1m
 wait_for_exists "control-plane=controller-manager" "redhat-ods-applications"
-oc -n redhat-ods-applications wait --for=condition=Ready=true po -l control-plane=controller-manager --timeout=10m
+oc -n redhat-ods-applications wait --for=condition=Ready=true po -l control-plane=controller-manager --timeout=-1m
 wait_for_exists "control-plane=odh-model-controller" "redhat-ods-applications"
-oc -n redhat-ods-applications wait --for=condition=Ready=true po -l control-plane=odh-model-controller --timeout=10m
+oc -n redhat-ods-applications wait --for=condition=Ready=true po -l control-plane=odh-model-controller --timeout=-1m
 wait_for_exists "app=notebook-controller" "redhat-ods-applications"
-oc -n redhat-ods-applications wait --for=condition=Ready=true po -l app=notebook-controller --timeout=10m
+oc -n redhat-ods-applications wait --for=condition=Ready=true po -l app=notebook-controller --timeout=-1m
 wait_for_exists "app=rhods-dashboard" "redhat-ods-applications"
-oc -n redhat-ods-applications wait --for=condition=Ready=true po -l app=rhods-dashboard --timeout=10m
+oc -n redhat-ods-applications wait --for=condition=Ready=true po -l app=rhods-dashboard --timeout=-1m

@@ -20,9 +20,9 @@ data:
         done;
     }
     wait_for_exists "app=gitea,role=server" "gitea"
-    oc -n gitea wait --timeout=10m --for=condition=Ready=true po -l app=gitea,role=server
+    oc -n gitea wait --timeout=-1m --for=condition=Ready=true po -l app=gitea,role=server
     wait_for_exists "eventlistener=ds-pipeline-trigger-listener" "mnist"
-    oc -n mnist wait --timeout=10m --for=condition=Ready=true po -l eventlistener=ds-pipeline-trigger-listener
+    oc -n mnist wait --timeout=-1m --for=condition=Ready=true po -l eventlistener=ds-pipeline-trigger-listener
   hook-creation.sh: |
     #!/usr/bin/env sh
     # Variables
