@@ -20,6 +20,12 @@ spec:
       name: json-serialize-stream 
   sink:
     ref:
-      kind: KafkaTopic
-      apiVersion: kafka.strimzi.io/v1beta1
-      name: mnist-images
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1alpha1
+      name: kafka-sink
+    properties:
+      bootstrapServers: "mnist-streaming-cluster-kafka-bootstrap.mnist.svc:9092"
+      topic: "mnist-images"
+      user: kafka-user
+      password: password
+      securityProtocol: PLAINTEXT
