@@ -36,9 +36,7 @@ Install the operators.
 oc apply -k ./manifests/operators/
 ```
 
-Wait for the installations to complete. Confirm that all operators are ready. Compare your operators status to this screenshot. 
-
-![operators-validation](./docs/screenshots/operators-validation.png)
+Wait for the installations to complete. Confirm that all operators are ready.
 
 
 ### Operator instances

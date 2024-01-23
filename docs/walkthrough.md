@@ -35,6 +35,8 @@ Go back to rhods dashboard
 
 On mnist namespace, find the webapp route and open the frontend. Draw a digit to make a prediction. Optionnaly explain the goal of the serverless function as a pre processor for the HTTP requests made by the frontend.
 
+![animation](./gif/final-result.gif)
+
 ## Camel integration
 
 You can explain the 2 camel integrations. You can highlight:
