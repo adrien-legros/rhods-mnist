@@ -30,3 +30,13 @@ spec:
                   name: mnist-sa
                   key: token
                   optional: true
+            - name: KAFKA_BOOTSTRAP
+              valueFrom:
+                configMapKeyRef:
+                  name: global-demo-configs
+                  key: KAFKA_BOOTSTRAP
+            - name: KAFKA_TOPIC
+              valueFrom:
+                configMapKeyRef:
+                  name: global-demo-configs
+                  key: KAFKA_TOPIC
