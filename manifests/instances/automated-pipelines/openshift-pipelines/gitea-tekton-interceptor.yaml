@@ -100,4 +100,4 @@ spec:
   clientConfig:
     service:
       name: gitea-interceptor
-      namespace: mnist
+      namespace: ci-cd

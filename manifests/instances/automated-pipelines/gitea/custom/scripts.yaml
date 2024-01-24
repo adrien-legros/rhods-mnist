@@ -21,8 +21,8 @@ data:
     }
     wait_for_exists "app=gitea,role=server" "gitea"
     oc -n gitea wait --timeout=-1m --for=condition=Ready=true po -l app=gitea,role=server
-    wait_for_exists "eventlistener=ds-pipeline-trigger-listener" "mnist"
-    oc -n mnist wait --timeout=-1m --for=condition=Ready=true po -l eventlistener=ds-pipeline-trigger-listener
+    wait_for_exists "eventlistener=ds-pipeline-trigger-listener" "ci-cd"
+    oc -n ci-cd wait --timeout=-1m --for=condition=Ready=true po -l eventlistener=ds-pipeline-trigger-listener
   hook-creation.sh: |
     #!/usr/bin/env sh
     # Variables
@@ -32,7 +32,7 @@ data:
     GITEA_ENDPOINT="http://gitea-http.gitea.svc.cluster.local:3000"
     MIGRATE_API_ENDPOINT=${GITEA_ENDPOINT}/api/v1/repos/migrate
     HOOK_API_ENDPOINT=${GITEA_ENDPOINT}/api/v1/repos/${OWNER}/${REPO}/hooks
-    EL_ENDPOINT="http://el-ds-pipeline-trigger-listener.mnist.svc.cluster.local:8080"
+    EL_ENDPOINT="http://el-ds-pipeline-trigger-listener.ci-cd.svc.cluster.local:8080"
     # Clone git repo
     migrate_payload() {
         cat <<EOF

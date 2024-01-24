@@ -1,6 +1,7 @@
-namespace: mnist
-
+namespace: ci-cd
 resources:
+  - namespace.yaml
+  - pvc.yaml
   - serviceaccount.yaml
   - gitea-tekton-interceptor.yaml
   - cluster-trigger-binding.yaml

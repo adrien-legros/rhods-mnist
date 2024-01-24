@@ -1,3 +1,4 @@
+namespace: gitea
 resources:
 - base
 - custom

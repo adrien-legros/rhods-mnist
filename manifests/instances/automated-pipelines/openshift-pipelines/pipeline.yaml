@@ -95,15 +95,3 @@ spec:
         kind: ClusterTask
       runAfter:
         - mlflow-get-metrics
-
-# image-registry.openshift-image-registry.svc.cluster.local:5000/openshift/python:3.8-ubi8
-    # - name: gitea-status
-    #   taskRef:
-    #     name: openshift-client
-    #     kind: ClusterTask
-    #   runAfter:
-    #     - build
-    #   params:
-    #   - name: SCRIPT
-    #     value: |
-    #       oc new-app --docker-image $(params.IMAGE_NAME)
