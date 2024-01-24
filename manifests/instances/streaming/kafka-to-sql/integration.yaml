@@ -18,6 +18,6 @@ spec:
       .setBody(simple('{"png": "${body.png}", "score": "${body.score}", "prediction": "${body.prediction}", "time": "${body.time}"}'))
       .setHeader("Content-Type", constant("application/json"))
       .to("log:info")
-      .to("kamelet:mysql-sink?serverName=mnistdb&username=mnist&password=mnist&query=INSERT INTO scoring (time,png,score, prediction) VALUES (:#time, :#png, :#score, :#prediction)&databaseName=mnistdb")
+      .to("kamelet:mysql-sink?serverName=mnistdb.grafana.svc.cluster.local&username=mnist&password=mnist&query=INSERT INTO scoring (time,png,score, prediction) VALUES (:#time, :#png, :#score, :#prediction)&databaseName=mnistdb")
     name: kafka-to-sql.groovy
   traits: {}

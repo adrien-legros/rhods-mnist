@@ -1,4 +1,4 @@
-namespace: mnist
+namespace: streaming
 resources:
   - ./kamelet-minio-source.yaml
   - ./kamelet-transform-data.yaml

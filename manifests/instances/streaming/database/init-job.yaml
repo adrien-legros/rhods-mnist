@@ -1,3 +1,21 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: jobs
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: job-admin-grafana
+subjects:
+- kind: ServiceAccount
+  name: jobs
+  namespace: grafana
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: rbac.authorization.k8s.io
+---
 kind: ConfigMap
 apiVersion: v1
 metadata:
@@ -19,10 +37,10 @@ spec:
       initContainers:
         - name: wait-for-mnistdb
           image: registry.redhat.io/openshift4/ose-cli:v4.11.0-202302061916.p0.g1928ac4.assembly.stream
-          command: ["oc", "-n", "mnist", "wait", "--for=condition=Ready=true", "po", "-l=app=mnistdb"]
+          command: ["oc", "-n", "grafana", "wait", "--for=condition=Ready=true", "po", "-l=app=mnistdb"]
       containers:
       - name: init-db
         image: registry.redhat.io/openshift4/ose-cli:v4.11.0-202302061916.p0.g1928ac4.assembly.stream
-        command: ["oc", "-n", "mnist", "exec", "-it", "dc/mnistdb",  "--", "/bin/sh", "-c", "mysql -u root mnistdb < /scripts/init-db.sh"]
+        command: ["oc", "-n", "grafana", "exec", "-it", "dc/mnistdb",  "--", "/bin/sh", "-c", "mysql -u root mnistdb < /scripts/init-db.sh"]
       restartPolicy: Never
   backoffLimit: 4

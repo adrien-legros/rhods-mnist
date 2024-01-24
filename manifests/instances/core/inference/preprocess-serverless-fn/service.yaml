@@ -6,7 +6,7 @@ spec:
   template:
     spec:
       containers:
-        - image: quay.io/alegros/mnist-serverless-fn:v3
+        - image: quay.io/alegros/mnist-serverless-fn:v4
           name: serverless-function
           env:
             - name: INFERENCE_ENDPOINT

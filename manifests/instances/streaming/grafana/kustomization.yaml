@@ -1,7 +1,6 @@
-kind: Kustomization
-
-namespace: mnist
+namespace: grafana
 resources:
+  - namespace.yaml
   - grafana.yaml
   - datasource.yaml
   - dashboard.yaml

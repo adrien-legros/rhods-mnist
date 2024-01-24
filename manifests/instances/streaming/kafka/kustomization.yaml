@@ -1,8 +1,6 @@
-kind: Kustomization
-
-namespace: mnist
-
+namespace: streaming
 resources:
+  - ./namespace.yaml
   - ./cluster-kafka.yaml
   - ./kafka-user.yaml
   - ./kafka-metrics.yaml

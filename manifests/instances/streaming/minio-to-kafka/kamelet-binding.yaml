@@ -11,7 +11,7 @@ spec:
     properties:
       accessKey: minio
       bucketName: images
-      endpoint: http://minio-pipelines-definition:9000
+      endpoint: http://minio-pipelines-definition.mnist:9000
       secretKey: minio123
   steps:
   - ref:
@@ -24,7 +24,7 @@ spec:
       apiVersion: camel.apache.org/v1alpha1
       name: kafka-sink
     properties:
-      bootstrapServers: "mnist-streaming-cluster-kafka-bootstrap.mnist.svc:9092"
+      bootstrapServers: "mnist-streaming-cluster-kafka-bootstrap.streaming.svc:9092"
       topic: "mnist-images"
       user: kafka-user
       password: password

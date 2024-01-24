@@ -13,6 +13,8 @@ INFERENCE_ENDPOINT = os.environ.get("INFERENCE_ENDPOINT") or "https://modelmesh-
 USE_OAUTH_PROXY = True if os.environ.get("USE_OAUTH_PROXY") == "true" else False
 OAUTH_TOKEN = os.environ.get("OAUTH_TOKEN")
 DEBUG = os.environ.get("FLASK_DEBUG")
+KAFKA_BOOTSTRAP = os.environ.get("KAFKA_BOOTSTRAP") or "mnist-streaming-cluster-kafka-bootstrap.streaming.svc.cluster.local:9092"
+KAFKA_TOPIC = os.environ.get("KAFKA_TOPIC") or "mnist-scoring-results"
 
 if USE_OAUTH_PROXY and bool(OAUTH_TOKEN):
     headers = {'Authorization': f'Bearer {OAUTH_TOKEN}'}
@@ -25,13 +27,12 @@ def status():
 
 def write_to_kafka(img_str, prediction):
     # Write maximal score index to kafka topic
-    producer = KafkaProducer(bootstrap_servers=['mnist-streaming-cluster-kafka-bootstrap.mnist.svc.cluster.local:9092'], value_serializer=lambda v: json.dumps(v).encode('utf-8'))
-    topic_name = "mnist-scoring-results"
+    producer = KafkaProducer(bootstrap_servers=[KAFKA_BOOTSTRAP], value_serializer=lambda v: json.dumps(v).encode('utf-8'))
     ts = time.time()
     timestamp = datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
     # Max index is the model prediciton
     index_max = max(range(len(prediction)), key=prediction.__getitem__)
-    producer.send(topic_name, {'time': timestamp,'score': max(prediction), 'prediction': index_max,'png': img_str})
+    producer.send(KAFKA_TOPIC, {'time': timestamp,'score': max(prediction), 'prediction': index_max,'png': img_str})
     application.logger.info(f"Producer: {producer}")
 
 @application.route('/', methods=['POST'])
