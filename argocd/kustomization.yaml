@@ -1,9 +1,0 @@
-resources:
-- rbac.yaml
-- core.yaml
-- streaming.yaml
-- gitea-base.yaml
-- gitea.yaml
-- mlflow.yaml
-- openshift-pipelines.yaml
-- operators.yaml
