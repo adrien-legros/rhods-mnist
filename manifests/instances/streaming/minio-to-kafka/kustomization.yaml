@@ -2,5 +2,4 @@ namespace: streaming
 resources:
   - ./kamelet-minio-source.yaml
   - ./kamelet-transform-data.yaml
-  - ./kamelet-binding.yaml  
-  - ./knative-kafka-source.yaml
+  - ./kamelet-binding.yaml
