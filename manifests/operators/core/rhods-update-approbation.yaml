@@ -27,6 +27,20 @@ data:
     #!/usr/bin/env sh
     RHODS_VERSION=$1
     echo "Approving rhods version: $RHODS_VERSION"
+    wait_for_exists () {
+        # Arg1: selector
+        # Arg2: namespace
+        while true; do
+            installplan_exists=$(oc -n $2 get installplan -oname -l $1 | wc -l)
+            if [ $installplan_exists -gt 0 ]; then
+                echo "Selector $1 found in namespace $2"
+                break
+            fi
+            echo "Wait for selector $1 in namespace $2"
+            sleep 5
+        done;
+    }
+    wait_for_exists "operators.coreos.com/rhods-operator.redhat-ods-operator" "redhat-ods-operator"
     oc -n redhat-ods-operator wait --for=jsonpath='.spec.clusterServiceVersionNames[0]'=${RHODS_VERSION} installplan -l=operators.coreos.com/rhods-operator.redhat-ods-operator
     INSTALL_PLAN=$(oc -n redhat-ods-operator get installplan -ojsonpath="{.items[?(@.spec.clusterServiceVersionNames[0]=='"${RHODS_VERSION}"')].metadata.name}")
     oc -n redhat-ods-operator patch installplan ${INSTALL_PLAN} --type merge --patch '{"spec":{"approved":true}}'
