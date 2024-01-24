@@ -33,13 +33,6 @@ spec:
                               --ServerApp.password=''
                               --ServerApp.base_url=/notebook/mnist/mnist-notebook
                               --ServerApp.quit_button=False
-        - name: CPU_OR_GPU_IN_NB
-          valueFrom:
-            configMapKeyRef:
-              name: global-demo-configs
-              key: CPU_OR_GPU_IN_NB
-        - name: JUPYTER_IMAGE
-          value: image-registry.openshift-image-registry.svc:5000/redhat-ods-applications/custom-ds-notebook:rhods-mnist-$(CPU_OR_GPU_IN_NB)
         - name: NOTEBOOKS_GIT_URL
           valueFrom:
             configMapKeyRef:
@@ -60,7 +53,7 @@ spec:
         envFrom:
           - secretRef:
               name: aws-connection-s3-creds
-        image: image-registry.openshift-image-registry.svc:5000/redhat-ods-applications/custom-ds-notebook:rhods-mnist-gpu
+        image: image-registry.openshift-image-registry.svc:5000/redhat-ods-applications/custom-ds-notebook:rhods-mnist-cpu
         imagePullPolicy: Always
         livenessProbe:
           failureThreshold: 3
