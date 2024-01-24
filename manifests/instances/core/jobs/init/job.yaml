@@ -19,6 +19,13 @@ spec:
           configMap:
             name: init-scripts
             defaultMode: 0777 
+      initContainers:
+        - name: wait-for-minio
+          image: registry.redhat.io/openshift4/ose-cli:v4.11.0-202302061916.p0.g1928ac4.assembly.stream
+          command: ['/scripts/wait-for-minio.sh']
+          volumeMounts:
+            - name: init-scripts
+              mountPath: /scripts
       containers:
         - name: minio-init
           image: quay.io/alegros/minio-client:rhods-mnist

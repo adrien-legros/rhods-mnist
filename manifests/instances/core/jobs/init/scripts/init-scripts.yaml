@@ -4,6 +4,23 @@ metadata:
   name: init-scripts
   generateName: init-scripts-
 data:
+  wait-for-minio.sh: |-
+    #!/usr/bin/env sh
+    wait_for_exists () {
+        # Arg1: selector
+        # Arg2: namespace
+        while true; do
+            pod_exists=$(oc -n $2 get po -oname -l $1 | wc -l)
+            if [ $pod_exists -gt 0 ]; then
+                echo "Selector $1 found in namespace $2"
+                break
+            fi
+            echo "Wait for selector $1 in namspace $2"
+            sleep 5
+        done;
+    }
+    wait_for_exists "app=minio-pipelines-definition" "mnist"
+    oc -n mnist wait --for=condition=Ready=true po -l app=minio-pipelines-definition --timeout=-1m
   init-minio.sh: |-
     #!/usr/bin/env sh
     # Create bucket
