@@ -6,7 +6,7 @@ metadata:
   name: amq-streams
   namespace: openshift-operators
 spec:
-  channel: amqstreams.v2.6.0-0
+  channel: amq-streams-2.6.x
   installPlanApproval: Automatic
   name: amq-streams
   source: redhat-operators
