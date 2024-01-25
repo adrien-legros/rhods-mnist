@@ -4,7 +4,7 @@ metadata:
   annotations:
     notebooks.opendatahub.io/inject-oauth: "true"
     notebooks.opendatahub.io/last-size-selection: Small
-    openshift.io/description: ""
+    openshift.io/description: "JupyterLab environment for digit recognition use case"
     openshift.io/display-name: mnist-notebook
   labels:
     app: mnist-notebook

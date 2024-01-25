@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Namespace
 metadata:
   annotations:
-    openshift.io/display-name: ci-cd
+    openshift.io/display-name: "AI pipelines"
   labels:
     kubernetes.io/metadata.name: ci-cd
   name: ci-cd
