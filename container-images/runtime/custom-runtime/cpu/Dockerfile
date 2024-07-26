@@ -1,4 +1,4 @@
-FROM quay.io/opendatahub-contrib/runtime-images:minimal-ubi8-py38_2023b_latest
+FROM quay.io/modh/runtime-images@sha256:de57a9c7bd6a870697d27ba0af4e3ee5dc2a2ab05f46885791bce2bffb77342d
 
 USER 0
 
@@ -10,10 +10,7 @@ COPY requirements.txt ./
 # (all commands are chained to minimize layer size)
 RUN echo "Installing softwares and packages" && \
     # Install Python packages \
-    pip install -r requirements.txt && \
-    # Fix permissions to support pip in Openshift environments \
-    chmod -R g+w /opt/app-root/lib/python3.8/site-packages && \
-    fix-permissions /opt/app-root -P
+    pip install -r requirements.txt
 
 USER 1001
 

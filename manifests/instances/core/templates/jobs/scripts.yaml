@@ -1,0 +1,56 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: init-scripts
+  namespace: mnist
+  generateName: init-scripts-
+data:
+  wait-for-minio.sh: |-
+    #!/usr/bin/env sh
+    wait_for_exists () {
+        # Arg1: selector
+        # Arg2: namespace
+        while true; do
+            pod_exists=$(oc -n $2 get po -oname -l $1 | wc -l)
+            if [ $pod_exists -gt 0 ]; then
+                echo "Selector $1 found in namespace $2"
+                break
+            fi
+            echo "Wait for selector $1 in namspace $2"
+            sleep 5
+        done;
+    }
+    wait_for_exists "app=minio" "minio"
+    oc -n minio wait --for=condition=Ready=true po -l app=minio --timeout=-1m
+  init-minio.sh: |-
+    #!/usr/bin/env sh
+    # Create bucket
+    mc alias set minio http://minio.minio:9000 {{ .Values.minio.access_key | quote }} {{ .Values.minio.secret_key | quote }}
+    if [ $? -gt 0 ]; then exit 1; fi
+    echo "Creating buckets on minio alias ..."
+    mc mb minio/rhods
+    mc mb minio/images
+    mc mb minio/mlflow
+    curl -LJ {{ .Values.mnistDataset | quote }} -o /tmp/dataset.tar.gz
+    mkdir /tmp/dataset
+    tar xzf /tmp/dataset.tar.gz -C /tmp/dataset --strip-components 1
+    unzip /tmp/dataset/digit-recognizer.zip -d /tmp/dataset
+    mc cp /tmp/dataset/train.csv minio/rhods/data/train.csv
+    mc cp /tmp/dataset/test.csv minio/rhods/data/test.csv
+    echo "Creation completed"
+  push-model.sh: |-
+    #!/usr/bin/env sh
+    # Push to bucket
+    mc alias set minio http://minio.minio:9000 {{ .Values.minio.access_key | quote }} {{ .Values.minio.secret_key | quote }}
+    mc mb minio/rhods
+    set -e
+    curl -LJ {{ .Values.notebooksGitUrl | quote }}/tarball/main -o /tmp/model.tar.gz
+    mkdir /tmp/model
+    tar xzf /tmp/model.tar.gz -C /tmp/model --strip-components 1
+    mc cp /tmp/model/models/model-v2.onnx minio/rhods/onnx/model-v2.onnx
+    mc cp /tmp/model/models/model-v2.onnx minio/rhods/onnx/model-prod.onnx
+    echo "Model pushed into bucket"
+  clone-repo.sh: |-
+    #!/usr/bin/env sh
+    set -e
+    git clone {{ .Values.notebooksGitUrl | quote }}

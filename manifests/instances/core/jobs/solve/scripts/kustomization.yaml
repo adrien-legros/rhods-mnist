@@ -1,3 +1,0 @@
-namespace: mnist
-resources:
-  - ./solve-scripts.yaml

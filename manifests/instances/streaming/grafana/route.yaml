@@ -5,7 +5,7 @@ metadata:
 spec:
   to:
     kind: Service
-    name: grafana-service
+    name: grafana-a-service
     weight: 100
   port:
     targetPort: grafana

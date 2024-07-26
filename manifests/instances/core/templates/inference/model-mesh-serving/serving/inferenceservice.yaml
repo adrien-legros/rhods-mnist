@@ -1,0 +1,21 @@
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  annotations:
+    openshift.io/display-name: mnist
+    serving.kserve.io/deploymentMode: ModelMesh
+  labels:
+    name: mnist
+    opendatahub.io/dashboard: "true"
+  name: mnist
+  namespace: mnist
+spec:
+  predictor:
+    model:
+      modelFormat:
+        name: onnx
+        version: "1"
+      runtime: mnist
+      storage:
+        key: aws-connection-models
+        path: onnx/model-prod.onnx

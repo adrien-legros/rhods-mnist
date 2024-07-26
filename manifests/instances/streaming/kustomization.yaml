@@ -1,6 +1,7 @@
 resources:
   - ./kafka/
   - ./minio-to-kafka/
+  - ./kafka-to-inference/
   - ./kafka-to-sql/
   - ./grafana/
   - ./database/

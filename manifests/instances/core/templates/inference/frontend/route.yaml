@@ -1,0 +1,16 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: mnist-webapp
+  namespace: mnist
+  labels:
+    app: mnist-webapp
+spec:
+  port:
+    targetPort: 8080 
+  to:
+    kind: Service
+    name: mnist-webapp
+  tls:
+    termination: edge
+  wildcardPolicy: None

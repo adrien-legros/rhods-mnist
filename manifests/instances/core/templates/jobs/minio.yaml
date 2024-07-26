@@ -1,0 +1,42 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: lab-init
+  namespace: mnist
+  generateName: lab-init-
+spec:
+  parallelism: 1    
+  completions: 1    
+  activeDeadlineSeconds: 1800 
+  backoffLimit: 6
+  template:         
+    metadata:
+      name: lab-init
+    spec:
+      serviceAccountName: jobs
+      restartPolicy: OnFailure
+      volumes:
+        - name: init-scripts
+          configMap:
+            name: init-scripts
+            defaultMode: 0777 
+      initContainers:
+        - name: wait-for-minio
+          image: registry.redhat.io/openshift4/ose-cli:v4.11.0-202302061916.p0.g1928ac4.assembly.stream
+          command: ['/scripts/wait-for-minio.sh']
+          volumeMounts:
+            - name: init-scripts
+              mountPath: /scripts
+      containers:
+        - name: minio-init
+          image: quay.io/alegros/minio-client:rhods-mnist
+          command: ['/scripts/init-minio.sh']
+          volumeMounts:
+            - name: init-scripts
+              mountPath: /scripts
+        - name: push-model-to-bucket
+          image: quay.io/alegros/minio-client:rhods-mnist
+          command: ['/scripts/push-model.sh']
+          volumeMounts:
+            - name: init-scripts
+              mountPath: /scripts

@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  annotations:
+    openshift.io/description: "Data Volume"
+    openshift.io/display-name: ml-pipeline
+  labels:
+    opendatahub.io/dashboard: "true"
+  name: ml-pipeline
+  namespace: mnist
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  volumeMode: Filesystem

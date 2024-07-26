@@ -1,4 +1,0 @@
-namespace: mnist
-resources:
-  - ./serviceaccount.yaml
-  - ./rbac.yaml

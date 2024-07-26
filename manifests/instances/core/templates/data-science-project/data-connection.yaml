@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: aws-connection-models
+  namespace: mnist
+  labels:
+    opendatahub.io/dashboard: "true"
+    opendatahub.io/managed: "true"
+  annotations:
+    opendatahub.io/connection-type: s3
+    openshift.io/display-name: Digit recognition models
+type: Opaque
+stringData:
+  AWS_ACCESS_KEY_ID: {{ .Values.minio.access_key | quote }}
+  AWS_SECRET_ACCESS_KEY: {{ .Values.minio.secret_key | quote }}
+  AWS_DEFAULT_REGION: eu-west-1
+  AWS_S3_ENDPOINT: http://minio.minio.svc.cluster.local:9000
+  AWS_S3_BUCKET: rhods
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: aws-connection-data
+  namespace: mnist
+  labels:
+    opendatahub.io/dashboard: "true"
+    opendatahub.io/managed: "true"
+  annotations:
+    opendatahub.io/connection-type: s3
+    openshift.io/display-name: Digit recognition data
+type: Opaque
+stringData:
+  AWS_ACCESS_KEY_ID: {{ .Values.minio.access_key | quote }}
+  AWS_SECRET_ACCESS_KEY: {{ .Values.minio.secret_key | quote }}
+  AWS_DEFAULT_REGION: eu-west-1
+  AWS_S3_ENDPOINT: http://minio.minio.svc.cluster.local:9000
+  AWS_S3_BUCKET: rhods

@@ -1,8 +1,0 @@
-kind: Kustomization
-
-namespace: mnist
-
-resources:
-  - ./model-mesh-serving/
-  - ./frontend/
-  - ./preprocess-serverless-fn/

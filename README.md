@@ -14,13 +14,13 @@ This demo demonstrates an end to end automated MLOps approach for model training
 
 ## User story
 
-A data scientist setup his Jupyter envrionement and develops his model. Once statisfied he commits his code and makes a pull request to merge into the production branch. The pull request automatically triggers a data science pipeline. During the training process, the model is tagged and stored into a bucket storage. A model server is serving this model and reconciles whenerer it is updated. The new model is automatically served and is consumable through api requests. It becomes a scalable model that can be used for live inference or batch streaming.
+A data scientist setup his Jupyter envrionement and develops his model. Once statisfied he commits his code and makes a pull request to merge into the production branch. The pull request automatically triggers a data science pipeline. During the training process, the model is tagged and stored into a bucket storage. A model server is serving this model. The new model is automatically served and is consumable through api requests. It becomes a scalable model that can be used for live inference or batch streaming.
 
-## Architecture
+## [NEED UPDATE] Architecture
 
 ![global-architecture](./docs/schemas/global-architecture.png)
 
-## Walkthrough
+## [NEED UPDATE] Walkthrough
 
 Walkthourgh and highlights can be found on [this documentation](./docs/walkthrough.md).
 
@@ -53,5 +53,8 @@ oc apply -k ./manifests/operators-instances/
 Deploy the demo instances:
 
 ```shell
-oc kustomize ./manifests/instances/ --enable-helm | oc apply -f -
+helm template ./manifests/instances/core | oc apply -f -
+oc kustomize ./manifests/instances/automated-pipelines/ --enable-helm | oc apply -f -
+oc kustomize ./manifests/instances/streaming/ --enable-helm | oc apply -f -
+
 ```

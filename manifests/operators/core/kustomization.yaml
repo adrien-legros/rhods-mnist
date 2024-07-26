@@ -1,6 +1,5 @@
 resources:
-  - ./openshift-data-science.yaml
-  - ./openshift-pipelines.yaml
+  - ./openshift-ai.yaml
   - ./openshift-serverless.yaml
   - ./rhods-update-approbation.yaml
 

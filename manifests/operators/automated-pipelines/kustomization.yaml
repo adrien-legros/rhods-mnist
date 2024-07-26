@@ -1,3 +1,4 @@
 resources:
+  - ./openshift-pipelines.yaml
   - ./gitea.yaml
   - ./pgo.yaml

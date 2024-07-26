@@ -1,0 +1,23 @@
+# DSP_INSTANCE_NAME=pipelines-definition
+# NOTEBOOKS_GIT_URL=https://github.com/adrien-legros/rhods-mnist-model
+# MNIST_DATASET=https://github.com/adrien-legros/datasets/tarball/mnist
+# INFERENCE_ENDPOINT=http://modelmesh-serving:8008/v2/models/mnist/infer
+# INFERENCE_AUTHENTICATION=true
+# MM_SA_NAME=mnist-sa
+# KAFKA_BOOTSTRAP=mnist-streaming-cluster-kafka-bootstrap.streaming.svc.cluster.local:9092
+# KAFKA_TOPIC=mnist-scoring-results
+
+# AWS_ACCESS_KEY_ID=minio
+# AWS_DEFAULT_REGION=us-east-1
+# AWS_S3_BUCKET=rhods
+# AWS_S3_ENDPOINT=http://minio-pipelines-definition:9000/
+# AWS_SECRET_ACCESS_KEY=minio123
+
+
+clusterDomain: apps.cluster-sbs99.sbs99.sandbox1062.opentlc.com 
+pipelineBucketName: pipelines
+mnistDataset: https://github.com/adrien-legros/datasets/tarball/mnist
+notebooksGitUrl: https://github.com/adrien-legros/rhods-mnist-model
+minio:
+  access_key: minio
+  secret_key: minio123

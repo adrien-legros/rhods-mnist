@@ -1,10 +1,14 @@
-apiVersion: integreatly.org/v1alpha1
+apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
   name: scoring-dashboard
   labels:
     app: grafana
 spec:
+  resyncPeriod: 1m
+  instanceSelector:
+    matchLabels:
+      dashboards: grafana-a
   plugins:
     - name: "volkovlabs-image-panel"
       version: "1.0.1"
@@ -33,15 +37,17 @@ spec:
         ]
       },
       "editable": true,
-      "gnetId": null,
+      "fiscalYearStartMonth": 0,
       "graphTooltip": 0,
-      "id": 3,
-      "iteration": 1689150572161,
+      "id": 1,
       "links": [],
       "panels": [
         {
           "collapsed": false,
-          "datasource": null,
+          "datasource": {
+            "type": "datasource",
+            "uid": "grafana"
+          },
           "gridPos": {
             "h": 1,
             "w": 24,
@@ -50,16 +56,23 @@ spec:
           },
           "id": 10,
           "panels": [],
+          "targets": [
+            {
+              "datasource": {
+                "type": "datasource",
+                "uid": "grafana"
+              },
+              "refId": "A"
+            }
+          ],
           "title": "Last Inference",
           "type": "row"
         },
         {
-          "datasource": "${datasource}",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {},
-            "overrides": []
+          "datasource": {
+            "uid": "${datasource}"
           },
+          "description": "",
           "gridPos": {
             "h": 9,
             "w": 9,
@@ -80,6 +93,9 @@ spec:
           },
           "targets": [
             {
+              "datasource": {
+                "uid": "${datasource}"
+              },
               "format": "table",
               "group": [],
               "metricColumn": "none",
@@ -106,7 +122,9 @@ spec:
           "type": "volkovlabs-image-panel"
         },
         {
-          "datasource": "${datasource}",
+          "datasource": {
+            "uid": "${datasource}"
+          },
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -114,8 +132,11 @@ spec:
               },
               "custom": {
                 "align": "auto",
-                "displayMode": "auto",
-                "filterable": false
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": false,
+                "inspect": false
               },
               "mappings": [],
               "thresholds": {
@@ -142,7 +163,9 @@ spec:
           },
           "id": 4,
           "options": {
+            "cellHeight": "sm",
             "footer": {
+              "countRows": false,
               "fields": "",
               "reducer": [
                 "sum"
@@ -152,7 +175,7 @@ spec:
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "7.5.17",
+          "pluginVersion": "10.4.3",
           "targets": [
             {
               "datasource": {
@@ -185,7 +208,10 @@ spec:
           "type": "table"
         },
         {
-          "datasource": null,
+          "datasource": {
+            "type": "datasource",
+            "uid": "grafana"
+          },
           "gridPos": {
             "h": 1,
             "w": 24,
@@ -193,11 +219,22 @@ spec:
             "y": 10
           },
           "id": 8,
+          "targets": [
+            {
+              "datasource": {
+                "type": "datasource",
+                "uid": "grafana"
+              },
+              "refId": "A"
+            }
+          ],
           "title": "All predictions",
           "type": "row"
         },
         {
-          "datasource": "${datasource}",
+          "datasource": {
+            "uid": "${datasource}"
+          },
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -205,8 +242,11 @@ spec:
               },
               "custom": {
                 "align": "left",
-                "displayMode": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
                 "filterable": false,
+                "inspect": false,
                 "width": 300
               },
               "mappings": [],
@@ -234,7 +274,9 @@ spec:
           },
           "id": 6,
           "options": {
+            "cellHeight": "sm",
             "footer": {
+              "countRows": false,
               "fields": "",
               "reducer": [
                 "sum"
@@ -243,7 +285,7 @@ spec:
             },
             "showHeader": true
           },
-          "pluginVersion": "7.5.17",
+          "pluginVersion": "10.4.3",
           "targets": [
             {
               "datasource": {
@@ -281,22 +323,18 @@ spec:
         }
       ],
       "refresh": "5s",
-      "schemaVersion": 27,
-      "style": "dark",
+      "schemaVersion": 39,
       "tags": [],
       "templating": {
         "list": [
           {
             "current": {
-              "selected": true,
-              "text": "MySQL",
-              "value": "MySQL"
+              "selected": false,
+              "text": "No data sources found",
+              "value": ""
             },
-            "description": null,
-            "error": null,
             "hide": 0,
             "includeAll": false,
-            "label": null,
             "multi": false,
             "name": "datasource",
             "options": [],
@@ -317,5 +355,6 @@ spec:
       "timezone": "",
       "title": "Inference Dashboard",
       "uid": "inferencedashboard",
-      "version": 4
+      "version": 2,
+      "weekStart": ""
     }

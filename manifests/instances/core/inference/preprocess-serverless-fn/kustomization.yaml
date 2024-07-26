@@ -1,3 +1,0 @@
-resources:
-  - ./service.yaml
-  - ./knative-kafka-source.yaml

@@ -35,11 +35,10 @@ spec:
           - name: DIGEST
             type: string
         steps:
-        - image: quay.io/alegros/mnist-pipeline-exec:latest
+        - image: image-registry.openshift-image-registry.svc:5000/redhat-ods-applications/s2i-generic-data-science-notebook:2024.1
           script: |
             echo "DIGEST: $(params.DIGEST)"
-            sed -i -e 's/TEKTON_BASH_STEP_IMAGE = \(.*\)/TEKTON_BASH_STEP_IMAGE = "quay.io\/alegros\/busybox:latest"/g' /opt/app-root/lib/python3.8/site-packages/kfp_tekton/compiler/_op_to_template.py
-            python /workspace/output/kfp/model.py --tag $(params.DIGEST) | grep -oP 'RUN_ID:\s\K\w+(.*)' | tr -d '\n' > "$(results.run-id.path)"
+            python /workspace/output/kfp/ml-pipeline.py --tag $(params.DIGEST) | grep -oP 'RUN_ID:\s\K\w+(.*)' | tr -d '\n' > "$(results.run-id.path)"
             cat $(results.run-id.path)
         results:
           - name: run-id
@@ -50,27 +49,20 @@ spec:
       runAfter:
         - fetch-repository
 
-    - name: wait-ds-pipeline
-      params:
-        - name: SCRIPT
-          value: oc -n mnist wait --timeout=-1s --for=condition=Succeeded=true pipelinerun --selector=pipeline/runid=$(tasks.start-ds-pipeline.results.run-id)
-      taskRef:
-        name: openshift-client
-        kind: ClusterTask
+    - name: get-routes
+      taskSpec:
+        steps:
+        - image: image-registry.openshift-image-registry.svc:5000/openshift/cli:latest
+          script: |
+            oc get route rhods-dashboard -n redhat-ods-applications -ojsonpath='{.status.ingress[0].host}' > "$(results.rhoai-dashboard.path)"
+            oc get route minio-console -n minio -ojsonpath='{.status.ingress[0].host}' > "$(results.minio-console.path)"
+        results:
+          - name: rhoai-dashboard
+            type: string
+          - name: minio-console
+            type: string
       runAfter:
         - start-ds-pipeline
-
-    - name: mlflow-get-metrics
-      taskRef:
-        name: mlflow-get-metrics
-        kind: ClusterTask
-      params:
-        - name: DIGEST
-          value: $(tasks.fetch-repository.results.commit)
-        - name: MLFLOW_SERVER_ENDPOINT
-          value: "http://mnist-mlflow-server.mlflow:8080"
-      runAfter:
-        - wait-ds-pipeline
 
     - name: gitea-comment-pr
       params:
@@ -78,20 +70,12 @@ spec:
           value: $(params.ISSUE_NB)
         - name: RUN_ID
           value: $(tasks.start-ds-pipeline.results.run-id)
-        - name: DASHBOARD
-          value: TODO
-        - name: accuracy
-          value: $(tasks.mlflow-get-metrics.results.accuracy)
-        - name: loss
-          value: $(tasks.mlflow-get-metrics.results.loss)
-        - name: lr
-          value: $(tasks.mlflow-get-metrics.results.lr)
-        - name: val_acc
-          value: $(tasks.mlflow-get-metrics.results.val_acc)
-        - name: val_loss
-          value: $(tasks.mlflow-get-metrics.results.val_loss)
+        - name: RHOAI_DASHBOARD
+          value: $(tasks.get-routes.results.rhoai-dashboard)
+        - name: MINIO_CONSOLE
+          value: $(tasks.get-routes.results.minio-console)
       taskRef:
         name: gitea-comment-pr
         kind: ClusterTask
       runAfter:
-        - mlflow-get-metrics
+        - get-routes
