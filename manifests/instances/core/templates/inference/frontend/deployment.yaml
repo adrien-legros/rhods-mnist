@@ -18,16 +18,12 @@ spec:
         app: mnist-webapp
     spec:
       containers:
-      - env:
-        - name: NAMESPACE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
-        - name: KNATIVE_SVC
-          value: data-transformation.$(NAMESPACE).svc.cluster.local
-        image: quay.io/alegros/mnist-webapp:v2
+      - image: quay.io/alegros/mnist-webapp:v3
         imagePullPolicy: Always
         name: mnist-webapp
+        env:
+        - name: NODE_TLS_REJECT_UNAUTHORIZED
+          value: "0"
         ports:
         - containerPort: 8080
           protocol: TCP
