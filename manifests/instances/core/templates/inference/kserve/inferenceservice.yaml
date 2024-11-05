@@ -7,15 +7,29 @@ metadata:
     sidecar.istio.io/inject: "true"
     sidecar.istio.io/rewriteAppHTTPProbers: "true"
   labels:
-    #networking.knative.dev/visibility: cluster-local
+    networking.knative.dev/visibility: cluster-local
     opendatahub.io/dashboard: "true"
   name: digit-recognition
-  namespace: mnist
+  namespace: mnist-kserve
 spec:
+  transformer:
+    containers:
+      - image: quay.io/alegros/mnist-kserve-transformer:v0
+        name: mnist-transformer
+        command:
+          - "python"
+          - "model.py"
+        args:
+          - --model_name
+          - digit-recognition
+          - --protocol 
+          - v2
+          - --predictor_host
+          - digit-recognition-predictor.mnist-kserve.svc.cluster.local
   predictor:
     logger:
       mode: all
-      url: http://message-dumper.mnist/
+      url: http://broker-ingress.knative-eventing.svc.cluster.local/mnist-kserve/inference-logger
     maxReplicas: 1
     minReplicas: 1
     model:

@@ -12,7 +12,7 @@ metadata:
   labels:
     opendatahub.io/dashboard: "true"
   name: digit-recognition
-  namespace: mnist
+  namespace: mnist-kserve
 spec:
   annotations:
     prometheus.io/path: /metrics
