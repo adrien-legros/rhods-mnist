@@ -1,5 +1,5 @@
 numpy<2
-tensorflow
+tensorflow-cpu
 pandas
 scikit-learn
 matplotlib
@@ -8,3 +8,4 @@ boto3
 tf2onnx
 keras_tuner
 onnxruntime
+model-registry==0.2.9

@@ -1,0 +1,28 @@
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  annotations:
+    opendatahub.io/notebook-image-desc: "Custom Datascience Notebook Cuda 11.4"
+    opendatahub.io/notebook-image-name: Custom Datascience Notebook Cuda 11.4
+    opendatahub.io/notebook-image-origin: Admin
+    opendatahub.io/notebook-image-url: quay.io/alegros/notebook:rhods-mnist-gpu
+  labels:
+    opendatahub.io/dashboard: "true"
+    opendatahub.io/notebook-image: "true"
+  name: custom-ds-notebook-cuda-11-4
+  namespace: redhat-ods-applications
+spec:
+  lookupPolicy:
+    local: true
+  tags:
+  - annotations:
+      opendatahub.io/notebook-python-dependencies: '[]'
+      opendatahub.io/notebook-software: '[]'
+      openshift.io/imported-from: quay.io/alegros/notebook:rhods-mnist-gpu
+    from:
+      kind: DockerImage
+      name: quay.io/alegros/notebook:rhods-mnist-gpu
+    importPolicy: {}
+    name: rhods-mnist-gpu
+    referencePolicy:
+      type: Source

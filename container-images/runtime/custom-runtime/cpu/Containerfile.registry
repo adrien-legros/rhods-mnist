@@ -4,13 +4,13 @@ USER 0
 
 WORKDIR /opt/app-root/bin
 
-COPY requirements.txt ./
+COPY requirements.registry.txt ./
 
 # Install packages and cleanup
 # (all commands are chained to minimize layer size)
 RUN echo "Installing softwares and packages" && \
     # Install Python packages \
-    pip install -r requirements.txt
+    pip install -r requirements.registry.txt
 
 USER 1001
 

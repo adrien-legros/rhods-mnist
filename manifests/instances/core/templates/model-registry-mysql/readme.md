@@ -1,0 +1,1 @@
+You need to deploy the model registry from RHOAI dashboard

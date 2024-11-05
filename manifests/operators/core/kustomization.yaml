@@ -1,6 +1,7 @@
 resources:
   - ./openshift-ai.yaml
   - ./openshift-serverless.yaml
+  - ./authorino.yaml
   - ./rhods-update-approbation.yaml
 
 

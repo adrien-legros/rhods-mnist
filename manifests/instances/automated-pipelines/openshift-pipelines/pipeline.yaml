@@ -38,8 +38,13 @@ spec:
         - image: image-registry.openshift-image-registry.svc:5000/redhat-ods-applications/s2i-generic-data-science-notebook:2024.1
           script: |
             echo "DIGEST: $(params.DIGEST)"
-            python /workspace/output/kfp/ml-pipeline.py --tag $(params.DIGEST) | grep -oP 'RUN_ID:\s\K\w+(.*)' | tr -d '\n' > "$(results.run-id.path)"
+            USER_TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+            echo $APP_DOMAIN
+            python /workspace/output/kfp/ml-pipeline.py --tag $(params.DIGEST) --register_model --app_domain ${APP_DOMAIN} --user_token ${USER_TOKEN}| grep -oP 'RUN_ID:\s\K\w+(.*)' | tr -d '\n' > "$(results.run-id.path)"
             cat $(results.run-id.path)
+          envFrom:
+            - configMapRef:
+                name: appdomain
         results:
           - name: run-id
             type: string

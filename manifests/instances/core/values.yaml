@@ -14,7 +14,6 @@
 # AWS_SECRET_ACCESS_KEY=minio123
 
 
-clusterDomain: apps.cluster-sbs99.sbs99.sandbox1062.opentlc.com 
 pipelineBucketName: pipelines
 mnistDataset: https://github.com/adrien-legros/datasets/tarball/mnist
 notebooksGitUrl: https://github.com/adrien-legros/rhods-mnist-model

@@ -10,6 +10,9 @@ metadata:
   name: default-dsc
 spec:
   components:
+    modelregistry:
+        managementState: Managed
+        registriesNamespace: rhoai-model-registries
     codeflare:
       managementState: Removed
     dashboard:
