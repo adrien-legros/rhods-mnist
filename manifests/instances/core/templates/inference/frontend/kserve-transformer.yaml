@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mnist-webapp-kserve-transformer
+  namespace: mnist
+  labels:
+    app: mnist-webapp-kserve-transformer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mnist-webapp-kserve-transformer
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: mnist-webapp-kserve-transformer
+    spec:
+      containers:
+      - image: quay.io/alegros/mnist-webapp:transformer
+        imagePullPolicy: Always
+        name: mnist-webapp-kserve-transformer
+        env:
+        - name: NODE_TLS_REJECT_UNAUTHORIZED
+          value: "0"
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mnist-webapp-kserve-transformer
+  namespace: mnist
+  labels:
+    app: mnist-webapp-kserve-transformer
+spec:
+  selector:
+    app: mnist-webapp-kserve-transformer
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: mnist-webapp-kserve-transformer
+  namespace: mnist
+  labels:
+    app: mnist-webapp-kserve-transformer
+spec:
+  port:
+    targetPort: 8080 
+  to:
+    kind: Service
+    name: mnist-webapp-kserve-transformer
+  tls:
+    termination: edge
+  wildcardPolicy: None
