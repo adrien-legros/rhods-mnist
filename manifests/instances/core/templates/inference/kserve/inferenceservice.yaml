@@ -36,7 +36,6 @@ spec:
       modelFormat:
         name: onnx
         version: "1"
-      name: ""
       resources:
         limits:
           cpu: "2"
@@ -47,4 +46,4 @@ spec:
       runtime: digit-recognition
       storage:
         key: aws-connection-models
-        path: models
+        path: onnx/model-prod.onnx

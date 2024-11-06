@@ -5,6 +5,6 @@ metadata:
     openshift.io/display-name: "Digit Recognition - Kserve"
   labels:
     kubernetes.io/metadata.name: mnist-kserve
-    modelmesh-enabled: "true"
+    modelmesh-enabled: "false"
     opendatahub.io/dashboard: "true"
   name: mnist-kserve

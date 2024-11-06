@@ -2,15 +2,21 @@ apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
   name: data-transformation
+  annotations:
+    serving.knative.openshift.io/enablePassthrough: "true"
 spec:
   template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: 'true'
+        sidecar.istio.io/rewriteAppHTTPProbers: 'true'
     spec:
       containers:
         - image: quay.io/alegros/mnist-serverless-fn:v4
           name: serverless-function
           env:
             - name: INFERENCE_ENDPOINT
-              value: "http://modelmesh-serving:8008/v2/models/mnist/infer"
+              value: "https://mnist.mnist.svc.cluster.local/v2/models/mnist/infer"
             - name: USE_OAUTH_PROXY
               value: "true"
             - name: MM_SA_NAME
