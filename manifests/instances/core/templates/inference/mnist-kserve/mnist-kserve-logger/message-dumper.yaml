@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: message-dumper
+  namespace: mnist-kserve-logger
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: message-dumper
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: message-dumper
+    spec:
+      containers:
+      - image: gcr.io/knative-releases/knative.dev/eventing-contrib/cmd/event_display
+        name: message-dumper 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: message-dumper
+  namespace: mnist-kserve-logger
+  labels:
+    app: message-dumper
+spec:
+  selector:
+    app: message-dumper
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080

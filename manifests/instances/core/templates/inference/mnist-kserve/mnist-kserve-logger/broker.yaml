@@ -2,4 +2,4 @@ apiVersion: eventing.knative.dev/v1
 kind: broker
 metadata:
   name: inference-logger
-  namespace: mnist-kserve
+  namespace: mnist-kserve-logger

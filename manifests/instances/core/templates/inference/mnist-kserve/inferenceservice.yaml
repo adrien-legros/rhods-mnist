@@ -29,7 +29,7 @@ spec:
   predictor:
     logger:
       mode: all
-      url: http://broker-ingress.knative-eventing.svc.cluster.local/mnist-kserve/inference-logger
+      url: http://broker-ingress.knative-eventing.svc.cluster.local/mnist-kserve-logger/inference-logger
     maxReplicas: 1
     minReplicas: 1
     model:
@@ -46,4 +46,4 @@ spec:
       runtime: digit-recognition
       storage:
         key: aws-connection-models
-        path: onnx/model-prod.onnx
+        path: models/digit-recognition

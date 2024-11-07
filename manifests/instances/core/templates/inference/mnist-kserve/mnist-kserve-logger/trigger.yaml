@@ -1,0 +1,13 @@
+apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: message-dumper-trigger
+  namespace: mnist-kserve-logger
+spec:
+  broker: inference-logger
+  subscriber:
+    ref:
+      apiVersion: v1
+      kind: Service
+      name: message-dumper
+      namespace: mnist-kserve-logger
