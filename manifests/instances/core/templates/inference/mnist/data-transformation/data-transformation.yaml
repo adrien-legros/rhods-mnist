@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: data-transformation
+  namespace: mnist
+  labels:
+    app: data-transformation
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: data-transformation
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: data-transformation
+    spec:
+      containers:
+        - image: quay.io/alegros/mnist-serverless-fn:v4
+          name: serverless-function
+          env:
+            - name: INFERENCE_ENDPOINT
+              value: "http://modelmesh-serving:8008/v2/models/mnist/infer"
+            - name: USE_OAUTH_PROXY
+              value: "true"
+            - name: MM_SA_NAME
+              value: "mnist-sa"
+            - name: OAUTH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: mnist-sa
+                  key: token
+                  optional: true
+            - name: KAFKA_BOOTSTRAP
+              value: mnist-streaming-cluster-kafka-bootstrap.streaming.svc.cluster.local:9092
+            - name: KAFKA_TOPIC
+              value: mnist-scoring-results
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: data-transformation
+  namespace: mnist
+  labels:
+    app: data-transformation
+spec:
+  selector:
+    app: data-transformation
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
