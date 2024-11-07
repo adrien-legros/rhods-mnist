@@ -49,6 +49,7 @@ data:
     tar xzf /tmp/model.tar.gz -C /tmp/model --strip-components 1
     mc cp /tmp/model/models/model-v2.onnx minio/rhods/onnx/model-v2.onnx
     mc cp /tmp/model/models/model-v2.onnx minio/rhods/onnx/model-prod.onnx
+    mc cp /tmp/model/models/model-v2.onnx minio/rhods/models/digit-recognition/1/model-prod.onnx
     echo "Model pushed into bucket"
   clone-repo.sh: |-
     #!/usr/bin/env sh
