@@ -52,19 +52,3 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 8080
----
-apiVersion: sources.knative.dev/v1beta1
-kind: KafkaSource
-metadata:
-  name: mnist-images
-spec:
-  bootstrapServers:
-    - mnist-streaming-cluster-kafka-bootstrap.streaming.svc:9092
-  topics:
-    - mnist-images
-  sink:
-    ref: 
-      apiVersion: v1
-      kind: Service
-      namespace: mnist
-      name: data-transformation

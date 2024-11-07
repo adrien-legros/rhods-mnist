@@ -27,7 +27,7 @@ spec:
     - --file_system_poll_wait_seconds=0
     - --grpc_bind_address=127.0.0.1
     - --rest_bind_address=127.0.0.1
-    image: quay.io/modh/openvino_model_server@sha256:6c7795279f9075bebfcd9aecbb4a4ce4177eec41fb3f3e1f1079ce6309b7ae45
+    image: quay.io/modh/openvino_model_server@sha256:38e8cdf152622371ba0330c02091a8d54b39c14de1d4b8f0bb696dcf0e6d4398
     name: ovms
     resources:
       limits:
