@@ -9,5 +9,6 @@ resources:
   - trigger-template.yaml
   - event-listener.yaml
   - mlflow-get-metrics-task.yaml
+  - git-clone.yaml
   - gitea-comment-task.yaml
   - pipeline.yaml

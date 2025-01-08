@@ -16,20 +16,20 @@ spec:
     - name: fetch-repository
       taskRef:
         name: git-clone
-        kind: ClusterTask
+        kind: Task
       workspaces:
         - name: output
           workspace: tekton-pvc
       params:
-        - name: url
+        - name: URL
           value: $(params.GIT_REPO)
-        - name: revision
+        - name: REVISION
           value: $(params.GIT_REVISION)
 
     - name: start-ds-pipeline
       params:
         - name: DIGEST
-          value: $(tasks.fetch-repository.results.commit)
+          value: $(tasks.fetch-repository.results.COMMIT)
       taskSpec:
         params:
           - name: DIGEST
