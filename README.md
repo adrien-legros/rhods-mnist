@@ -1,28 +1,15 @@
-# An MLOPS journey
-
-## Table of content
-
-1. [About](#about)
-2. [User story](#user-story)
-3. [Architecture](#architecture)
-4. [Walkthrough](#walkthrough)
-5. [Deployment](#deployment)  
+# MLOps with Openshift AI
 
 ## About
 
-This demo demonstrates an end to end automated MLOps approach for model training and inference. It leverages Red Hat Openshift Data Science (RHODS) as well as other products from Red Hat portfolio. 
+This demo illustrates MLOps features of Openshift AI and extensions to Openshift (streaming, ELT, ...).
 
-## User story
+## Content
 
-A data scientist setup his Jupyter envrionement and develops his model. Once statisfied he commits his code and makes a pull request to merge into the production branch. The pull request automatically triggers a data science pipeline. During the training process, the model is tagged and stored into a bucket storage. A model server is serving this model. The new model is automatically served and is consumable through api requests. It becomes a scalable model that can be used for live inference or batch streaming.
-
-## [NEED UPDATE] Architecture
-
-![global-architecture](./docs/schemas/global-architecture.png)
-
-## [NEED UPDATE] Walkthrough
-
-Walkthourgh and highlights can be found on [this documentation](./docs/walkthrough.md).
+- Openshift AI MLOps features (notebooks, automated pipeline creation through git, experimentations, artifacts, model registry)
+- Streaming with kafka
+- Data transformation with camel
+- Kserve features (usage of transformer for pre/post processing)
 
 ## Deployment
 
@@ -58,3 +45,43 @@ oc kustomize ./manifests/instances/automated-pipelines/ --enable-helm | oc apply
 oc kustomize ./manifests/instances/streaming/ --enable-helm | oc apply -f -
 
 ```
+
+### Required manual setup on Openshift AI
+
+1. Data science pipeline
+
+Go to the digit-recognition data science project. On the pipeline tab, create a new pipeline server using one of the data connection available. Change the bucket name to "ml-pipelines" for clarity. Wait for the pipeline server creation to complete.
+
+2. Notebook creation
+
+Create a new workbench. Use the standard data science container image. Add the "data" data connection. Wait for the notebook creation. Open it and clone https://github.com/adrien-legros/rhods-mnist-model.
+
+3. Model registry setup
+
+On the settings side of Openshift AI choose model registry. Create a new one with the settings:
+- Name: model-regisgtry
+- Host: mysql.mnist
+- Port: 3306
+- Database name: modelregistry
+
+Wait for the model registry creation to complete.
+
+### Credentials: username / password
+
+- Openshift AI: your openshift user (needs to be a openshift ai admin)
+- Gitea: data-scientist-1 / rhods
+- Grafana: admin / admin
+
+## [UNCOMPLETE] Architecture
+
+![global-architecture](./docs/schemas/global-architecture.png)
+
+The schema does to reflect:
+- Model registry
+- Experimentations and metric tracking
+- Kserve as a variation for the streaming workflow
+
+## [DEPRECATED] Walkthrough
+
+Deprecated but gives some steps for the demo.
+Walkthourgh and highlights can be found on [this documentation](./docs/walkthrough.md).
