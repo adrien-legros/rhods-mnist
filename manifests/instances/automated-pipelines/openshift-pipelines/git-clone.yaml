@@ -16,7 +16,6 @@ metadata:
     tekton.dev/platforms: linux/amd64,linux/s390x,linux/ppc64le,linux/arm64
     tekton.dev/source: https://github.com/openshift-pipelines/task-git
     tekton.dev/tags: git
-  creationTimestamp: "2025-01-08T13:29:51Z"
   generation: 1
   labels:
     app.kubernetes.io/version: 0.4.1
@@ -24,15 +23,6 @@ metadata:
     operator.tekton.dev/provider-type: redhat
   name: git-clone
   namespace: ci-cd
-  ownerReferences:
-  - apiVersion: operator.tekton.dev/v1alpha1
-    blockOwnerDeletion: true
-    controller: true
-    kind: TektonInstallerSet
-    name: addon-custom-resolvertask-spvd6
-    uid: ac01c091-049a-4bbb-91e9-63fd9f123edd
-  resourceVersion: "93260"
-  uid: db2bd70d-1cca-44f7-a4bd-d329c4437e08
 spec:
   description: "This object represents Git and is able to initialize and clone a remote
     repository on the informed Workspace. It's likely to become the first `step` on
